@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - RTWE Sales Order System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    /* ========================================
+       TOP NAVIGATION BAR
+       ======================================== */
+    .topbar {
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+      color: white;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .topbar-logo {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    .btn-logout {
+      background: #E53935;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: #C62828;
+      transform: scale(1.05);
+    }
+
+    /* ========================================
+       NAVIGATION TABS
+       ======================================== */
+    .nav-bar {
+      background: #8B5A2B;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 18px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 13px;
+      white-space: nowrap;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-bottom-color: #FFD54F;
+    }
+
+    .nav-item .nav-icon {
+      font-size: 16px;
+    }
+
+    /* ========================================
+       MAIN CONTAINER
+       ======================================== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* ========================================
+       WELCOME SECTION
+       ======================================== */
+    .welcome-section {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+      border-left: 5px solid #6B4423;
+    }
+
+    .welcome-section h2 {
+      color: #6B4423;
+      margin-bottom: 5px;
+      font-size: 24px;
+    }
+
+    .welcome-section p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* ========================================
+       SECTION HEADERS
+       ======================================== */
+    .section-header {
+      color: #6B4423;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ========================================
+       STATISTICS CARDS
+       ======================================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border-top: 4px solid #6B4423;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card .icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .label {
+      color: #666;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Today's Activity Cards with colors */
+    .stat-card.orange {
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      border-top-color: #FF9800;
+    }
+
+    .stat-card.orange .value {
+      color: #E65100;
+    }
+
+    .stat-card.green {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+      border-top-color: #4CAF50;
+    }
+
+    .stat-card.green .value {
+      color: #2E7D32;
+    }
+
+    .stat-card.blue {
+      background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+      border-top-color: #2196F3;
+    }
+
+    .stat-card.blue .value {
+      color: #1565C0;
+    }
+
+    /* ========================================
+       QUICK ACTIONS
+       ======================================== */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .action-card {
+      background: white;
+      padding: 25px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+    }
+
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-color: #6B4423;
+    }
+
+    .action-card .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin: 0 auto 15px;
+      background: #F5F5F5;
+    }
+
+    .action-card h3 {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .action-card p {
+      color: #999;
+      font-size: 12px;
+    }
+
+    /* Action card icon colors */
+    .action-card.new-order .icon {
+      background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+    }
+
+    .action-card.pending .icon {
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+    }
+
+    .action-card.complete .icon {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+    }
+
+    .action-card.cancelled .icon {
+      background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+    }
+
+    /* ========================================
+       LOADING & ERROR STATES
+       ======================================== */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #6B4423;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error {
+      background: #FFEBEE;
+      color: #C62828;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    /* ========================================
+       SESSION ERROR OVERLAY
+       ======================================== */
+    .session-error {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .session-error-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .session-error-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .session-error-message {
+      font-size: 18px;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .btn-login {
+      background: white;
+      color: #6B4423;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-login:hover {
+      transform: scale(1.05);
+    }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-bar {
+        padding: 0 10px;
+      }
+
+      .nav-item {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Session Error Overlay (Hidden by default) -->
+  <div id="sessionErrorOverlay" class="session-error" style="display: none;">
+    <div class="session-error-icon">🔒</div>
+    <div class="session-error-title">Session Expired</div>
+    <div class="session-error-message">Your session has expired or is invalid. Please login again.</div>
+    <button class="btn-login" onclick="redirectToLogin()">Go to Login</button>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      🏭 RTWE Sales Order System
+    </div>
+    <div class="topbar-right">
+      <span class="user-info">
+        <span id="topbarUserName">
+          <?= userName ?>
+        </span> (Owner)
+      </span>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar">
+    <a href="#" class="nav-item active" id="navDashboard">
+      <span class="nav-icon">🏠</span> Dashboard
+    </a>
+    <a href="#" class="nav-item" id="navNewOrder">
+      <span class="nav-icon">📝</span> New<br>Order
+    </a>
+    <a href="#" class="nav-item" id="navPending">
+      <span class="nav-icon">⏳</span> Pending<br>Orders
+    </a>
+    <a href="#" class="nav-item" id="navComplete">
+      <span class="nav-icon">✅</span> Complete<br>Orders
+    </a>
+    <a href="#" class="nav-item" id="navCancelled">
+      <span class="nav-icon">❌</span> Cancelled
+    </a>
+  </nav>
+
+  <div class="container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <h2>Welcome back, <span id="welcomeUserName">
+          <?= userName ?>
+        </span>! 👋</h2>
+      <p>Here's an overview of your RTWE Sales Order operations</p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingStats" class="loading">
+      <div class="spinner"></div>
+      <div>Loading statistics...</div>
+    </div>
+
+    <!-- Error State -->
+    <div id="statsError" class="error" style="display: none;">⚠️ Failed to load statistics</div>
+
+    <!-- Statistics Area -->
+    <div id="statsArea" style="display: none;">
+      <!-- Overall Statistics -->
+      <div class="section-header">📊 Overall Statistics</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="icon">📋</div>
+          <div class="value" id="statPending">0</div>
+          <div class="label">Pending Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">✅</div>
+          <div class="value" id="statComplete">0</div>
+          <div class="label">Complete Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">❌</div>
+          <div class="value" id="statCancelled">0</div>
+          <div class="label">Cancelled Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">📊</div>
+          <div class="value" id="statTotal">0</div>
+          <div class="label">Total Orders</div>
+        </div>
+      </div>
+
+      <!-- Today's Activity -->
+      <div class="section-header">📅 Today's Activity</div>
+      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-card orange">
+          <div class="icon">📥</div>
+          <div class="value" id="statTodayNew">0</div>
+          <div class="label">Today's New Orders</div>
+        </div>
+        <div class="stat-card green">
+          <div class="icon">✔️</div>
+          <div class="value" id="statTodayComplete">0</div>
+          <div class="label">Today's Completed</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="icon">⏳</div>
+          <div class="value" id="statStillPending">0</div>
+          <div class="label">Still Pending</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-header">⚡ Quick Actions</div>
+    <div class="actions-grid">
+      <a href="#" id="actionNewOrder" class="action-card new-order">
+        <div class="icon">📝</div>
+        <h3>New Sale Order</h3>
+        <p>Create new order</p>
+      </a>
+      <a href="#" id="actionPending" class="action-card pending">
+        <div class="icon">⏳</div>
+        <h3>Pending Orders</h3>
+        <p>View pending orders</p>
+      </a>
+      <a href="#" id="actionComplete" class="action-card complete">
+        <div class="icon">✅</div>
+        <h3>Complete Orders</h3>
+        <p>View complete orders</p>
+      </a>
+      <a href="#" id="actionCancelled" class="action-card cancelled">
+        <div class="icon">❌</div>
+        <h3>Cancelled Orders</h3>
+        <p>View cancelled orders</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CONFIGURATION & INITIALIZATION
+    // ========================================
+    const webAppUrl = "<?= webAppUrl ?>";
+    let sessionId = "<?= sessionId ?>";
+    let userName = "<?= userName ?>";
+
+    console.log('Dashboard loaded');
+    console.log('Initial sessionId:', sessionId);
+    console.log('Initial userName:', userName);
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', function () {
+      initializeDashboard();
+    });
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    function initializeDashboard() {
+      console.log('Initializing dashboard...');
+
+      // Try to recover session from localStorage if not provided
+      if (!sessionId || sessionId === 'undefined' || sessionId.trim() === '') {
+        console.log('No sessionId from server, checking localStorage...');
+
+        try {
+          const storedSession = localStorage.getItem('saleorder_session');
+          const storedUserName = localStorage.getItem('saleorder_userName');
+
+          if (storedSession) {
+            console.log('Found stored session:', storedSession);
+            sessionId = storedSession;
+
+            if (storedUserName) {
+              userName = storedUserName;
+              updateUserNameDisplay(userName);
+            }
+          } else {
+            console.log('No stored session found, redirecting to login...');
+            showSessionError();
+            return;
+          }
+        } catch (e) {
+          console.error('Error accessing localStorage:', e);
+          showSessionError();
+          return;
+        }
+      }
+
+      // Store/update session in localStorage
+      try {
+        localStorage.setItem('saleorder_session', sessionId);
+        localStorage.setItem('saleorder_userName', userName);
+        console.log('Session stored in localStorage');
+      } catch (e) {
+        console.error('Error storing session:', e);
+      }
+
+      // Update navigation links
+      updateNavigationLinks();
+
+      // Update action links with sessionId
+      updateActionLinks();
+
+      // Load statistics
+      loadStatistics();
+    }
+
+    // ========================================
+    // SESSION MANAGEMENT
+    // ========================================
+    function updateUserNameDisplay(name) {
+      document.getElementById('topbarUserName').textContent = name;
+      document.getElementById('welcomeUserName').textContent = name;
+    }
+
+    function updateNavigationLinks() {
+      document.getElementById('navDashboard').href = webAppUrl + '?page=dashboard&sessionId=' + sessionId;
+      document.getElementById('navNewOrder').href = webAppUrl + '?page=sale-order-form&sessionId=' + sessionId;
+      document.getElementById('navPending').href = webAppUrl + '?page=pending-orders&sessionId=' + sessionId;
+      document.getElementById('navComplete').href = webAppUrl + '?page=complete-orders&sessionId=' + sessionId;
+      document.getElementById('navCancelled').href = webAppUrl + '?page=cancelled-orders&sessionId=' + sessionId;
+    }
+
+    function updateActionLinks() {
+      document.getElementById('actionNewOrder').href = webAppUrl + '?page=sale-order-form&sessionId=' + sessionId;
+      document.getElementById('actionPending').href = webAppUrl + '?page=pending-orders&sessionId=' + sessionId;
+      document.getElementById('actionComplete').href = webAppUrl + '?page=complete-orders&sessionId=' + sessionId;
+      document.getElementById('actionCancelled').href = webAppUrl + '?page=cancelled-orders&sessionId=' + sessionId;
+    }
+
+    function showSessionError() {
+      document.getElementById('sessionErrorOverlay').style.display = 'flex';
+    }
+
+    function redirectToLogin() {
+      // Clear localStorage
+      try {
+        localStorage.removeItem('saleorder_session');
+        localStorage.removeItem('saleorder_userName');
+        localStorage.removeItem('saleorder_userId');
+        localStorage.removeItem('saleorder_userEmail');
+        localStorage.removeItem('saleorder_userRole');
+      } catch (e) {
+        console.error('Error clearing localStorage:', e);
+      }
+
+      // Redirect to login
+      window.location.href = webAppUrl + '?page=login';
+    }
+
+    // ========================================
+    // STATISTICS LOADING
+    // ========================================
+    function loadStatistics() {
+      console.log('Loading statistics with sessionId:', sessionId);
+
+      document.getElementById('loadingStats').style.display = 'block';
+      document.getElementById('statsError').style.display = 'none';
+      document.getElementById('statsArea').style.display = 'none';
+
+      google.script.run
+        .withSuccessHandler(onStatisticsSuccess)
+        .withFailureHandler(onStatisticsFailure)
+        .getDashboardStats(sessionId);
+    }
+
+    function onStatisticsSuccess(data) {
+      console.log('Statistics loaded successfully:', data);
+
+      document.getElementById('loadingStats').style.display = 'none';
+
+      if (data) {
+        // Update overall statistics
+        document.getElementById('statPending').textContent = data.pending || data.pendingOrders || 0;
+        document.getElementById('statComplete').textContent = data.approved || data.completeOrders || 0;
+        document.getElementById('statCancelled').textContent = data.closed || data.cancelledOrders || 0;
+        document.getElementById('statTotal').textContent = data.total || data.totalOrders || 0;
+
+        // Update today's activity
+        document.getElementById('statTodayNew').textContent = data.todayNew || 0;
+        document.getElementById('statTodayComplete').textContent = data.todayApproved || data.todayCompleted || 0;
+        document.getElementById('statStillPending').textContent = data.pending || data.stillPending || 0;
+
+        document.getElementById('statsArea').style.display = 'block';
+      } else {
+        console.error('No data received');
+        document.getElementById('statsError').innerHTML = '⚠️ No statistics data available';
+        document.getElementById('statsError').style.display = 'block';
+        document.getElementById('statsArea').style.display = 'block';
+      }
+    }
+
+    function onStatisticsFailure(error) {
+      console.error('Failed to load statistics:', error);
+
+      document.getElementById('loadingStats').style.display = 'none';
+
+      let errorMessage = '⚠️ Failed to load statistics';
+      if (error && error.message) {
+        errorMessage += ': ' + error.message;
+
+        // Check if error indicates session issue
+        if (error.message.toLowerCase().includes('session') ||
+          error.message.toLowerCase().includes('expired') ||
+          error.message.toLowerCase().includes('unauthorized')) {
+          showSessionError();
+          return;
+        }
+      }
+
+      document.getElementById('statsError').innerHTML = errorMessage;
+      document.getElementById('statsError').style.display = 'block';
+      document.getElementById('statsArea').style.display = 'block';
+    }
+
+    // ========================================
+    // LOGOUT
+    // ========================================
+    function handleLogout() {
+      console.log('Logging out...');
+
+      // Clear localStorage
+      try {
+        localStorage.removeItem('saleorder_session');
+        localStorage.removeItem('saleorder_userName');
+        localStorage.removeItem('saleorder_userId');
+        localStorage.removeItem('saleorder_userEmail');
+        localStorage.removeItem('saleorder_userRole');
+      } catch (e) {
+        console.error('Error clearing localStorage:', e);
+      }
+
+      // Redirect to logout
+      window.location.href = webAppUrl + '?page=logout&sessionId=' + sessionId;
+    }
+  </script>
+</body>
+
+</html>

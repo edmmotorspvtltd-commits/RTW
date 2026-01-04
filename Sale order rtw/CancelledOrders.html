@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancelled Orders - RTWE Sales Order System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    /* Navigation styles */
+    .topbar {
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar h1 {
+      font-size: 18px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #E53935 0%, #C62828 100%);
+      color: white;
+      padding: 20px;
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-count {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .search-bar {
+      padding: 20px;
+      background: #fafafa;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .search-bar input {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .search-bar input:focus {
+      border-color: #E53935;
+      outline: none;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #E53935;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #C62828;
+    }
+
+    .btn-refresh {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-refresh:hover {
+      background: #388E3C;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #fafafa;
+      font-weight: 600;
+      color: #333;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background: #fafafa;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #E53935;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .loading-content {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      z-index: 10000;
+      display: none;
+    }
+
+    .toast.success {
+      background: #4CAF50;
+    }
+
+    .toast.error {
+      background: #f44336;
+    }
+
+    .reason-badge {
+      background: #FFEBEE;
+      color: #C62828;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .search-bar {
+        flex-direction: column;
+      }
+
+      .search-bar input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <h1>🏭 RTWE Sales Order System</h1>
+    <div class="topbar-right">
+      <span id="userName">User</span>
+      <a href="#" class="btn-back" id="btnBack">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div id="loadingText">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        ❌ Cancelled Orders
+        <span class="badge-count" id="totalCount">0 Orders</span>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Search by SO No, RTWE No, Buyer...">
+        <button class="btn btn-primary" onclick="searchOrders()">Search</button>
+        <button class="btn btn-refresh" onclick="loadCancelledOrders()">🔄 Refresh</button>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="table-container">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>SO Number</th>
+              <th>RTWE No</th>
+              <th>Date</th>
+              <th>Buyer</th>
+              <th>Cancel Reason</th>
+              <th>Cancelled By</th>
+              <th>Cancelled At</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr>
+              <td colspan="8" class="empty-state">
+                <div class="spinner"></div>
+                Loading cancelled orders...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const webAppUrl = "<?= webAppUrl ?>";
+    const sessionId = "<?= sessionId ?>";
+    const userName = "<?= userName ?>";
+
+    let allOrders = [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('userName').textContent = userName;
+      document.getElementById('btnBack').href = webAppUrl + '?page=dashboard&sessionId=' + sessionId;
+      loadCancelledOrders();
+    });
+
+    // Load cancelled orders
+    function loadCancelledOrders() {
+      showLoading('Loading cancelled orders...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+
+          if (result && result.success) {
+            // Handle both formats: result.data OR result.orders
+            allOrders = result.data || result.orders || [];
+            displayOrders(allOrders);
+          } else {
+            allOrders = [];
+            displayOrders([]);
+            if (result && result.message) {
+              showToast(result.message, 'error');
+            }
+          }
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          console.error('Error loading cancelled orders:', error);
+          showToast('Failed to load cancelled orders', 'error');
+          displayOrders([]);
+        })
+        .getCancelledOrders(sessionId);
+    }
+
+    // Display orders in table
+    function displayOrders(orders) {
+      const tbody = document.getElementById('ordersBody');
+      document.getElementById('totalCount').textContent = orders.length + ' Orders';
+
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="empty-state">
+              ✅ No cancelled orders - Great!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      orders.forEach(function (order, index) {
+        html += `
+          <tr>
+            <td>${index + 1}</td>
+            <td><strong>${order.so_number || order.soNumber || '-'}</strong></td>
+            <td>${order.rtwe_no || order.rtweNo || '-'}</td>
+            <td>${order.date || order.created_at || '-'}</td>
+            <td>${order.buyer || order.buyer_name || '-'}</td>
+            <td><span class="reason-badge">${order.cancel_reason || order.cancelled_reason || order.cancellationReason || '-'}</span></td>
+            <td>${order.cancelled_by || order.cancelledBy || '-'}</td>
+            <td>${order.cancelled_at || order.cancelledAt || '-'}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // Search orders
+    function searchOrders() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      if (!searchTerm) {
+        displayOrders(allOrders);
+        return;
+      }
+
+      const filtered = allOrders.filter(function (order) {
+        const searchableText = [
+          order.so_number, order.soNumber,
+          order.rtwe_no, order.rtweNo,
+          order.buyer, order.buyer_name,
+          order.cancel_reason, order.cancelled_reason
+        ].join(' ').toLowerCase();
+
+        return searchableText.includes(searchTerm);
+      });
+
+      displayOrders(filtered);
+    }
+
+    // Utility functions
+    function showLoading(text) {
+      document.getElementById('loadingText').textContent = text || 'Loading...';
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').style.display = 'none';
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + (type || 'success');
+      toast.style.display = 'block';
+
+      setTimeout(function () {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // Search on input
+    document.getElementById('searchInput').addEventListener('input', searchOrders);
+  </script>
+</body>
+
+</html>

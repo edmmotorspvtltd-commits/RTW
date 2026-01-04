@@ -1,0 +1,70 @@
+<!-- Navigation Component - Reusable across all pages -->
+<style>
+  .navbar {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar li {
+    margin: 0;
+  }
+  
+  .navbar a {
+    display: block;
+    padding: 14px 20px;
+    color: #2C2C2C;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+    transition: all 0.3s;
+  }
+  
+  .navbar a:hover,
+  .navbar a.active {
+    background: #8B6F47;
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .navbar ul {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<nav class="navbar">
+  <ul>
+    <li><a href="?page=dashboard&session=<?= sessionId ?>" id="nav-dashboard">📊 Dashboard</a></li>
+    <li><a href="?page=pending-orders&session=<?= sessionId ?>" id="nav-pending">📋 Pending Orders</a></li>
+    <li><a href="?page=complete-orders&session=<?= sessionId ?>" id="nav-complete">✅ Complete Orders</a></li>
+    
+    <?php if (user.role === 'ADMIN' || user.role === 'MANAGER') { ?>
+    <li><a href="?page=user-management&session=<?= sessionId ?>" id="nav-users">👥 Users</a></li>
+    <li><a href="?page=settings&session=<?= sessionId ?>" id="nav-settings">⚙️ Settings</a></li>
+    <li><a href="?page=audit-log&session=<?= sessionId ?>" id="nav-audit">📋 Audit Log</a></li>
+    <?php } ?>
+  </ul>
+</nav>
+
+<script>
+  // Auto-highlight active page
+  (function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page');
+    
+    if (page) {
+      const navId = 'nav-' + page.replace('-', '');
+      const activeLink = document.getElementById(navId);
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+    }
+  })();
+</script>
