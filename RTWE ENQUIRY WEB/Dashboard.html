@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - RTWE Enquiry System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      font-size: 14px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .navbar {
+      background: white;
+      padding: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar a {
+      display: block;
+      padding: 15px 20px;
+      color: #5D4037;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .navbar a:hover {
+      background: #EFEBE9;
+    }
+
+    .navbar a.active {
+      background: #D7CCC8;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .welcome-section {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .welcome-section h2 {
+      color: #5D4037;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      color: #666;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .stat-card .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #5D4037;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .action-card {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-card .icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+
+    .action-card h3 {
+      color: #5D4037;
+      margin-bottom: 5px;
+    }
+
+    .action-card p {
+      color: #666;
+      font-size: 13px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error {
+      background: #FFEBEE;
+      color: #C62828;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    /* Logout Overlay */
+    .logout-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logout-overlay.show {
+      display: flex;
+    }
+
+    .logout-modal {
+      background: white;
+      border-radius: 12px;
+      padding: 40px 50px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .logout-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #E0E0E0;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .logout-modal h3 {
+      color: #5D4037;
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .logout-modal p {
+      color: #666;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Admin Section */
+    .admin-section {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #E0E0E0;
+    }
+
+    .admin-title {
+      background: #5D4037;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+        flex-wrap: wrap;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .user-info {
+        font-size: 12px;
+        display: none;
+      }
+
+      .btn-logout {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .navbar a {
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .welcome-section {
+        padding: 20px;
+      }
+
+      .welcome-section h2 {
+        font-size: 18px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-card .icon {
+        font-size: 30px;
+      }
+
+      .stat-card .label {
+        font-size: 12px;
+      }
+
+      .stat-card .value {
+        font-size: 24px;
+      }
+
+      .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .action-card {
+        padding: 20px 15px;
+      }
+
+      .action-card .icon {
+        font-size: 30px;
+      }
+
+      .action-card h3 {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar-left h1 {
+        font-size: 14px;
+      }
+
+      .navbar ul {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .navbar a {
+        padding: 10px;
+        border-bottom: 1px solid #E0E0E0;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome-section h2 {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>🏭 RTWE Enquiry System</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        👤 <strong>
+          <?= userName ?>
+        </strong>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Global variables for Navigation - MUST be before Navigation include -->
+  <script>
+    var webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+    var sessionId = "<?= sessionId ?>";
+  </script>
+
+  <?!= include('Navigation') ?>
+
+  <div class="container">
+    <div class="welcome-section">
+      <h2>Welcome back,
+        <?= userName ?>! 👋
+      </h2>
+      <p>Here's an overview of your RTWE enquiry operations</p>
+    </div>
+
+    <div id="loadingStats" class="loading">
+      <div class="spinner"></div>
+      <div>Loading statistics...</div>
+    </div>
+
+    <div id="statsError" class="error" style="display: none;">
+      ⚠️ Failed to load statistics
+    </div>
+
+    <div id="statsArea" style="display: none;">
+      <!-- Overall Stats -->
+      <h4 class="section-title">📊 Overall Statistics</h4>
+      <div class="stats-grid" style="margin-bottom: 20px;">
+        <div class="stat-card">
+          <div class="icon">📋</div>
+          <div class="value" id="statPending">0</div>
+          <div class="label">PENDING ENQUIRIES</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon">✅</div>
+          <div class="value" id="statApproved">0</div>
+          <div class="label">PENDING APPROVED</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon">🎯</div>
+          <div class="value" id="statConfirmed">0</div>
+          <div class="label">ORDER CONFIRMED</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon">🔒</div>
+          <div class="value" id="statClosed">0</div>
+          <div class="label">ENQUIRIES CLOSED</div>
+        </div>
+      </div>
+
+      <!-- Today's Stats -->
+      <h4 class="section-title">📅 Today's Activity</h4>
+      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 30px;">
+        <div class="stat-card"
+          style="background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); border-left: 4px solid #FF9800;">
+          <div class="icon">📥</div>
+          <div class="value" id="statTodayNew" style="color: #E65100;">0</div>
+          <div class="label">TODAY'S NEW ENQUIRIES</div>
+        </div>
+
+        <div class="stat-card"
+          style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border-left: 4px solid #4CAF50;">
+          <div class="icon">✔️</div>
+          <div class="value" id="statTodayApproved" style="color: #2E7D32;">0</div>
+          <div class="label">TODAY'S APPROVED</div>
+        </div>
+
+        <div class="stat-card"
+          style="background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-left: 4px solid #2196F3;">
+          <div class="icon">⏳</div>
+          <div class="value" id="statStillPending" style="color: #1565C0;">0</div>
+          <div class="label">STILL PENDING</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 15px; color: #5D4037;">Quick Actions</h3>
+
+    <div class="actions-grid">
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=new-enquiry&sessionId=<?= sessionId ?>" class="action-card"
+        onclick="showLoading('New Enquiry')">
+        <div class="icon">📝</div>
+        <h3>New Enquiry</h3>
+        <p>Create new entry</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=pending-enquiries&sessionId=<?= sessionId ?>"
+        class="action-card" onclick="showLoading('Pending Enquiries')">
+        <div class="icon">⏳</div>
+        <h3>Pending Enquiries</h3>
+        <p>View pending entries</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=pending-approved&sessionId=<?= sessionId ?>"
+        class="action-card" onclick="showLoading('Pending Approved')">
+        <div class="icon">✓</div>
+        <h3>Pending Approved</h3>
+        <p>Approved, awaiting confirmation</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=order-confirm&sessionId=<?= sessionId ?>" class="action-card"
+        onclick="showLoading('Order Confirm Data')">
+        <div class="icon">✅</div>
+        <h3>Order Confirm Data</h3>
+        <p>View confirmed orders</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=cancelled-enquiries&sessionId=<?= sessionId ?>"
+        class="action-card" onclick="showLoading('Cancelled Enquiries')">
+        <div class="icon">❌</div>
+        <h3>Cancelled Enquiries</h3>
+        <p>View cancelled entries</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=search&sessionId=<?= sessionId ?>" class="action-card"
+        onclick="showLoading('Search')">
+        <div class="icon">🔍</div>
+        <h3>Search Enquiries</h3>
+        <p>Find and filter enquiries</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=kpi&sessionId=<?= sessionId ?>" class="action-card"
+        onclick="showLoading('KPI Dashboard')">
+        <div class="icon">📊</div>
+        <h3>KPI Dashboard</h3>
+        <p>View analytics</p>
+      </a>
+
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=settings&sessionId=<?= sessionId ?>" class="action-card"
+        onclick="showLoading('Settings')">
+        <div class="icon">⚙️</div>
+        <h3>Settings</h3>
+        <p>Configuration</p>
+      </a>
+    </div>
+
+    <!-- Admin Section - Only visible to admins -->
+    <div id="adminSection" class="admin-section" style="display: none;">
+      <div class="admin-title">🔐 Admin Panel</div>
+      <div class="actions-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=user-management&sessionId=<?= sessionId ?>"
+          class="action-card" onclick="showLoading('User Management')">
+          <div class="icon">👥</div>
+          <h3>User Management</h3>
+          <p>Add, edit, remove users</p>
+        </a>
+
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=audit-log&sessionId=<?= sessionId ?>" class="action-card"
+          onclick="showLoading('Audit Log')">
+          <div class="icon">📋</div>
+          <h3>Audit Log</h3>
+          <p>View system activity</p>
+        </a>
+
+        <a href="#" class="action-card" onclick="sendManualReport()">
+          <div class="icon">📧</div>
+          <h3>Send Reports</h3>
+          <p>Email daily/weekly reports</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Overlay -->
+  <div class="logout-overlay" id="logoutOverlay">
+    <div class="logout-modal">
+      <div class="logout-spinner"></div>
+      <h3>Logging Out...</h3>
+      <p>Please wait while we sign you out</p>
+    </div>
+  </div>
+
+  <script>
+    // Variables already defined above for Navigation
+    var userName = '<?= userName ?>';
+
+    // Store session in localStorage for back button recovery
+    try {
+      localStorage.setItem('rtwe_session', sessionId);
+      localStorage.setItem('rtwe_webAppUrl', webAppUrl);
+    } catch (e) {
+      console.log('localStorage not available');
+    }
+
+    // Load statistics on page load
+    window.onload = function () {
+      loadStatistics();
+      checkAdminRole();
+    };
+
+    function loadStatistics() {
+      document.getElementById('loadingStats').style.display = 'block';
+      document.getElementById('statsError').style.display = 'none';
+      document.getElementById('statsArea').style.display = 'none';
+
+      google.script.run
+        .withSuccessHandler(onStatisticsSuccess)
+        .withFailureHandler(onStatisticsFailure)
+        .getDashboardStats(sessionId);
+    }
+
+    function onStatisticsSuccess(data) {
+      document.getElementById('loadingStats').style.display = 'none';
+
+      if (data) {
+        updateStatsDisplay(
+          data.pending || 0,
+          data.approved || 0,
+          data.confirmed || 0,
+          data.closed || 0,
+          data.todayNew || 0,
+          data.todayApproved || 0
+        );
+        document.getElementById('statsArea').style.display = 'block';
+      } else {
+        document.getElementById('statsError').style.display = 'block';
+        document.getElementById('statsArea').style.display = 'block';
+        updateStatsDisplay(0, 0, 0, 0, 0, 0);
+      }
+    }
+
+    function onStatisticsFailure(error) {
+      document.getElementById('loadingStats').style.display = 'none';
+      document.getElementById('statsError').style.display = 'block';
+      document.getElementById('statsArea').style.display = 'block';
+
+      const errorDiv = document.getElementById('statsError');
+      errorDiv.innerHTML = '<strong>⚠️ Failed to load statistics</strong><br>Error: ' + (error.message || 'Unknown error');
+
+      updateStatsDisplay(0, 0, 0, 0, 0, 0);
+    }
+
+    function updateStatsDisplay(pending, approved, confirmed, closed, todayNew, todayApproved) {
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statApproved').textContent = approved;
+      document.getElementById('statConfirmed').textContent = confirmed;
+      document.getElementById('statClosed').textContent = closed;
+
+      // Today's Activity
+      document.getElementById('statTodayNew').textContent = todayNew || 0;
+      document.getElementById('statTodayApproved').textContent = todayApproved || 0;
+      document.getElementById('statStillPending').textContent = pending;
+    }
+
+    function checkAdminRole() {
+      google.script.run
+        .withSuccessHandler(function (isAdmin) {
+          if (isAdmin) {
+            document.getElementById('adminSection').style.display = 'block';
+          }
+        })
+        .isUserAdmin(sessionId);
+    }
+
+    function handleLogout() {
+      document.getElementById('logoutOverlay').classList.add('show');
+
+      try {
+        localStorage.removeItem('rtwe_session');
+        localStorage.removeItem('rtwe_webAppUrl');
+        localStorage.removeItem('rtwe_userName');
+      } catch (e) { }
+
+      setTimeout(function () {
+        google.script.run
+          .withSuccessHandler(function () {
+            window.location.href = webAppUrl + '?page=login&message=' + encodeURIComponent('Logged out successfully');
+          })
+          .withFailureHandler(function () {
+            window.location.href = webAppUrl + '?page=login&message=' + encodeURIComponent('Logged out');
+          })
+          .serverLogout(sessionId);
+      }, 500);
+    }
+
+    function sendManualReport() {
+      const reportType = prompt('Which report do you want to send?\n\n1 = Daily Report\n2 = Weekly Report\n3 = Monthly Report\n\nEnter 1, 2, or 3:');
+
+      if (!reportType) return;
+
+      let reportFunction;
+      let reportName;
+
+      switch (reportType.trim()) {
+        case '1':
+          reportFunction = 'sendDailyEmailReport';
+          reportName = 'Daily';
+          break;
+        case '2':
+          reportFunction = 'sendWeeklyEmailReport';
+          reportName = 'Weekly';
+          break;
+        case '3':
+          reportFunction = 'sendMonthlyEmailReport';
+          reportName = 'Monthly';
+          break;
+        default:
+          alert('Invalid option. Please enter 1, 2, or 3.');
+          return;
+      }
+
+      if (confirm('Send ' + reportName + ' Report now?')) {
+        google.script.run
+          .withSuccessHandler(function () {
+            alert('✅ ' + reportName + ' report sent successfully!');
+          })
+          .withFailureHandler(function (error) {
+            alert('❌ Failed to send report: ' + error);
+          })
+        [reportFunction]();
+      }
+    }
+
+    function showLoading(pageName) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 60px;border-radius:12px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Loading ' + pageName + '</h3><p style="color:#666;margin-top:10px">Please wait...</p></div>';
+      document.body.appendChild(overlay);
+    }
+  </script>
+</body>
+
+</html>

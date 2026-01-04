@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RTWE Advanced Search</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .search-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .section-header {
+      background: #5D4037;
+      color: white;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .section-content {
+      padding: 20px;
+    }
+
+    /* Quick Filters */
+    .quick-filters {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .quick-filter-btn {
+      background: #8D6E63;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+
+    .quick-filter-btn:hover {
+      background: #5D4037;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(93, 64, 55, 0.3);
+    }
+
+    /* Date Filters */
+    .date-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #5D4037;
+      margin-bottom: 6px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      padding: 10px 12px;
+      border: 1px solid #D7CCC8;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: none;
+      border-color: #5D4037;
+      box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+    }
+
+    /* Advanced Filters */
+    .advanced-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .sort-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .sort-row select {
+      padding: 10px 12px;
+      border: 1px solid #D7CCC8;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 200px;
+    }
+
+    /* Action Buttons */
+    .btn-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-search {
+      background: #5D4037;
+      color: white;
+    }
+
+    .btn-search:hover {
+      background: #4E342E;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(93, 64, 55, 0.3);
+    }
+
+    .btn-clear {
+      background: #E0E0E0;
+      color: #333;
+    }
+
+    .btn-clear:hover {
+      background: #BDBDBD;
+    }
+
+    .btn-export {
+      background: #8D6E63;
+      color: white;
+    }
+
+    .btn-export:hover {
+      background: #6D4C41;
+    }
+
+    /* Results Table */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #5D4037;
+      color: white;
+    }
+
+    .results-count {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    th {
+      background: #6D4C41;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #E0E0E0;
+      font-size: 13px;
+    }
+
+    tr:hover {
+      background: #EFEBE9;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+    }
+
+    .action-btn {
+      background: #5D4037;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    .action-btn:hover {
+      background: #4E342E;
+    }
+
+    .action-btn.view {
+      background: #8D6E63;
+    }
+
+    .action-btn.edit {
+      background: #A1887F;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-modal {
+      background: white;
+      border-radius: 12px;
+      padding: 40px 50px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #E0E0E0;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-modal h3 {
+      color: #5D4037;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .advanced-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .quick-filters {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .quick-filters {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .date-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .advanced-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .btn-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .quick-filters {
+        grid-template-columns: 1fr;
+      }
+
+      .advanced-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>🔍 Advanced Search Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=dashboard&sessionId=<?= sessionId ?>" class="btn-back">← Back
+        to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Global variables for Navigation - MUST be before Navigation include -->
+  <script>
+    var webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+    var sessionId = "<?= sessionId ?>";
+  </script>
+
+  <?!= include('Navigation') ?>
+
+  <div class="container">
+    <!-- Quick Filters -->
+    <div class="search-card">
+      <div class="section-header">⚡ QUICK FILTERS</div>
+      <div class="section-content">
+        <div class="quick-filters">
+          <button class="quick-filter-btn" onclick="setQuickFilter('today')">📅 Today</button>
+          <button class="quick-filter-btn" onclick="setQuickFilter('week')">📆 This Week</button>
+          <button class="quick-filter-btn" onclick="setQuickFilter('month')">📆 This Month</button>
+          <button class="quick-filter-btn" onclick="setQuickFilter('lastMonth')">📆 Last Month</button>
+          <button class="quick-filter-btn" onclick="setQuickFilter('year')">📆 This Year</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Search -->
+    <div class="search-card">
+      <div class="section-header">📅 DATE SEARCH</div>
+      <div class="section-content">
+        <div class="date-grid">
+          <div class="filter-group">
+            <label>Single Date</label>
+            <input type="date" id="singleDate">
+          </div>
+          <div class="filter-group">
+            <label>OR Date Range - From</label>
+            <input type="date" id="dateFrom">
+          </div>
+          <div class="filter-group">
+            <label>To</label>
+            <input type="date" id="dateTo">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Filters -->
+    <div class="search-card">
+      <div class="section-header">🔧 ADVANCED FILTERS</div>
+      <div class="section-content">
+        <div class="advanced-grid">
+          <div class="filter-group">
+            <label>Broker <small>(comma-separated)</small></label>
+            <input type="text" id="broker" placeholder="e.g., Broker1, Broker2">
+          </div>
+          <div class="filter-group">
+            <label>Quality <small>(comma-separated)</small></label>
+            <input type="text" id="quality" placeholder="e.g., Quality1, Quality2">
+          </div>
+          <div class="filter-group">
+            <label>Buyer</label>
+            <input type="text" id="buyer" placeholder="Buyer name">
+          </div>
+          <div class="filter-group">
+            <label>Year</label>
+            <input type="text" id="year" placeholder="e.g., 2024, 2025">
+          </div>
+          <div class="filter-group">
+            <label>Status <small>(comma-separated)</small></label>
+            <input type="text" id="status" placeholder="e.g., Approved, Pending">
+          </div>
+        </div>
+
+        <div class="sort-row">
+          <div class="filter-group">
+            <label>Sort By</label>
+            <select id="sortBy">
+              <option value="latest">Latest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="rtwe">RTWE No</option>
+              <option value="value">Order Value</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-container">
+          <button class="btn btn-search" onclick="performSearch()">🔍 SEARCH</button>
+          <button class="btn btn-clear" onclick="clearFilters()">🗑️ CLEAR</button>
+          <button class="btn btn-export" onclick="exportToPDF()">📄 EXPORT PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="search-card">
+      <div class="results-header">
+        <span>📋 SEARCH RESULTS</span>
+        <span class="results-count" id="resultsCount">0 records found</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>RTWE No</th>
+              <th>Costing</th>
+              <th>Date</th>
+              <th>Broker</th>
+              <th>Quality</th>
+              <th>Buyer</th>
+              <th>Status</th>
+              <th>Value</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <tr class="no-results">
+              <td colspan="9">Fill filters above and click SEARCH</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-modal">
+      <div class="spinner"></div>
+      <h3>Searching...</h3>
+    </div>
+  </div>
+
+  <script>
+    // sessionId and webAppUrl already declared above for Navigation
+    const userName = '<?= userName ?>';
+
+    // Store session
+    try {
+      localStorage.setItem('rtwe_session', sessionId);
+    } catch (e) { }
+
+    function setQuickFilter(type) {
+      clearFilters();
+      const today = new Date();
+      let fromDate, toDate;
+
+      switch (type) {
+        case 'today':
+          fromDate = toDate = formatDate(today);
+          break;
+        case 'week':
+          const weekStart = new Date(today);
+          weekStart.setDate(today.getDate() - today.getDay());
+          fromDate = formatDate(weekStart);
+          toDate = formatDate(today);
+          break;
+        case 'month':
+          fromDate = formatDate(new Date(today.getFullYear(), today.getMonth(), 1));
+          toDate = formatDate(today);
+          break;
+        case 'lastMonth':
+          fromDate = formatDate(new Date(today.getFullYear(), today.getMonth() - 1, 1));
+          toDate = formatDate(new Date(today.getFullYear(), today.getMonth(), 0));
+          break;
+        case 'year':
+          fromDate = formatDate(new Date(today.getFullYear(), 0, 1));
+          toDate = formatDate(today);
+          break;
+      }
+
+      document.getElementById('dateFrom').value = fromDate;
+      document.getElementById('dateTo').value = toDate;
+      performSearch();
+    }
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    function clearFilters() {
+      document.getElementById('singleDate').value = '';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      document.getElementById('broker').value = '';
+      document.getElementById('quality').value = '';
+      document.getElementById('buyer').value = '';
+      document.getElementById('year').value = '';
+      document.getElementById('status').value = '';
+      document.getElementById('sortBy').value = 'latest';
+
+      document.getElementById('resultsBody').innerHTML = '<tr class="no-results"><td colspan="9">Fill filters above and click SEARCH</td></tr>';
+      document.getElementById('resultsCount').textContent = '0 records found';
+    }
+
+    function performSearch() {
+      const filters = {
+        singleDate: document.getElementById('singleDate').value,
+        dateFrom: document.getElementById('dateFrom').value,
+        dateTo: document.getElementById('dateTo').value,
+        broker: document.getElementById('broker').value,
+        quality: document.getElementById('quality').value,
+        buyer: document.getElementById('buyer').value,
+        year: document.getElementById('year').value,
+        status: document.getElementById('status').value,
+        sortBy: document.getElementById('sortBy').value
+      };
+
+      showLoading();
+
+      google.script.run
+        .withSuccessHandler(function (results) {
+          hideLoading();
+          displayResults(results);
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          alert('Error: ' + error.message);
+        })
+        .advancedSearch(filters, sessionId);
+    }
+
+    function displayResults(results) {
+      const tbody = document.getElementById('resultsBody');
+
+      if (!results || results.length === 0) {
+        tbody.innerHTML = '<tr class="no-results"><td colspan="9">No records found</td></tr>';
+        document.getElementById('resultsCount').textContent = '0 records found';
+        return;
+      }
+
+      document.getElementById('resultsCount').textContent = results.length + ' records found';
+
+      tbody.innerHTML = results.map(row => `
+        <tr>
+          <td>${row.rtweNo || '-'}</td>
+          <td>${row.costingNo || '-'}</td>
+          <td>${row.enqDate || '-'}</td>
+          <td>${row.broker || '-'}</td>
+          <td>${row.quality || '-'}</td>
+          <td>${row.buyer || '-'}</td>
+          <td>${row.status || '-'}</td>
+          <td>${row.value ? '₹' + formatNumber(row.value) : '-'}</td>
+          <td>
+            <button class="action-btn view" onclick="viewRecord('${row.rtweNo}')">View</button>
+            <button class="action-btn edit" onclick="editRecord('${row.rtweNo}')">Edit</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('en-IN').format(num);
+    }
+
+    function viewRecord(rtweNo) {
+      alert('Viewing RTWE: ' + rtweNo);
+    }
+
+    function editRecord(rtweNo) {
+      window.location.href = webAppUrl + '?page=enquiry-form&sessionId=' + sessionId + '&edit=' + rtweNo;
+    }
+
+    function exportToPDF() {
+      alert('Export to PDF feature - Coming soon!');
+    }
+
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+  </script>
+</body>
+
+</html>

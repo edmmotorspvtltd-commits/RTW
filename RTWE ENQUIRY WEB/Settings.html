@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RTWE Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* Top Navigation Bar */
+    .top-nav {
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-nav h1 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.3s;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-link.active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .top-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: #8b7355;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .settings-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 3px solid #d4a574;
+    }
+
+    .settings-header {
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .settings-header h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .settings-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .settings-content {
+      padding: 35px;
+      background: #fafafa;
+    }
+
+    /* Settings Sections */
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-left: 5px solid #8b7355;
+      transition: all 0.3s;
+    }
+
+    .section:hover {
+      transform: translateX(5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c2c2c;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-title span {
+      font-size: 24px;
+    }
+
+    /* Form Elements */
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .setting-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .setting-label strong {
+      font-size: 15px;
+      color: #2c2c2c;
+    }
+
+    .setting-label small {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .setting-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="time"],
+    input[type="text"],
+    input[type="number"],
+    select {
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s;
+      font-family: inherit;
+      background: white;
+      min-width: 200px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #8b7355;
+      box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.1);
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 32px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-switch input:checked+.toggle-slider {
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+    }
+
+    .toggle-switch input:checked+.toggle-slider:before {
+      transform: translateX(28px);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-inactive {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: white;
+      padding: 18px 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      border-left: 5px solid #4caf50;
+      z-index: 10002;
+      display: none;
+      align-items: center;
+      gap: 15px;
+      min-width: 300px;
+      animation: toastSlideIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: flex;
+    }
+
+    .toast.error {
+      border-left-color: #f44336;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-icon {
+      font-size: 24px;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      color: #2c2c2c;
+      margin-bottom: 3px;
+    }
+
+    .toast-message {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    /* Back Button */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .setting-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      input[type="time"],
+      input[type="text"],
+      input[type="number"],
+      select {
+        min-width: 100%;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <div class="top-nav-left">
+      <h1>🏭 RTWE System</h1>
+      <div class="nav-links">
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=dashboard&sessionId=<?= sessionId ?>" class="nav-link">📊
+          Dashboard</a>
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=enquiry-form&sessionId=<?= sessionId ?>"
+          class="nav-link">📝 Enquiry</a>
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=search&sessionId=<?= sessionId ?>" class="nav-link">🔍
+          Search</a>
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=settings&sessionId=<?= sessionId ?>"
+          class="nav-link active">⚙️ Settings</a>
+      </div>
+    </div>
+    <div class="top-nav-right">
+      <div class="user-info">👤 <span id="userName">
+          <?= userName ?>
+        </span></div>
+      <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+    </div>
+  </div>
+
+  <!-- Global variables for Navigation - MUST be before Navigation include -->
+  <script>
+    var webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+    var sessionId = "<?= sessionId ?>";
+  </script>
+
+  <?!= include('Navigation') ?>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="settings-card">
+      <div class="settings-header">
+        <h2>⚙️ System Settings</h2>
+        <p>Configure your RTWE system preferences</p>
+      </div>
+
+      <div class="settings-content">
+        <!-- Email Settings Section -->
+        <div class="section">
+          <div class="section-title">
+            <span>📧</span>
+            Email Settings
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Daily Report Time</strong>
+              <small>Time to send daily email reports</small>
+            </div>
+            <div class="setting-input">
+              <input type="time" id="dailyReportTime" value="09:00">
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Weekly Report Day</strong>
+              <small>Day to send weekly summary report</small>
+            </div>
+            <div class="setting-input">
+              <select id="weeklyReportDay">
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+                <option value="0">Sunday</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveEmailSettings()">
+            💾 Save Email Settings
+          </button>
+        </div>
+
+        <!-- Telegram Settings Section -->
+        <div class="section">
+          <div class="section-title">
+            <span>📱</span>
+            Telegram Settings
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Enable Telegram Notifications</strong>
+              <small>Receive alerts via Telegram bot</small>
+            </div>
+            <div class="setting-input">
+              <label class="toggle-switch">
+                <input type="checkbox" id="telegramEnabled">
+                <span class="toggle-slider"></span>
+              </label>
+              <span id="telegramStatus" class="status-badge status-inactive">Disabled</span>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Bot Token</strong>
+              <small>Your Telegram bot API token</small>
+            </div>
+            <div class="setting-input">
+              <input type="text" id="botToken" placeholder="Enter bot token..." style="min-width: 350px;">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveTelegramSettings()">
+            💾 Save Telegram Settings
+          </button>
+        </div>
+
+        <!-- User Management Section -->
+        <div class="section">
+          <div class="section-title">
+            <span>👥</span>
+            User Management
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Manage System Users</strong>
+              <small>Add, edit, or remove user accounts</small>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <a href="<?= ScriptApp.getService().getUrl() ?>?page=user-management&sessionId=<?= sessionId ?>"
+              class="btn btn-primary" style="text-decoration: none; text-align: center;">
+              ➕ Add New User
+            </a>
+            <a href="<?= ScriptApp.getService().getUrl() ?>?page=user-management&sessionId=<?= sessionId ?>"
+              class="btn btn-secondary" style="text-decoration: none; text-align: center;">
+              👥 View All Users
+            </a>
+          </div>
+        </div>
+
+        <!-- Security Settings Section -->
+        <div class="section">
+          <div class="section-title">
+            <span>🔒</span>
+            Security Settings
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Session Timeout</strong>
+              <small>Auto-logout after inactivity (minutes)</small>
+            </div>
+            <div class="setting-input">
+              <input type="number" id="sessionTimeout" value="30" min="5" max="120">
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <strong>Max Login Attempts</strong>
+              <small>Failed attempts before account lockout</small>
+            </div>
+            <div class="setting-input">
+              <input type="number" id="maxAttempts" value="5" min="3" max="10">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveSecuritySettings()">
+            💾 Save Security Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <div class="toast-icon" id="toastIcon">✅</div>
+    <div class="toast-content">
+      <div class="toast-title" id="toastTitle">Success</div>
+      <div class="toast-message" id="toastMessage">Settings saved successfully</div>
+    </div>
+    <button class="toast-close" onclick="hideToast()">×</button>
+  </div>
+
+  <script>
+    // sessionId and webAppUrl already declared above for Navigation
+    const userName = '<?= userName ?>';
+
+    // ========================================
+    // SESSION STORAGE - Persist session in localStorage
+    // ========================================
+
+    // Store session on page load
+    if (sessionId && sessionId !== '') {
+      localStorage.setItem('rtweSessionId', sessionId);
+      localStorage.setItem('rtweUserName', userName);
+    }
+
+    // Get stored session (fallback for back button)
+    function getStoredSession() {
+      return localStorage.getItem('rtweSessionId') || sessionId;
+    }
+
+    // Go back to Dashboard
+    function goBack() {
+      event.preventDefault();
+      const storedSession = getStoredSession();
+      // Use direct URL navigation (more reliable in GAS)
+      const backUrl = '<?= ScriptApp.getService().getUrl() ?>' + '?page=dashboard&sessionId=' + storedSession;
+      window.location.href = backUrl;
+    }
+
+    // Update Telegram toggle status
+    document.getElementById('telegramEnabled').addEventListener('change', function () {
+      const status = document.getElementById('telegramStatus');
+      if (this.checked) {
+        status.textContent = 'Enabled';
+        status.className = 'status-badge status-active';
+      } else {
+        status.textContent = 'Disabled';
+        status.className = 'status-badge status-inactive';
+      }
+    });
+
+    function saveEmailSettings() {
+      const time = document.getElementById('dailyReportTime').value;
+      const day = document.getElementById('weeklyReportDay').value;
+
+      google.script.run
+        .withSuccessHandler(function () {
+          showToast('Success', 'Email settings saved successfully!', 'success');
+        })
+        .withFailureHandler(function (error) {
+          showToast('Error', 'Failed to save: ' + error, 'error');
+        })
+        .updateEmailSettings(time, day);
+    }
+
+    function saveTelegramSettings() {
+      const enabled = document.getElementById('telegramEnabled').checked;
+      const token = document.getElementById('botToken').value;
+
+      google.script.run
+        .withSuccessHandler(function () {
+          showToast('Success', 'Telegram settings saved successfully!', 'success');
+        })
+        .withFailureHandler(function (error) {
+          showToast('Error', 'Failed to save: ' + error, 'error');
+        })
+        .updateTelegramSettings(enabled, token);
+    }
+
+    function saveSecuritySettings() {
+      const timeout = document.getElementById('sessionTimeout').value;
+      const attempts = document.getElementById('maxAttempts').value;
+
+      google.script.run
+        .withSuccessHandler(function () {
+          showToast('Success', 'Security settings saved successfully!', 'success');
+        })
+        .withFailureHandler(function (error) {
+          showToast('Error', 'Failed to save: ' + error, 'error');
+        })
+        .updateSecuritySettings(timeout, attempts);
+    }
+
+    function addNewUser() {
+      google.script.run.showCreateUserDialog();
+    }
+
+    function viewAllUsers() {
+      google.script.run.viewAllUsers();
+    }
+    // Base URL from template
+    const baseUrl = '<?= ScriptApp.getService().getUrl() ?>';
+
+    function navigateTo(page) {
+      // Construct URL directly (more reliable in GAS)
+      const url = baseUrl + '?page=' + page + '&sessionId=' + sessionId;
+      window.location.href = url;
+    }
+
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        // Clear stored session
+        localStorage.removeItem('rtweSessionId');
+        localStorage.removeItem('rtweUserName');
+
+        google.script.run
+          .withSuccessHandler(function () {
+            window.location.href = baseUrl + '?page=logout';
+          })
+          .serverLogout(sessionId);
+      }
+    }
+
+    function showToast(title, message, type) {
+      const toast = document.getElementById('toast');
+      const toastIcon = document.getElementById('toastIcon');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMessage = document.getElementById('toastMessage');
+
+      toastIcon.textContent = type === 'success' ? '✅' : '❌';
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+
+      toast.classList.remove('error');
+      if (type === 'error') {
+        toast.classList.add('error');
+      }
+
+      toast.classList.add('active');
+
+      setTimeout(hideToast, 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('toast').classList.remove('active');
+    }
+  </script>
+</body>
+
+</html>

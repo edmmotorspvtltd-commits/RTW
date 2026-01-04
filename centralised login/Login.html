@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RTWE Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: #5D4037;
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5D4037;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .message.error {
+            background: #FFEBEE;
+            color: #C62828;
+            border: 1px solid #EF9A9A;
+        }
+
+        .message.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 1px solid #A5D6A7;
+        }
+
+        .message.info {
+            background: #E3F2FD;
+            color: #1565C0;
+            border: 1px solid #90CAF9;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            color: #666;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+        }
+
+        /* Fullscreen Loading Overlay for Redirect */
+        .redirect-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .redirect-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .redirect-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #fff;
+            border-radius: 50%;
+            animation: redirectSpin 0.8s linear infinite;
+            margin-bottom: 30px;
+        }
+
+        .redirect-content {
+            text-align: center;
+            color: white;
+        }
+
+        .redirect-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: redirectPulse 1.5s ease-in-out infinite;
+        }
+
+        .redirect-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .redirect-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            animation: redirectPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes redirectSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes redirectPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🏭 RTWE Portal</h1>
+            <p>Centralized Access</p>
+        </div>
+
+        <div class="login-body">
+            <!-- Message Area -->
+            <div id="messageArea"></div>
+
+            <!-- Loading Indicator -->
+            <div id="loadingArea" class="loading">
+                <div class="spinner"></div>
+                <div>Logging in...</div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username"
+                        placeholder="Enter your username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" required autocomplete="current-password"
+                            placeholder="Enter your password">
+                        <button type="button" class="password-toggle" onclick="togglePassword()"
+                            title="Show/Hide Password">
+                            <span id="eyeIcon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Keep me logged in</label>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Redirect Loading Overlay -->
+    <div id="redirectOverlay" class="redirect-overlay">
+        <div class="redirect-icon">🌟</div>
+        <div class="redirect-spinner"></div>
+        <div class="redirect-content">
+            <div class="redirect-title">Welcome!</div>
+            <div class="redirect-subtitle">Loading Portal...</div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION
+        // ========================================
+        const webAppUrl = '<?= webAppUrl ?>';
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        window.addEventListener('DOMContentLoaded', function () {
+            initializePage();
+        });
+
+        function initializePage() {
+            // Check URL for any messages
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+
+            if (message) {
+                showMessage(decodeURIComponent(message), 'info');
+            }
+
+            // Auto-focus username field
+            document.getElementById('username').focus();
+
+            // Handle form submission
+            document.getElementById('loginForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                handleLogin();
+            });
+        }
+
+        // ========================================
+        // PASSWORD TOGGLE
+        // ========================================
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        }
+
+        // ========================================
+        // LOGIN HANDLER
+        // ========================================
+        function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Validate inputs
+            if (!username || !password) {
+                showMessage('Please enter username and password', 'error');
+                return;
+            }
+
+            // Show loading state
+            setLoadingState(true);
+            clearMessage();
+
+            // Call server-side function
+            google.script.run
+                .withSuccessHandler(onLoginSuccess)
+                .withFailureHandler(onLoginFailure)
+                .portalLogin(username, password, rememberMe);
+        }
+
+        // ========================================
+        // SUCCESS HANDLER
+        // ========================================
+        function onLoginSuccess(result) {
+            setLoadingState(false);
+
+            console.log('Login result:', result);
+
+            if (result.success) {
+                showMessage('Login successful! Redirecting to portal...', 'success');
+
+                // Show fullscreen loading overlay
+                const overlay = document.getElementById('redirectOverlay');
+                overlay.classList.add('show');
+
+                // Redirect to portal after animation
+                setTimeout(function () {
+                    const portalUrl = webAppUrl + '?sessionId=' + result.sessionId;
+                    try {
+                        if (window.top && window.top !== window) {
+                            window.top.location.href = portalUrl;
+                        } else {
+                            window.location.href = portalUrl;
+                        }
+                    } catch (e) {
+                        window.location.href = portalUrl;
+                    }
+                }, 1500);
+
+            } else {
+                showMessage(result.message || 'Login failed. Please try again.', 'error');
+                document.getElementById('username').focus();
+            }
+        }
+
+        // ========================================
+        // FAILURE HANDLER
+        // ========================================
+        function onLoginFailure(error) {
+            setLoadingState(false);
+            console.error('Login error:', error);
+            showMessage('An error occurred. Please try again.', 'error');
+            document.getElementById('username').focus();
+        }
+
+        // ========================================
+        // UI HELPER FUNCTIONS
+        // ========================================
+        function setLoadingState(isLoading) {
+            const loadingArea = document.getElementById('loadingArea');
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (isLoading) {
+                loadingArea.classList.add('show');
+                loginBtn.disabled = true;
+            } else {
+                loadingArea.classList.remove('show');
+                loginBtn.disabled = false;
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = '<div class="message ' + type + '">' + escapeHtml(text) + '</div>';
+        }
+
+        function clearMessage() {
+            document.getElementById('messageArea').innerHTML = '';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enter key to submit
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName === 'INPUT') {
+                    e.preventDefault();
+                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirm Data - RTWE System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #5D4037;
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .page-header .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .search-filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+        }
+
+        .search-row input {
+            padding: 10px;
+            border: 1px solid #D7CCC8;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn-search {
+            padding: 10px 20px;
+            background: #5D4037;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-search:hover {
+            background: #4E342E;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #4CAF50;
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        tbody tr:hover {
+            background: #F5F5F5;
+        }
+
+        td {
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .btn-action {
+            background: #2196F3;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-view {
+            background: #2196F3;
+        }
+
+        .btn-pdf {
+            background: #E91E63;
+        }
+
+        .btn-share {
+            background: #FF9800;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 16px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+            opacity: 0;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        }
+
+        /* ============================================
+           VIEW MODAL STYLES
+        ============================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #5D4037 0%, #4E342E 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .modal-header .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-header .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .view-section {
+            margin-bottom: 30px;
+        }
+
+        .view-section h3 {
+            color: #5D4037;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .view-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .view-field {
+            background: #F5F5F5;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .view-field label {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .view-field .value {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .view-field.highlight {
+            background: #E8F5E9;
+            border-left-color: #2196F3;
+        }
+
+        .view-field.highlight .value {
+            color: #2196F3;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .design-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .design-table th,
+        .design-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #E0E0E0;
+        }
+
+        .design-table th {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .design-table tr:nth-child(even) {
+            background: #F5F5F5;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            background: #F5F5F5;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-modal {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal.primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-modal.primary:hover {
+            background: #388E3C;
+        }
+
+        .btn-modal.secondary {
+            background: #E0E0E0;
+            color: #333;
+        }
+
+        .btn-modal.secondary:hover {
+            background: #BDBDBD;
+        }
+
+        /* ============================================
+           PDF OPTIONS MODAL
+        ============================================ */
+        .modal-content.small {
+            max-width: 400px;
+        }
+
+        .pdf-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .pdf-option-btn {
+            padding: 20px;
+            background: #F5F5F5;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pdf-option-btn:hover {
+            background: #E8F5E9;
+            border-color: #4CAF50;
+        }
+
+        .pdf-option-btn .icon {
+            font-size: 32px;
+        }
+
+        .pdf-option-btn .text h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .pdf-option-btn .text p {
+            margin: 0;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* ============================================
+           SHARE MODAL
+        ============================================ */
+        .share-options {
+            padding: 20px 0;
+        }
+
+        .share-input-group {
+            margin-bottom: 20px;
+        }
+
+        .share-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .share-input-group input,
+        .share-input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #D7CCC8;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .share-input-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .email-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .email-tag {
+            background: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .email-tag .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px 10px;
+            }
+
+            .page-header h2 {
+                font-size: 18px;
+            }
+
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 700px;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .view-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-action {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Global variables for Navigation - MUST be before Navigation include -->
+    <script>
+        var webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+        var sessionId = "<?= sessionId ?>";
+    </script>
+
+    <?!= include('Navigation') ?>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>✅ Order Confirm Data</h2>
+            <div class="subtitle">Confirmed enquiries - View or Edit order details</div>
+        </div>
+
+        <div class="search-filters">
+            <div class="search-row">
+                <input type="text" id="searchRTWE" placeholder="Search RTWE No...">
+                <input type="text" id="searchBroker" placeholder="Search Broker...">
+                <input type="text" id="searchBuyer" placeholder="Search Buyer...">
+                <button class="btn-search" onclick="loadConfirmedEnquiries()">🔍 Search</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div id="loadingArea" class="loading">
+                <div class="spinner"></div>
+                <div>Loading confirmed orders...</div>
+            </div>
+
+            <div id="tableArea" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>RTWE No</th>
+                            <th>Broker Name</th>
+                            <th>Buyer</th>
+                            <th>Quality</th>
+                            <th>Final Rate</th>
+                            <th>P/O No</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="confirmedBody"></tbody>
+                </table>
+            </div>
+
+            <div id="emptyArea" class="empty-state" style="display: none;">
+                <h3>📋 No Confirmed Orders Yet!</h3>
+                <p>Confirmed enquiries will appear here.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast" class="toast"></div>
+
+    <!-- View Modal -->
+    <div id="viewModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Order Details</h2>
+                <button class="close-btn" onclick="closeViewModal()">&times;</button>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Loading order details...</div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal secondary" onclick="closeViewModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Options Modal -->
+    <div id="pdfModal" class="modal-overlay">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2>📄 PDF Options</h2>
+                <button class="close-btn" onclick="closePdfModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="pdf-options">
+                    <div class="pdf-option-btn" onclick="printPDF()">
+                        <div class="icon">🖨️</div>
+                        <div class="text">
+                            <h3>Print</h3>
+                            <p>Print the order details directly</p>
+                        </div>
+                    </div>
+                    <div class="pdf-option-btn" onclick="downloadPDF()">
+                        <div class="icon">⬇️</div>
+                        <div class="text">
+                            <h3>Download</h3>
+                            <p>Download PDF to your device</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal secondary" onclick="closePdfModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📧 Share Order</h2>
+                <button class="close-btn" onclick="closeShareModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="share-options">
+                    <div class="share-input-group">
+                        <label>Email Addresses (comma separated)</label>
+                        <input type="text" id="shareEmails" placeholder="email1@example.com, email2@example.com">
+                        <div class="email-tags" id="emailTags"></div>
+                    </div>
+
+                    <div class="share-input-group">
+                        <label>Message (Optional)</label>
+                        <textarea id="shareMessage" placeholder="Add a message..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal secondary" onclick="closeShareModal()">Cancel</button>
+                <button class="btn-modal primary" onclick="sendShare()">📧 Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
+        let currentOrderData = null; // Store current order for PDF/Share
+
+        console.log('=== ORDER CONFIRM DATA INITIALIZED ===');
+        console.log('Session ID:', sessionId);
+        console.log('Web App URL:', webAppUrl);
+
+        window.onload = function () {
+            console.log('⏳ Page loaded, calling loadConfirmedEnquiries()...');
+            loadConfirmedEnquiries();
+        };
+
+        // ============================================
+        // LOAD CONFIRMED ENQUIRIES
+        // ============================================
+        function loadConfirmedEnquiries() {
+            console.log('========================================');
+            console.log('📞 CALLING getConfirmedEnquiries');
+            console.log('========================================');
+
+            document.getElementById('loadingArea').style.display = 'block';
+            document.getElementById('tableArea').style.display = 'none';
+            document.getElementById('emptyArea').style.display = 'none';
+
+            const filters = {
+                rtweNo: document.getElementById('searchRTWE').value.trim(),
+                broker: document.getElementById('searchBroker').value.trim(),
+                buyer: document.getElementById('searchBuyer').value.trim()
+            };
+
+            console.log('Filters:', filters);
+
+            google.script.run
+                .withSuccessHandler(onConfirmedSuccess)
+                .withFailureHandler(onConfirmedFailure)
+                .getConfirmedEnquiries(filters);
+
+            console.log('✅ google.script.run.getConfirmedEnquiries() called');
+        }
+
+        function onConfirmedSuccess(data) {
+            console.log('========================================');
+            console.log('✅ SUCCESS HANDLER CALLED');
+            console.log('========================================');
+            console.log('Raw Response:', data);
+
+            document.getElementById('loadingArea').style.display = 'none';
+
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                console.log('❌ No data found');
+                document.getElementById('emptyArea').style.display = 'block';
+                return;
+            }
+
+            console.log('✅ Displaying ' + data.length + ' confirmed orders');
+            displayConfirmedEnquiries(data);
+            document.getElementById('tableArea').style.display = 'block';
+        }
+
+        function onConfirmedFailure(error) {
+            console.log('========================================');
+            console.log('❌ FAILURE HANDLER');
+            console.log('========================================');
+            console.error('Error:', error);
+
+            document.getElementById('loadingArea').style.display = 'none';
+            document.getElementById('emptyArea').style.display = 'block';
+
+            showToast('Failed to load: ' + (error && error.message ? error.message : String(error)), 'error');
+        }
+
+        // ============================================
+        // DISPLAY CONFIRMED ENQUIRIES IN TABLE
+        // ============================================
+        function displayConfirmedEnquiries(enquiries) {
+            console.log('displayConfirmedEnquiries called with', enquiries.length, 'orders');
+
+            const tbody = document.getElementById('confirmedBody');
+            tbody.innerHTML = '';
+
+            enquiries.forEach((enq, index) => {
+                console.log('Order ' + (index + 1) + ':', enq);
+
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td><strong>${escapeHtml(enq.rtweNo)}</strong></td>
+                    <td>${escapeHtml(enq.broker)}</td>
+                    <td>${escapeHtml(enq.buyer)}</td>
+                    <td>${escapeHtml(enq.quality)}</td>
+                    <td><strong>₹ ${escapeHtml(enq.finalRate)}</strong></td>
+                    <td>${escapeHtml(enq.poNo)}</td>
+                    <td><span class="status-badge">Confirmed</span></td>
+                    <td>
+                        <button class="btn-action btn-view" onclick="viewOrder('${escapeHtml(enq.rtweNo)}')">
+                            👁️ View
+                        </button>
+                        <button class="btn-action btn-pdf" onclick="openPdfOptions('${escapeHtml(enq.rtweNo)}')">
+                            📄 PDF
+                        </button>
+                        <button class="btn-action btn-share" onclick="openShareModal('${escapeHtml(enq.rtweNo)}')">
+                            📧 Share
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            console.log('✅ Table populated with ' + enquiries.length + ' rows');
+        }
+
+        // ============================================
+        // VIEW ORDER DETAILS
+        // ============================================
+        function viewOrder(rtweNo) {
+            console.log('========================================');
+            console.log('👁️ VIEW ORDER: ' + rtweNo);
+            console.log('========================================');
+
+            const modal = document.getElementById('viewModal');
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Loading order details...</div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+
+            google.script.run
+                .withSuccessHandler(displayOrderDetails)
+                .withFailureHandler(onViewFailure)
+                .loadConfirmedEnquiryData(rtweNo);
+        }
+
+        function displayOrderDetails(data) {
+            console.log('📦 Displaying order details:', data);
+
+            if (!data) {
+                showToast('Order not found', 'error');
+                closeViewModal();
+                return;
+            }
+
+            // Store for PDF/Share
+            currentOrderData = data;
+
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = `
+                <!-- Basic Information -->
+                <div class="view-section">
+                    <h3>📋 Basic Information</h3>
+                    <div class="view-grid">
+                        <div class="view-field highlight">
+                            <label>RTWE Number</label>
+                            <div class="value">${escapeHtml(data.rtweNo)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Costing No</label>
+                            <div class="value">${escapeHtml(data.costingNo)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Enquiry Date</label>
+                            <div class="value">${escapeHtml(data.enqDate)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Enquiry Time</label>
+                            <div class="value">${escapeHtml(data.enqTime)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Party Details -->
+                <div class="view-section">
+                    <h3>🤝 Party Details</h3>
+                    <div class="view-grid">
+                        <div class="view-field highlight">
+                            <label>Broker Name</label>
+                            <div class="value">${escapeHtml(data.broker)}</div>
+                        </div>
+                        <div class="view-field highlight">
+                            <label>Buyer</label>
+                            <div class="value">${escapeHtml(data.buyer)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Quality</label>
+                            <div class="value">${escapeHtml(data.quality)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Quality Order</label>
+                            <div class="value">${escapeHtml(data.qualityOrder || 'N/A')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing & Order Details -->
+                <div class="view-section">
+                    <h3>💰 Pricing & Order Details</h3>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Given Rate</label>
+                            <div class="value">₹ ${escapeHtml(data.givenRate)}</div>
+                        </div>
+                        <div class="view-field highlight">
+                            <label>Final Rate</label>
+                            <div class="value">₹ ${escapeHtml(data.finalRate)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>P/O Number</label>
+                            <div class="value">${escapeHtml(data.poNo)}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Order Status</label>
+                            <div class="value">${escapeHtml(data.orderStatus || 'Confirmed')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Approved Date</label>
+                            <div class="value">${escapeHtml(data.approvedDate || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Approved Time</label>
+                            <div class="value">${escapeHtml(data.approvedTime || 'N/A')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Design & TAGA Details -->
+                <div class="view-section">
+                    <h3>🎨 Design & TAGA Details</h3>
+                    <table class="design-table">
+                        <thead>
+                            <tr>
+                                <th style="width:50px;">#</th>
+                                <th>Design</th>
+                                <th style="width:100px;">TAGA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${generateDesignRows(data)}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Production Details -->
+                <div class="view-section">
+                    <h3>🏭 Production Details</h3>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Total Order TAGA</label>
+                            <div class="value">${escapeHtml(data.totalOrderTaga || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Count Meter</label>
+                            <div class="value">${escapeHtml(data.countMeter || 'N/A')}</div>
+                        </div>
+                        <div class="view-field highlight">
+                            <label>Total MTR</label>
+                            <div class="value">${escapeHtml(data.totalMTR || 'N/A')}</div>
+                        </div>
+                        <div class="view-field highlight">
+                            <label>Total Order Value</label>
+                            <div class="value">₹ ${escapeHtml(data.totalOrderValue || 'N/A')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selvedge Details -->
+                <div class="view-section">
+                    <h3>📏 Selvedge Details</h3>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Name of Selvedge</label>
+                            <div class="value">${escapeHtml(data.selvedgeName || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Ends of Selvedge</label>
+                            <div class="value">${escapeHtml(data.selvedgeEnds || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Color of Selvedge</label>
+                            <div class="value">${escapeHtml(data.selvedgeColor || 'N/A')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="view-section">
+                    <h3>📝 Additional Details</h3>
+                    <div class="view-grid">
+                        <div class="view-field">
+                            <label>Yarn to be Used</label>
+                            <div class="value">${escapeHtml(data.yarnUsed || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Sizing Beam Meter</label>
+                            <div class="value">${escapeHtml(data.sizingBeam || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Payment Terms</label>
+                            <div class="value">${escapeHtml(data.paymentTerms || 'N/A')}</div>
+                        </div>
+                        <div class="view-field">
+                            <label>Delivery Date</label>
+                            <div class="value">${escapeHtml(data.deliveryDate || 'N/A')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remarks -->
+                ${data.remark ? `
+                <div class="view-section">
+                    <h3>💬 Remarks</h3>
+                    <div class="view-field">
+                        <div class="value">${escapeHtml(data.remark)}</div>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // ============================================
+        // GENERATE DESIGN ROWS - UPDATED FOR JSON FORMAT
+        // ============================================
+        function generateDesignRows(data) {
+            let rows = '';
+            let designsToShow = [];
+
+            // ============================================
+            // NEW: Use designs array if available
+            // ============================================
+            if (data.designs && Array.isArray(data.designs) && data.designs.length > 0) {
+                console.log('✅ Using NEW designs array format:', data.designs);
+                designsToShow = data.designs;
+            }
+            // ============================================
+            // FALLBACK: Old design1-6 format (backward compatible)
+            // ============================================
+            else {
+                console.log('⚠️ Falling back to old design1-6 format');
+                for (let i = 1; i <= 6; i++) {
+                    const design = data['design' + i];
+                    const taga = data['taga' + i];
+                    if (design || taga) {
+                        designsToShow.push({
+                            design: design || '',
+                            taga: taga || ''
+                        });
+                    }
+                }
+            }
+
+            // Generate table rows
+            designsToShow.forEach((item, index) => {
+                rows += `
+                    <tr>
+                        <td style="text-align:center;font-weight:bold;">${index + 1}</td>
+                        <td>${escapeHtml(item.design || '-')}</td>
+                        <td style="text-align:center;">${escapeHtml(String(item.taga) || '-')}</td>
+                    </tr>
+                `;
+            });
+
+            return rows || '<tr><td colspan="3" style="text-align:center;color:#999;">No design data available</td></tr>';
+        }
+
+        function onViewFailure(error) {
+            console.error('❌ View failed:', error);
+            showToast('Failed to load order details: ' + error.message, 'error');
+            closeViewModal();
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').classList.remove('active');
+        }
+
+        // ============================================
+        // PDF OPTIONS FUNCTIONS
+        // ============================================
+        function openPdfOptions(rtweNo) {
+            console.log('📄 Opening PDF options for:', rtweNo);
+
+            // Load order data first
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    currentOrderData = data;
+                    document.getElementById('pdfModal').classList.add('active');
+                })
+                .withFailureHandler(function (error) {
+                    showToast('Failed to load order data', 'error');
+                })
+                .loadConfirmedEnquiryData(rtweNo);
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdfModal').classList.remove('active');
+        }
+
+        function printPDF() {
+            if (!currentOrderData) {
+                showToast('No order data loaded', 'error');
+                return;
+            }
+
+            showToast('Generating PDF for printing...', 'success');
+            closePdfModal();
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    if (result.success) {
+                        // Open PDF in new window for printing
+                        window.open(result.pdfUrl, '_blank');
+                        showToast('PDF opened in new window - Ready to print!', 'success');
+                    } else {
+                        showToast('PDF generation failed: ' + result.error, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    showToast('PDF generation error: ' + error.message, 'error');
+                })
+                .generateEnquiryPDF(currentOrderData);
+        }
+
+        function downloadPDF() {
+            if (!currentOrderData) {
+                showToast('No order data loaded', 'error');
+                return;
+            }
+
+            showToast('Generating PDF for download...', 'success');
+            closePdfModal();
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    if (result.success) {
+                        // Trigger download
+                        const link = document.createElement('a');
+                        link.href = result.pdfUrl;
+                        link.download = result.fileName || 'Order_' + currentOrderData.rtweNo + '.pdf';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        showToast('PDF download started!', 'success');
+                    } else {
+                        showToast('PDF generation failed: ' + result.error, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    showToast('PDF generation error: ' + error.message, 'error');
+                })
+                .generateEnquiryPDF(currentOrderData);
+        }
+
+        // ============================================
+        // SHARE FUNCTIONS
+        // ============================================
+        function openShareModal(rtweNo) {
+            console.log('📧 Opening share modal for:', rtweNo);
+
+            // Load order data first
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    currentOrderData = data;
+                    document.getElementById('shareModal').classList.add('active');
+
+                    // Pre-fill broker email if available
+                    // You can customize this based on your data structure
+                })
+                .withFailureHandler(function (error) {
+                    showToast('Failed to load order data', 'error');
+                })
+                .loadConfirmedEnquiryData(rtweNo);
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+            document.getElementById('shareEmails').value = '';
+            document.getElementById('shareMessage').value = '';
+            document.getElementById('emailTags').innerHTML = '';
+        }
+
+        function sendShare() {
+            if (!currentOrderData) {
+                showToast('No order data loaded', 'error');
+                return;
+            }
+
+            const emailsInput = document.getElementById('shareEmails').value.trim();
+            const message = document.getElementById('shareMessage').value.trim();
+
+            if (!emailsInput) {
+                showToast('Please enter at least one email address', 'error');
+                return;
+            }
+
+            // Parse emails
+            const emails = emailsInput.split(',').map(e => e.trim()).filter(e => e);
+
+            if (emails.length === 0) {
+                showToast('Please enter valid email addresses', 'error');
+                return;
+            }
+
+            showToast('Sending order details...', 'success');
+            closeShareModal();
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    if (result.success) {
+                        showToast('Order shared successfully to ' + emails.length + ' recipient(s)!', 'success');
+                    } else {
+                        showToast('Share failed: ' + result.message, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    showToast('Share error: ' + error.message, 'error');
+                })
+                .shareOrderConfirmation(currentOrderData, emails, false); // false = no telegram
+        }
+
+        // ============================================
+        // MODAL CLICK OUTSIDE TO CLOSE
+        // ============================================
+        document.addEventListener('click', function (event) {
+            if (event.target === document.getElementById('viewModal')) {
+                closeViewModal();
+            }
+            if (event.target === document.getElementById('pdfModal')) {
+                closePdfModal();
+            }
+            if (event.target === document.getElementById('shareModal')) {
+                closeShareModal();
+            }
+        });
+
+        // Close modals on ESC key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeViewModal();
+                closePdfModal();
+                closeShareModal();
+            }
+        });
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

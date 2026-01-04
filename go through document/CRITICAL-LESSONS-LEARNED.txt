@@ -1,0 +1,201 @@
+================================================================================
+RTWE SALE ORDER SYSTEM - CRITICAL LESSONS LEARNED
+Session: 2026-01-02 | Login/Session Redirect Loop Fix
+================================================================================
+
+PROBLEM ENCOUNTERED:
+-------------------
+Infinite redirect loop between Login page and Dashboard when session expires.
+User could not access login page - kept redirecting in circle.
+
+
+ROOT CAUSE:
+-----------
+1. Login.html checked localStorage FIRST, then redirected BEFORE clearing invalid session
+2. Code.gs redirected to login but did NOT clear client's localStorage
+3. Dashboard.html tried to "recover" sessionId from localStorage when server didn't provide one
+
+
+CRITICAL MISTAKES TO AVOID:
+---------------------------
+
+❌ DON'T: Auto-redirect based on localStorage without server validation
+❌ DON'T: Keep old sessionId in localStorage after session expires
+❌ DON'T: Try to "recover" session from localStorage on protected pages
+❌ DON'T: Redirect to login without clearing client storage first
+❌ DON'T: Trust client-side storage as source of truth for authentication
+
+
+CORRECT APPROACH:
+-----------------
+
+✅ DO: Clear ALL localStorage immediately when login page loads
+✅ DO: Server-side redirect must clear client localStorage BEFORE redirecting
+✅ DO: Protected pages should ONLY trust server-provided sessionId
+✅ DO: Never auto-redirect based on localStorage alone
+✅ DO: Server is ALWAYS source of truth for session validation
+
+
+CODE PATTERNS:
+--------------
+
+WRONG (Login.html):
+```javascript
+if (storedSession) {
+    window.location.href = dashboard; // ❌ Redirects with invalid session
+}
+```
+
+CORRECT (Login.html):
+```javascript
+// Clear storage IMMEDIATELY on page load
+(function() {
+    localStorage.clear();
+    sessionStorage.clear();
+})();
+```
+
+WRONG (Code.gs):
+```javascript
+if (!isValidSession(sessionId)) {
+    return serveLogin('Session expired'); // ❌ Client keeps old session
+}
+```
+
+CORRECT (Code.gs):
+```javascript
+if (!isValidSession(sessionId)) {
+    return clearSessionAndRedirectToLogin(); // ✅ Clears client storage first
+}
+```
+
+WRONG (Dashboard.html):
+```javascript
+if (!sessionId) {
+    sessionId = localStorage.getItem('session'); // ❌ Recovery from localStorage
+}
+```
+
+CORRECT (Dashboard.html):
+```javascript
+if (!sessionId) {
+    showSessionError(); // ✅ No recovery, trust server only
+    return;
+}
+```
+
+
+KEY PRINCIPLES:
+---------------
+
+1. SERVER IS SOURCE OF TRUTH
+   - Never trust client-side storage for authentication
+   - Always validate on server before serving protected pages
+
+2. CLEAN SLATE ON AUTHENTICATION FAILURE
+   - Clear ALL client storage when session invalid
+   - Don't leave traces of old sessions
+
+3. NO AUTO-REDIRECTS FROM CLIENT STORAGE
+   - Only redirect after SERVER validates session
+   - Client storage is convenience, not authority
+
+4. EXPLICIT OVER IMPLICIT
+   - Don't try to be "smart" by recovering sessions
+   - Fail explicitly and redirect to login
+
+5. AVOID REDIRECT LOOPS
+   - Always clear state before redirecting
+   - Never redirect based on potentially stale data
+
+
+SESSION MANAGEMENT CHECKLIST:
+-----------------------------
+
+Server-side (Code.gs):
+☑ Validate sessionId on every protected page request
+☑ Return HTML that clears localStorage before redirect on failure
+☑ Never serve protected pages without valid session
+
+Client-side (Login.html):
+☑ Clear ALL localStorage/sessionStorage on page load
+☑ Never auto-redirect based on stored sessionId
+☑ Only store session AFTER successful server authentication
+
+Client-side (Protected Pages):
+☑ Trust ONLY server-provided sessionId
+☑ Never recover from localStorage
+☑ Show error and redirect if no valid sessionId from server
+
+
+TESTING CHECKLIST:
+------------------
+
+Test these scenarios:
+☑ Login with valid credentials → Dashboard loads
+☑ Logout → Clears session and shows login
+☑ Session expires → Redirects to login without loop
+☑ Access protected page without session → Redirects to login
+☑ Invalid sessionId in URL → Redirects to login
+☑ Old sessionId in localStorage → Ignored and cleared
+☑ Multiple tabs with same session → All handle expiry correctly
+
+
+FILE-SPECIFIC FIXES:
+--------------------
+
+Code.gs:
+- Add clearSessionAndRedirectToLogin() function
+- Replace serveLogin() with clearSessionAndRedirectToLogin() on failures
+- Return HTML that clears localStorage before redirecting
+
+Login.html:
+- Add immediate localStorage.clear() in IIFE at script start
+- Remove auto-redirect logic based on stored session
+- Only redirect after successful server authentication
+
+Dashboard.html:
+- Remove localStorage recovery logic
+- Trust only server-provided sessionId
+- Show error if no sessionId from server
+
+
+DATA IMPORT (BONUS):
+--------------------
+
+IMPORTRANGE Formula Pattern:
+=IMPORTRANGE("SPREADSHEET_ID","SheetName!A:Z")
+
+Must click "Allow access" first time.
+Use for live sync - data updates automatically.
+
+
+FORMULA LOCATIONS:
+------------------
+
+Each sheet, cell A1:
+- Sale_Orders: =IMPORTRANGE("1brkb9nZRiTxwo0BJZg4kf_nCO9q0-CIexebUgz0UdLI","Sale_Orders!A:AZ")
+- Pending_Orders: =IMPORTRANGE("1brkb9nZRiTxwo0BJZg4kf_nCO9q0-CIexebUgz0UdLI","Pending orders RTWE!A:AZ")
+- Completed_Orders: =IMPORTRANGE("1brkb9nZRiTxwo0BJZg4kf_nCO9q0-CIexebUgz0UdLI","Completed Orders!A:AZ")
+- Master_Agents: =IMPORTRANGE("1brkb9nZRiTxwo0BJZg4kf_nCO9q0-CIexebUgz0UdLI","Master_Agents!A:Z")
+- Master_Transport: =IMPORTRANGE("1brkb9nZRiTxwo0BJZg4kf_nCO9q0-CIexebUgz0UdLI","Master_Transport!A:Z")
+- Master_Others: =IMPORTRANGE("1brkb9nZRiTxwo0BJZg4kf_nCO9q0-CIexebUgz0UdLI","Master_Others!A:Z")
+
+
+SUMMARY FOR AI AGENTS:
+----------------------
+
+When building authentication systems:
+1. Server validates, client displays
+2. Clear storage on authentication failure
+3. No auto-redirects from localStorage
+4. Fail explicitly, don't try to recover
+5. Test session expiry scenarios thoroughly
+
+The redirect loop happened because client kept trying to use old session.
+Fix: Clear localStorage BEFORE any redirect, trust server only.
+
+
+================================================================================
+END OF DOCUMENT
+================================================================================
