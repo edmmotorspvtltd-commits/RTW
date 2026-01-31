@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - RTWE ERP System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ============ SIDEBAR - Matching Dashboard ============ */
+        :root {
+            --primary-dark: #3E2723;
+            --primary: #5D4037;
+            --primary-light: #8D6E63;
+            --accent: #A1887F;
+            --sidebar-bg: #2C1810;
+            --sidebar-hover: #3E2723;
+            --sidebar-active: #5D4037;
+            --text-light: #FFFFFF;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section-title {
+            padding: 10px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            gap: 12px;
+        }
+
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-light);
+            border-left-color: var(--accent);
+            padding-left: 20px;
+        }
+
+        .menu-item.active {
+            background: var(--sidebar-active);
+            color: var(--text-light);
+            border-left-color: var(--text-light);
+        }
+
+        .menu-icon,
+        .menu-item .icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Collapsible Menu Styles */
+        .menu-category {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-category:hover {
+            background: var(--sidebar-hover);
+            border-left-color: var(--accent);
+        }
+
+        .menu-category .category-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-category .category-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-category.expanded .category-arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu.expanded {
+            max-height: 1000px;
+        }
+
+        .submenu .menu-item {
+            padding-left: 50px;
+            font-size: 13px;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            background: #f5f5f5;
+        }
+
+        .topbar {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar h1 {
+            font-size: 24px;
+            color: #2c2013;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: #f5f5f5;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: #e0e0e0;
+            transform: scale(1.1);
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        /* ============ PAGE HEADER ============ */
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .page-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title h2 {
+            font-size: 26px;
+            color: #2c2013;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a3520, #2c2013);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 53, 32, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4a3520;
+            border: 2px solid #4a3520;
+        }
+
+        .btn-secondary:hover {
+            background: #4a3520;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        /* ============ FILTERS & SEARCH ============ */
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .filter-input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #4a3520;
+            box-shadow: 0 0 0 3px rgba(74, 53, 32, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+        }
+
+        .search-box input {
+            padding-left: 45px;
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        /* ============ STATS CARDS ============ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+        }
+
+        .stat-icon.red {
+            background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+        }
+
+        .stat-info h3 {
+            font-size: 28px;
+            color: #2c2013;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* ============ TABLE ============ */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 18px;
+            color: #2c2013;
+            margin: 0;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .view-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #4a3520, #2c2013);
+            color: white;
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        td {
+            padding: 18px 20px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-small {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4a574, #a67c52);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c2013;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ============ BADGES ============ */
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-super-admin {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            color: #1565C0;
+        }
+
+        .badge-company-admin {
+            background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+            color: #6A1B9A;
+        }
+
+        .badge-unit-manager {
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            color: #E65100;
+        }
+
+        .badge-manager {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            color: #2E7D32;
+        }
+
+        .badge-employee {
+            background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
+            color: #424242;
+        }
+
+        .badge-active {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            color: #2E7D32;
+        }
+
+        .badge-inactive {
+            background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+            color: #C62828;
+        }
+
+        .badge-suspended {
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            color: #EF6C00;
+        }
+
+        /* ============ ACTION BUTTONS ============ */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-view {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .btn-view:hover {
+            background: #1976D2;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        .btn-edit:hover {
+            background: #EF6C00;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .btn-delete:hover {
+            background: #C62828;
+            color: white;
+        }
+
+        .btn-more {
+            background: #F5F5F5;
+            color: #666;
+        }
+
+        .btn-more:hover {
+            background: #E0E0E0;
+        }
+
+        /* ============ MODAL ============ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4a3520, #2c2013);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 5px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 25px;
+        }
+
+        .modal-tab {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .modal-tab.active {
+            color: #4a3520;
+            border-bottom-color: #4a3520;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c2013;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-grid.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group label .required {
+            color: #C62828;
+            margin-left: 3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4a3520;
+            box-shadow: 0 0 0 3px rgba(74, 53, 32, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Password Strength Meter */
+        .password-strength {
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        .strength-fill.weak {
+            width: 33%;
+            background: #f44336;
+        }
+
+        .strength-fill.medium {
+            width: 66%;
+            background: #FF9800;
+        }
+
+        .strength-fill.strong {
+            width: 100%;
+            background: #4CAF50;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .strength-text.weak {
+            color: #f44336;
+        }
+
+        .strength-text.medium {
+            color: #FF9800;
+        }
+
+        .strength-text.strong {
+            color: #4CAF50;
+        }
+
+        /* Permissions Matrix */
+        .permissions-matrix {
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .permission-header {
+            background: #f8f8f8;
+            padding: 15px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .permission-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .permission-row:hover {
+            background: #fafafa;
+        }
+
+        .permission-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .permission-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .permission-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Profile Picture Upload */
+        .profile-picture-upload {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .profile-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4a574, #a67c52);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            font-weight: bold;
+            border: 3px solid #e0e0e0;
+        }
+
+        .upload-controls {
+            flex: 1;
+        }
+
+        .upload-controls p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s;
+        }
+
+        .btn-upload:hover {
+            background: #e0e0e0;
+            border-color: #ccc;
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f8f8f8;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-radius: 0 0 16px 16px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover {
+            border-color: #4a3520;
+            background: #fafafa;
+        }
+
+        .page-btn.active {
+            background: #4a3520;
+            color: white;
+            border-color: #4a3520;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f0f0f0;
+            border-top: 5px solid #4a3520;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 320px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 16px 20px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 4000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 5px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 5px solid #f44336;
+        }
+
+        .toast.info {
+            border-left: 5px solid #2196F3;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .toast.success .toast-icon {
+            background: #4CAF50;
+        }
+
+        .toast.error .toast-icon {
+            background: #f44336;
+        }
+
+        .toast.info .toast-icon {
+            background: #2196F3;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .toast-close:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-260px);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .topbar h1 {
+                font-size: 18px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            .modal {
+                width: 100%;
+                max-width: 100%;
+                border-radius: 0;
+                max-height: 100vh;
+            }
+
+            .permission-row {
+                grid-template-columns: 1.5fr 0.75fr 0.75fr 0.75fr 0.75fr 0.75fr;
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    <!-- Session Guard - Prevent unauthorized access -->
+    <script src="js/session-guard.js"></script>
+
+    <!-- Load Sidebar Component -->
+    <script src="js/sidebar-component.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">
+                RTWE ERP
+                <small>Textile Management</small>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+
+                <!-- Master Data - Collapsible -->
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left">
+                        <span class="category-icon">📦</span>
+                        <span>Master Data</span>
+                    </div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <!-- ⭐ PINNED AT TOP - ADD-ON SYSTEMS ⭐ -->
+                    <a href="add-company.html" class="menu-item"><span class="icon">🏢</span>Add Company</a>
+                    <a href="user-management-enhanced.html" class="menu-item active"><span class="icon">👥</span>User
+                        Management</a>
+                    <a href="rapier-costing.html" class="menu-item"><span class="icon">💰</span>Costing Sheet</a>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;"></div>
+                    <!-- Existing Items -->
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+
+                <a href="#" class="menu-item">
+                    <span class="icon">📝</span>
+                    Enquiries
+                    <span class="badge">5</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🛒</span>
+                    Sale Orders
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📦</span>
+                    Sort Master
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Attendance & HR</div>
+                <a href="attendance-dashboard.html" class="menu-item">
+                    <span class="icon">🕒</span>
+                    Attendance Dashboard
+                </a>
+                <a href="attendance-employees.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    Employees
+                </a>
+                <a href="attendance-shifts.html" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Shift Management
+                </a>
+                <a href="attendance-leaves.html" class="menu-item">
+                    <span class="icon">🏖️</span>
+                    Leave Management
+                </a>
+                <a href="salary-management.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    Salary & Payroll
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Reports</div>
+                <a href="#" class="menu-item">
+                    <span class="icon">📈</span>
+                    Analytics
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📋</span>
+                    Order Reports
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">💰</span>
+                    Financial
+                </a>
+            </div>
+
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="/Usermanagement.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    User Management
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📜</span>
+                    Audit Logs
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <h1>
+                <span>👥</span> User Management
+            </h1>
+            <div class="topbar-actions">
+                <button class="btn-icon" title="Notifications">🔔</button>
+                <button class="btn-icon" title="Help">❓</button>
+                <button class="btn-icon" title="Settings">⚙️</button>
+            </div>
+        </div>
+
+        <!-- Container -->
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-header-top">
+                    <div class="page-title">
+                        <div>
+                            <h2>User Management</h2>
+                            <p class="page-subtitle">Manage users, roles, permissions, and access control</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-export" onclick="exportUsers()">
+                            📤 Export
+                        </button>
+                        <button class="btn btn-secondary" onclick="importUsers()">
+                            📥 Import
+                        </button>
+                        <button class="btn btn-primary" onclick="openCreateUserModal()">
+                            ➕ Add User
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-info">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <h3 id="activeUsers">0</h3>
+                        <p>Active Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">⏸️</div>
+                    <div class="stat-info">
+                        <h3 id="inactiveUsers">0</h3>
+                        <p>Inactive Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">🔒</div>
+                    <div class="stat-info">
+                        <h3 id="suspendedUsers">0</h3>
+                        <p>Suspended Users</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-group search-box">
+                        <label>🔍 Search</label>
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="filter-input" id="searchInput"
+                            placeholder="Search by name, email, or ID...">
+                    </div>
+                    <div class="filter-group">
+                        <label>🏢 Company</label>
+                        <select class="filter-input" id="filterCompany">
+                            <option value="">All Companies</option>
+                            <!-- Companies loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>🏭 Unit</label>
+                        <select class="filter-input" id="filterUnit">
+                            <option value="">All Units</option>
+                            <!-- Units loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>👤 Role</label>
+                        <select class="filter-input" id="filterRole">
+                            <option value="">All Roles</option>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="company_admin">Company Admin</option>
+                            <option value="unit_manager">Unit Manager</option>
+                            <option value="manager">Manager</option>
+                            <option value="employee">Employee</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>📊 Status</label>
+                        <select class="filter-input" id="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filters-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="resetFilters()">🔄 Reset</button>
+                    <button class="btn btn-primary btn-sm" onclick="applyFilters()">🔍 Apply Filters</button>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>All Users (25)</h3>
+                    <div class="table-controls">
+                        <div class="view-toggle">
+                            <button class="view-btn active" title="Table View">📋</button>
+                            <button class="view-btn" title="Card View">🃏</button>
+                        </div>
+                    </div>
+                </div>
+
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Company</th>
+                            <th>Unit</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                                <div class="spinner" style="margin: 0 auto 10px;"></div>
+                                Loading users...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Showing <strong>1-10</strong> of <strong>25</strong> users
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="page-btn" disabled>⬅️ Previous</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">Next ➡️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create/Edit User Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">
+                    <span>➕</span> Add New User
+                </h3>
+                <button class="modal-close" onclick="closeUserModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tabs -->
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="switchTab('basic')">📋 Basic Info</button>
+                    <button class="modal-tab" onclick="switchTab('employment')">💼 Employment</button>
+                    <button class="modal-tab" onclick="switchTab('access')">🔐 Access & Security</button>
+                    <button class="modal-tab" onclick="switchTab('permissions')">✅ Permissions</button>
+                </div>
+
+                <form id="userForm">
+                    <!-- Tab 1: Basic Information -->
+                    <div class="tab-content active" id="tab-basic">
+                        <!-- Profile Picture -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">📸 Profile Picture</h4>
+                            <div class="profile-picture-upload">
+                                <div class="profile-preview" id="profilePreview">RS</div>
+                                <div class="upload-controls">
+                                    <p>Upload user profile picture (Optional)</p>
+                                    <div class="file-input-wrapper">
+                                        <label class="btn-upload">
+                                            📤 Choose Photo
+                                            <input type="file" id="profilePicture" accept="image/*"
+                                                onchange="previewProfilePicture(this)">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">👤 Personal Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Full Name <span class="required">*</span></label>
+                                    <input type="text" id="fullName" placeholder="Enter full name" required>
+                                    <span class="form-hint">As per official documents</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address <span class="required">*</span></label>
+                                    <input type="email" id="email" placeholder="user@company.com" required>
+                                    <span class="form-hint">Will be used for login</span>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Phone Number <span class="required">*</span></label>
+                                    <input type="tel" id="phone" placeholder="9876543210" pattern="[0-9]{10}"
+                                        maxlength="10" required>
+                                    <span class="form-hint">10-digit mobile number</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Alternate Phone</label>
+                                    <input type="tel" id="alternatePhone" placeholder="9876543210" pattern="[0-9]{10}"
+                                        maxlength="10">
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" id="dob">
+                                </div>
+                                <div class="form-group">
+                                    <label>Gender</label>
+                                    <select id="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid single">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea id="address" placeholder="Enter full address"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>State</label>
+                                    <select id="state" onchange="loadCitiesByState()">
+                                        <option value="">Select State</option>
+                                        <!-- Will be populated from API -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>City</label>
+                                    <select id="city" disabled>
+                                        <option value="">Select State First</option>
+                                        <!-- Will be populated based on selected state -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Pincode</label>
+                                    <input type="text" id="pincode" placeholder="400001" pattern="[0-9]{6}"
+                                        maxlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label>Emergency Contact</label>
+                                    <input type="tel" id="emergencyContact" placeholder="9876543210" pattern="[0-9]{10}"
+                                        maxlength="10">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Employment Information -->
+                    <div class="tab-content" id="tab-employment">
+                        <div class="form-section">
+                            <h4 class="form-section-title">💼 Employment Details</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Employee ID <span class="required">*</span></label>
+                                    <input type="text" id="employeeId" placeholder="EMP-001" required>
+                                    <span class="form-hint">Unique employee identification number</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Joining Date <span class="required">*</span></label>
+                                    <input type="date" id="joiningDate" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Department <span class="required">*</span></label>
+                                    <select id="department" required>
+                                        <option value="">Select Department</option>
+                                        <option value="hr">Human Resources</option>
+                                        <option value="production">Production</option>
+                                        <option value="sales">Sales</option>
+                                        <option value="accounts">Accounts</option>
+                                        <option value="it">IT</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Designation <span class="required">*</span></label>
+                                    <select id="designation" required>
+                                        <option value="">Select Designation</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="supervisor">Supervisor</option>
+                                        <option value="operator">Operator</option>
+                                        <option value="executive">Executive</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Reporting Manager</label>
+                                    <select id="reportingManager">
+                                        <option value="">Select Manager</option>
+                                        <option value="1">Rajesh Sharma</option>
+                                        <option value="2">Amit Patel</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Work Shift</label>
+                                    <select id="workShift">
+                                        <option value="">Select Shift</option>
+                                        <option value="morning">Morning Shift (8 AM - 5 PM)</option>
+                                        <option value="night">Night Shift (8 PM - 5 AM)</option>
+                                        <option value="rotational">Rotational</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Employment Type</label>
+                                    <select id="employmentType">
+                                        <option value="">Select Type</option>
+                                        <option value="permanent">Permanent</option>
+                                        <option value="contract">Contract</option>
+                                        <option value="temporary">Temporary</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Probation Period (Months)</label>
+                                    <input type="number" id="probationPeriod" placeholder="3" min="0" max="12">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Access & Security -->
+                    <div class="tab-content" id="tab-access">
+                        <!-- Company & Unit Assignment -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">🏢 Company & Unit Assignment</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Company <span class="required">*</span></label>
+                                    <select id="company" required onchange="loadModalUnits(this.value)">
+                                        <option value="">Select Company</option>
+                                        <!-- Companies loaded dynamically -->
+                                    </select>
+                                    <span class="form-hint">Which company does this user belong to?</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Unit/Branch <span class="required">*</span></label>
+                                    <select id="unit" required>
+                                        <option value="">First select company</option>
+                                    </select>
+                                    <span class="form-hint">Assign to specific unit or "All Units" for admin</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Role & Access Level -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">👤 Role & Access Level</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>User Role <span class="required">*</span></label>
+                                    <select id="role" required onchange="updateRoleDescription()">
+                                        <option value="">Select Role</option>
+                                        <option value="super_admin">Super Admin</option>
+                                        <option value="company_admin">Company Admin</option>
+                                        <option value="unit_manager">Unit Manager</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="employee">Employee</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Account Status <span class="required">*</span></label>
+                                    <select id="status" required>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                        <option value="suspended">Suspended</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="roleDescription"
+                                style="padding: 15px; background: #f8f8f8; border-radius: 8px; margin-top: 10px; display: none;">
+                                <p style="font-size: 13px; color: #666; margin: 0;"></p>
+                            </div>
+                        </div>
+
+                        <!-- Login Credentials -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">🔐 Login Credentials</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Username/Login ID <span class="required">*</span></label>
+                                    <input type="text" id="username" placeholder="Enter username" required>
+                                    <span class="form-hint">Used for login (cannot be changed later)</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Temporary Password <span class="required">*</span></label>
+                                    <input type="password" id="password" placeholder="Enter password" required
+                                        oninput="checkPasswordStrength(this.value)">
+                                    <span class="form-hint">User will change on first login</span>
+                                </div>
+                            </div>
+
+                            <!-- Password Strength Meter -->
+                            <div class="password-strength" id="passwordStrength" style="display: none;">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText">Weak</div>
+                            </div>
+
+                            <div
+                                style="padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; margin-top: 15px;">
+                                <p style="font-size: 13px; color: #856404; margin: 0; font-weight: 600;">Password
+                                    Requirements:</p>
+                                <ul style="font-size: 12px; color: #856404; margin: 8px 0 0 20px; padding: 0;">
+                                    <li>Minimum 8 characters long</li>
+                                    <li>At least one uppercase letter (A-Z)</li>
+                                    <li>At least one lowercase letter (a-z)</li>
+                                    <li>At least one number (0-9)</li>
+                                    <li>At least one special character (!@#$%^&*)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Additional Security Options -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">🛡️ Security Options</h4>
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="emailVerification">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="emailVerification" style="cursor: pointer;">Require Email
+                                        Verification</label>
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="twoFactorAuth">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="twoFactorAuth" style="cursor: pointer;">Enable Two-Factor Authentication
+                                        (2FA)</label>
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="forcePasswordChange" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="forcePasswordChange" style="cursor: pointer;">Force Password Change on
+                                        First Login</label>
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="sessionTimeout">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="sessionTimeout" style="cursor: pointer;">Auto Logout After Inactivity
+                                        (30 mins)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Permissions -->
+                    <div class="tab-content" id="tab-permissions">
+                        <div class="form-section">
+                            <h4 class="form-section-title">✅ Module Permissions</h4>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">
+                                Select which modules and actions this user can access. Permissions are based on role by
+                                default but can be customized.
+                            </p>
+
+                            <div class="permissions-matrix">
+                                <div class="permission-row" style="background: #f8f8f8; font-weight: 600;">
+                                    <div class="permission-label">Module</div>
+                                    <div style="text-align: center;">View</div>
+                                    <div style="text-align: center;">Create</div>
+                                    <div style="text-align: center;">Edit</div>
+                                    <div style="text-align: center;">Delete</div>
+                                    <div style="text-align: center;">Export</div>
+                                </div>
+
+                                <!-- Dashboard -->
+                                <div class="permission-row">
+                                    <div class="permission-label">📊 Dashboard</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_dashboard_view"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_dashboard_create"
+                                            disabled></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_dashboard_edit"
+                                            disabled></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_dashboard_delete"
+                                            disabled></div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_dashboard_export"></div>
+                                </div>
+
+                                <!-- Master Data -->
+                                <div class="permission-row">
+                                    <div class="permission-label">⚙️ Master Data</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_master_view"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_master_create"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_master_edit"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_master_delete">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_master_export"
+                                            checked></div>
+                                </div>
+
+                                <!-- Orders -->
+                                <div class="permission-row">
+                                    <div class="permission-label">📦 Orders Management</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_orders_view"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_orders_create"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_orders_edit"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_orders_delete">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_orders_export"
+                                            checked></div>
+                                </div>
+
+                                <!-- Attendance -->
+                                <div class="permission-row">
+                                    <div class="permission-label">📅 Attendance</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_attendance_view"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_attendance_create" checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_attendance_edit"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_attendance_delete"></div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_attendance_export" checked></div>
+                                </div>
+
+                                <!-- Employees -->
+                                <div class="permission-row">
+                                    <div class="permission-label">👥 Employee Management</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_employees_view"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_employees_create"></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_employees_edit">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_employees_delete"></div>
+                                    <div class="permission-checkbox"><input type="checkbox"
+                                            name="perm_employees_export"></div>
+                                </div>
+
+                                <!-- Reports -->
+                                <div class="permission-row">
+                                    <div class="permission-label">📊 Reports & Analytics</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_reports_view"
+                                            checked></div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_reports_create">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_reports_edit">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_reports_delete">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_reports_export"
+                                            checked></div>
+                                </div>
+
+                                <!-- User Management -->
+                                <div class="permission-row">
+                                    <div class="permission-label">👥 User Management</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_users_view">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_users_create">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_users_edit">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_users_delete">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_users_export">
+                                    </div>
+                                </div>
+
+                                <!-- Settings -->
+                                <div class="permission-row">
+                                    <div class="permission-label">⚙️ System Settings</div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_settings_view">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_settings_create">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_settings_edit">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_settings_delete">
+                                    </div>
+                                    <div class="permission-checkbox"><input type="checkbox" name="perm_settings_export">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    onclick="selectAllPermissions()">✅ Select All</button>
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    onclick="deselectAllPermissions()">❌ Deselect All</button>
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                    onclick="applyDefaultPermissions()">🔄 Apply Role Defaults</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUserModal()">❌ Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">💾 Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">✓</div>
+        <div class="toast-content">
+            <div class="toast-title">Success</div>
+            <div class="toast-message" id="toastMessage">Operation completed successfully</div>
+        </div>
+        <button class="toast-close" onclick="hideToast()">×</button>
+    </div>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadUsers();
+            updateStats();
+            loadStates(); // Load states on page load
+        });
+
+        // States and Cities data cache
+        let statesData = [];
+        let citiesData = [];
+
+        // Load States from API
+        async function loadStates() {
+            try {
+                console.log('Loading states from API...');
+                const response = await fetch('/api/location/states'); // Get all states
+                const data = await response.json();
+
+                console.log('States API response:', data);
+
+                if (data.success && data.data && data.data.length > 0) {
+                    statesData = data.data;
+                    populateStatesDropdown();
+                } else {
+                    console.warn('No states data found:', data);
+                }
+            } catch (error) {
+                console.error('Error loading states:', error);
+            }
+        }
+
+        // Populate States Dropdown
+        function populateStatesDropdown() {
+            const stateSelect = document.getElementById('state');
+            if (!stateSelect) return;
+
+            // Keep the default option
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+
+            // Add states sorted alphabetically
+            statesData.sort((a, b) => a.name.localeCompare(b.name));
+            statesData.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state.name;
+                option.dataset.stateId = state.id;
+                option.textContent = state.name;
+                stateSelect.appendChild(option);
+            });
+        }
+
+        // Load Cities by Selected State
+        async function loadCitiesByState() {
+            const stateSelect = document.getElementById('state');
+            const citySelect = document.getElementById('city');
+
+            if (!citySelect) return;
+
+            const selectedOption = stateSelect.options[stateSelect.selectedIndex];
+            const stateId = selectedOption?.dataset?.stateId;
+
+            if (!stateId) {
+                citySelect.innerHTML = '<option value="">Select State First</option>';
+                citySelect.disabled = true;
+                return;
+            }
+
+            // Show loading
+            citySelect.innerHTML = '<option value="">Loading cities...</option>';
+            citySelect.disabled = true;
+
+            try {
+                const response = await fetch(`/api/location/cities?state_id=${stateId}`);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    citiesData = data.data;
+
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+
+                    // Sort cities alphabetically
+                    citiesData.sort((a, b) => a.city.localeCompare(b.city));
+                    citiesData.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.city;
+                        option.textContent = city.city;
+                        citySelect.appendChild(option);
+                    });
+
+                    citySelect.disabled = false;
+                } else {
+                    citySelect.innerHTML = '<option value="">No cities found</option>';
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+                citySelect.innerHTML = '<option value="">Error loading cities</option>';
+            }
+        }
+
+        // Global users array
+        let allUsers = [];
+
+        // Load Users from API
+        async function loadUsers() {
+            const authToken = localStorage.getItem('authToken');
+
+            if (!authToken) {
+                window.location.href = '/Login.html?message=' + encodeURIComponent('Please login first');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    allUsers = data.users;
+                    renderUsers(allUsers);
+                    updateStats(allUsers);
+                } else {
+                    showError('Failed to load users: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Load users error:', error);
+                showError('Failed to load users. Please try again.');
+            }
+        }
+
+        // Render Users to Table
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                            No users found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const initials = getInitials(user.full_name || user.username || 'U');
+                const roleBadge = getRoleBadge(user.role);
+                const statusBadge = getStatusBadge(user.is_active);
+                const lastLogin = formatLastLogin(user.last_login);
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar-small">${initials}</div>
+                                <div class="user-details">
+                                    <h4>${escapeHtml(user.full_name || user.username)}</h4>
+                                    <p>${escapeHtml(user.email)}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(user.company_name || 'N/A')}</td>
+                        <td>${escapeHtml(user.unit_name || 'All Units')}</td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${lastLogin}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" onclick="viewUser(${user.user_id || user.id})">👁️ View</button>
+                                <button class="btn-action btn-edit" onclick="editUser(${user.user_id || user.id})">✏️ Edit</button>
+                                <button class="btn-action btn-more" onclick="showUserMenu(${user.user_id || user.id})">⋮</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update table header count
+            document.querySelector('.table-header h3').textContent = `All Users (${users.length})`;
+        }
+
+        // Helper: Get initials from name
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        // Helper: Get role badge HTML
+        function getRoleBadge(role) {
+            const badgeClass = `badge-${role.replace('_', '-')}`;
+            const roleLabel = role.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            return `<span class="badge ${badgeClass}">${roleLabel}</span>`;
+        }
+
+        // Helper: Get status badge HTML
+        function getStatusBadge(isActive) {
+            if (isActive) {
+                return '<span class="badge badge-active">Active</span>';
+            }
+            return '<span class="badge badge-inactive">Inactive</span>';
+        }
+
+        // Helper: Format last login time
+        function formatLastLogin(lastLogin) {
+            if (!lastLogin) return 'Never';
+
+            const loginDate = new Date(lastLogin);
+            const now = new Date();
+            const diffMs = now - loginDate;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffMins < 60) return `${diffMins} mins ago`;
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return loginDate.toLocaleDateString();
+        }
+
+        // Helper: Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Helper: Show error message
+        function showError(message) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #C62828;">
+                        ❌ ${message}
+                        <br><br>
+                        <button class="btn btn-primary" onclick="loadUsers()">🔄 Retry</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Update Stats from real data
+        function updateStats(users) {
+            if (!users) users = allUsers;
+
+            const total = users.length;
+            const active = users.filter(u => u.is_active === true).length;
+            const inactive = users.filter(u => u.is_active === false).length;
+            const suspended = 0; // Could be a separate status if needed
+
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+            document.getElementById('inactiveUsers').textContent = inactive;
+            document.getElementById('suspendedUsers').textContent = suspended;
+        }
+
+        // View User Details
+        function viewUser(userId) {
+            const user = allUsers.find(u => (u.user_id || u.id) === userId);
+            if (user) {
+                alert(`User Details:\n\nName: ${user.full_name || user.username}\nEmail: ${user.email}\nRole: ${user.role}\nStatus: ${user.is_active ? 'Active' : 'Inactive'}`);
+            }
+        }
+
+        // Edit User
+        function editUser(userId) {
+            const user = allUsers.find(u => (u.user_id || u.id) === userId);
+            if (!user) {
+                showToast('User not found', 'error');
+                return;
+            }
+
+            console.log('Editing user:', user); // Debug
+
+            // Populate form with user data
+            document.getElementById('modalTitle').innerHTML = '<span>✏️</span> Edit User';
+
+            // Basic Info - Personal Information
+            document.getElementById('fullName').value = user.full_name || user.user_name || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phone || '';
+
+            // Alternate phone (if exists)
+            const altPhoneField = document.getElementById('alternatePhone');
+            if (altPhoneField) altPhoneField.value = user.alternate_phone || '';
+
+            // Date of birth
+            const dobField = document.getElementById('dob');
+            if (dobField && user.dob) {
+                dobField.value = user.dob.split('T')[0]; // Format: YYYY-MM-DD
+            }
+
+            // Gender
+            const genderField = document.getElementById('gender');
+            if (genderField) genderField.value = user.gender || '';
+
+            // Address
+            const addressField = document.getElementById('address');
+            if (addressField) addressField.value = user.address || '';
+
+            // State
+            const stateField = document.getElementById('state');
+            if (stateField && user.state) {
+                stateField.value = user.state;
+                // Trigger city loading
+                loadCitiesByState().then(() => {
+                    const cityField = document.getElementById('city');
+                    if (cityField && user.city) cityField.value = user.city;
+                });
+            }
+
+            // Pincode
+            const pincodeField = document.getElementById('pincode');
+            if (pincodeField) pincodeField.value = user.pincode || '';
+
+            // Emergency Contact
+            const emergencyField = document.getElementById('emergencyContact');
+            if (emergencyField) emergencyField.value = user.emergency_contact || '';
+
+            // Employment Info
+            const roleField = document.getElementById('role');
+            if (roleField) roleField.value = user.role || 'employee';
+
+            const companyField = document.getElementById('company');
+            if (companyField) companyField.value = user.company_id || '';
+
+            const unitField = document.getElementById('unit');
+            if (unitField) unitField.value = user.unit_id || '';
+
+            // Login Credentials (Username/Login ID)
+            const usernameField = document.getElementById('username');
+            if (usernameField) usernameField.value = user.username || user.custom_user_id || '';
+
+            // Store user ID for save
+            document.getElementById('userForm').dataset.userId = userId;
+            document.getElementById('userForm').dataset.mode = 'edit';
+
+            document.getElementById('userModal').classList.add('show');
+            switchTab('basic');
+        }
+
+        // Delete/Deactivate User
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to deactivate this user?')) {
+                return;
+            }
+
+            const authToken = localStorage.getItem('authToken');
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('User deactivated successfully', 'success');
+                    loadUsers(); // Reload list
+                } else {
+                    showToast('Failed to deactivate user: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                console.error('Delete user error:', error);
+                showToast('Failed to deactivate user', 'error');
+            }
+        }
+
+        // Show User Menu (action dropdown)
+        function showUserMenu(userId) {
+            if (confirm('Do you want to deactivate this user?')) {
+                deleteUser(userId);
+            }
+        }
+
+        // Open Create User Modal
+        function openCreateUserModal() {
+            document.getElementById('modalTitle').innerHTML = '<span>➕</span> Add New User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userModal').classList.add('show');
+            switchTab('basic');
+        }
+
+        // Close User Modal
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('show');
+            document.getElementById('userForm').dataset.userId = '';
+            document.getElementById('userForm').dataset.mode = 'create';
+        }
+
+        // Save User (Create or Update)
+        async function saveUser() {
+            const authToken = localStorage.getItem('authToken');
+            const form = document.getElementById('userForm');
+            const isEditMode = form.dataset.mode === 'edit';
+            const userId = form.dataset.userId;
+
+            // Get form values
+            const userData = {
+                fullName: document.getElementById('fullName')?.value || '',
+                email: document.getElementById('email')?.value || '',
+                phone: document.getElementById('phone')?.value || '',
+                role: document.getElementById('role')?.value || 'employee',
+                companyId: document.getElementById('company')?.value || null,
+                unitId: document.getElementById('unit')?.value || null
+            };
+
+            // For new users, also get password and username
+            if (!isEditMode) {
+                userData.username = document.getElementById('username')?.value || '';
+                userData.password = document.getElementById('password')?.value || '';
+
+                if (!userData.username || !userData.password) {
+                    showToast('Username and password are required for new users', 'error');
+                    return;
+                }
+            }
+
+            // Validate required fields
+            if (!userData.fullName || !userData.email) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const url = isEditMode ? `/api/users/${userId}` : '/api/users';
+                const method = isEditMode ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+                hideLoading();
+
+                if (data.success) {
+                    showToast(isEditMode ? 'User updated successfully!' : 'User created successfully!', 'success');
+                    closeUserModal();
+                    loadUsers(); // Reload the user list
+                } else {
+                    showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Save user error:', error);
+                showToast('Failed to save user. Please try again.', 'error');
+            }
+        }
+
+        // Switch Tab
+        function switchTab(tabName) {
+            // Remove active from all tabs and contents
+            document.querySelectorAll('.modal-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active to clicked tab and corresponding content
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // Load Units based on Company
+        function loadUnits(companyId) {
+            const unitSelect = document.getElementById('unit');
+            unitSelect.innerHTML = '<option value="">Loading...</option>';
+
+            // Simulate API call
+            setTimeout(() => {
+                if (companyId === '1') {
+                    unitSelect.innerHTML = `
+                        <option value="">Select Unit</option>
+                        <option value="all">All Units (Admin Only)</option>
+                        <option value="1">Mumbai Factory</option>
+                        <option value="2">Delhi Factory</option>
+                        <option value="3">Pune Factory</option>
+                    `;
+                } else {
+                    unitSelect.innerHTML = '<option value="">No units found</option>';
+                }
+            }, 500);
+        }
+
+        // Update Role Description
+        function updateRoleDescription() {
+            const role = document.getElementById('role').value;
+            const roleDesc = document.getElementById('roleDescription');
+            const descriptions = {
+                'super_admin': '🔓 Full system access to all companies, units, and modules. Can manage all users and settings.',
+                'company_admin': '🏢 Full access to assigned company and all its units. Can manage company users.',
+                'unit_manager': '🏭 Full access to assigned unit only. Can manage unit employees and operations.',
+                'manager': '📋 Limited management access. Can view and edit data within assigned unit.',
+                'employee': '👤 Basic access. Can view own data and perform assigned tasks only.'
+            };
+
+            if (role) {
+                roleDesc.style.display = 'block';
+                roleDesc.querySelector('p').textContent = descriptions[role] || '';
+            } else {
+                roleDesc.style.display = 'none';
+            }
+        }
+
+        // Check Password Strength
+        function checkPasswordStrength(password) {
+            const strengthDiv = document.getElementById('passwordStrength');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+
+            if (!password) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+
+            strengthDiv.style.display = 'block';
+
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+
+            strengthFill.className = 'strength-fill';
+            strengthText.className = 'strength-text';
+
+            if (strength <= 2) {
+                strengthFill.classList.add('weak');
+                strengthText.classList.add('weak');
+                strengthText.textContent = 'Weak Password';
+            } else if (strength === 3) {
+                strengthFill.classList.add('medium');
+                strengthText.classList.add('medium');
+                strengthText.textContent = 'Medium Password';
+            } else {
+                strengthFill.classList.add('strong');
+                strengthText.classList.add('strong');
+                strengthText.textContent = 'Strong Password';
+            }
+        }
+
+        // Preview Profile Picture
+        function previewProfilePicture(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('profilePreview');
+                    preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Permission Actions
+        function selectAllPermissions() {
+            document.querySelectorAll('input[name^="perm_"]').forEach(checkbox => {
+                if (!checkbox.disabled) checkbox.checked = true;
+            });
+        }
+
+        function deselectAllPermissions() {
+            document.querySelectorAll('input[name^="perm_"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        function applyDefaultPermissions() {
+            const role = document.getElementById('role').value;
+            // Reset all
+            deselectAllPermissions();
+
+            // Apply based on role
+            if (role === 'super_admin') {
+                selectAllPermissions();
+            } else if (role === 'company_admin') {
+                // Apply company admin defaults
+                document.querySelectorAll('input[name$="_view"]').forEach(cb => cb.checked = true);
+                document.querySelectorAll('input[name$="_create"]').forEach(cb => cb.checked = true);
+                document.querySelectorAll('input[name$="_edit"]').forEach(cb => cb.checked = true);
+            } else if (role === 'unit_manager') {
+                // Apply unit manager defaults
+                document.querySelectorAll('input[name$="_view"]').forEach(cb => cb.checked = true);
+                document.querySelector('input[name="perm_orders_create"]').checked = true;
+                document.querySelector('input[name="perm_orders_edit"]').checked = true;
+                document.querySelector('input[name="perm_attendance_create"]').checked = true;
+                document.querySelector('input[name="perm_attendance_edit"]').checked = true;
+            }
+        }
+
+        // Export Users
+        function exportUsers() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showToast('Users exported to Excel successfully!', 'success');
+            }, 1000);
+        }
+
+        // Import Users
+        function importUsers() {
+            console.log('Import users');
+            showToast('Import functionality coming soon!', 'info');
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            showLoading();
+            const search = document.getElementById('searchInput')?.value || '';
+            const role = document.getElementById('filterRole')?.value || '';
+            const status = document.getElementById('filterStatus')?.value || '';
+
+            // Filter the users array
+            let filtered = allUsers.filter(user => {
+                let matches = true;
+                if (search) {
+                    const searchLower = search.toLowerCase();
+                    matches = matches && (
+                        (user.full_name || '').toLowerCase().includes(searchLower) ||
+                        (user.email || '').toLowerCase().includes(searchLower) ||
+                        (user.username || '').toLowerCase().includes(searchLower)
+                    );
+                }
+                if (role) {
+                    matches = matches && user.role === role;
+                }
+                if (status) {
+                    const isActive = status === 'active';
+                    matches = matches && user.is_active === isActive;
+                }
+                return matches;
+            });
+
+            renderUsers(filtered);
+            hideLoading();
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterUnit').value = '';
+            document.getElementById('filterRole').value = '';
+            document.getElementById('filterStatus').value = '';
+            renderUsers(allUsers);
+        }
+
+        // Show Loading
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.classList.add('show');
+        }
+
+        // Hide Loading
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.classList.remove('show');
+        }
+
+        // Show Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = toast?.querySelector('.toast-icon');
+            const toastTitle = toast?.querySelector('.toast-title');
+
+            if (!toast || !toastMessage) {
+                alert(message); // Fallback to alert
+                return;
+            }
+
+            // Set icon and title based on type
+            if (toastIcon) {
+                toastIcon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
+            }
+            if (toastTitle) {
+                toastTitle.textContent = type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Info';
+            }
+
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Hide Toast
+        function hideToast() {
+            const toast = document.getElementById('toast');
+            if (toast) toast.classList.remove('show');
+        }
+
+        // Load Companies from API
+        async function loadCompanies() {
+            try {
+                const response = await fetch('/api/company', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success && data.companies) {
+                    const select = document.getElementById('filterCompany');
+                    // Clear existing options except "All Companies"
+                    select.innerHTML = '<option value="">All Companies</option>';
+
+                    // Add companies from API
+                    data.companies.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.id;
+                        option.textContent = company.company_name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading companies:', error);
+            }
+        }
+
+        // Load Units from API (when company is selected)
+        async function loadUnits(companyId = null) {
+            try {
+                let url = '/api/company/units';
+                if (companyId) {
+                    url = `/api/company/${companyId}/units`;
+                }
+
+                const response = await fetch(url, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                const select = document.getElementById('filterUnit');
+                // Clear existing options except "All Units"
+                select.innerHTML = '<option value="">All Units</option>';
+
+                if (data.success && data.units) {
+                    // Add units from API
+                    data.units.forEach(unit => {
+                        const option = document.createElement('option');
+                        option.value = unit.id;
+                        option.textContent = unit.unit_name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading units:', error);
+            }
+        }
+
+        // Load units when company filter changes
+        document.getElementById('filterCompany')?.addEventListener('change', function () {
+            const companyId = this.value;
+            if (companyId) {
+                loadUnits(companyId);
+            } else {
+                loadUnits(); // Load all units
+            }
+        });
+
+        // Load Companies for Modal (Edit User)
+        async function loadModalCompanies() {
+            try {
+                const response = await fetch('/api/company', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success && data.companies) {
+                    const select = document.getElementById('company');
+                    if (!select) return;
+
+                    // Clear existing options except "Select Company"
+                    select.innerHTML = '<option value="">Select Company</option>';
+
+                    // Add companies from API
+                    data.companies.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.id;
+                        option.textContent = company.company_name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading modal companies:', error);
+            }
+        }
+
+        // Load Units for Modal (when company is selected)
+        async function loadModalUnits(companyId) {
+            try {
+                const select = document.getElementById('unit');
+                if (!select) return;
+
+                // Clear existing options
+                select.innerHTML = '<option value="">Loading units...</option>';
+                select.disabled = true;
+
+                if (!companyId) {
+                    select.innerHTML = '<option value="">First select company</option>';
+                    return;
+                }
+
+                const response = await fetch(`/api/company/${companyId}/units`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                select.innerHTML = '<option value="">Select Unit</option>';
+                select.disabled = false;
+
+                if (data.success && data.units) {
+                    // Add units from API
+                    data.units.forEach(unit => {
+                        const option = document.createElement('option');
+                        option.value = unit.id;
+                        option.textContent = unit.unit_name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading modal units:', error);
+                const select = document.getElementById('unit');
+                if (select) {
+                    select.innerHTML = '<option value="">Error loading units</option>';
+                    select.disabled = false;
+                }
+            }
+        }
+
+        // Call loadModalCompanies when modal opens
+        // We'll hook into the modal open events
+        const userModal = document.getElementById('userModal');
+        if (userModal) {
+            // Use MutationObserver to detect when modal is shown
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.attributeName === 'class') {
+                        if (userModal.classList.contains('show')) {
+                            loadModalCompanies();
+                        }
+                    }
+                });
+            });
+            observer.observe(userModal, { attributes: true });
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            loadCompanies();
+            loadUnits();
+        });
+
+    </script>
+
+    <!-- Shared Sidebar JavaScript for logout confirmation -->
+    <script src="js/sidebar.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!-- ============================================
+     RTWE ERP - REUSABLE SIDEBAR HTML
+     Copy this block to any new page
+     ============================================ -->
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="sidebar-logo">🏭</span>
+        <div class="sidebar-brand">
+            RTWE ERP
+            <small>Textile Management</small>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <div class="menu-section">
+            <div class="menu-section-title">Main Menu</div>
+            <a href="dashboard.html" class="menu-item">
+                <span class="icon">📊</span>
+                Dashboard
+            </a>
+
+            <!-- Master Data - Collapsible -->
+            <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                <div class="category-left">
+                    <span class="category-icon">📦</span>
+                    <span>Master Data</span>
+                </div>
+                <span class="category-arrow">▶</span>
+            </div>
+            <div class="submenu" id="masterSubmenu">
+                <!-- ⭐ PINNED AT TOP - ADD-ON SYSTEMS ⭐ -->
+                <a href="add-company.html" class="menu-item"><span class="icon">🏢</span>Add Company</a>
+                <a href="user-management-enhanced.html" class="menu-item"><span class="icon">👥</span>User
+                    Management</a>
+                <a href="rapier-costing.html" class="menu-item"><span class="icon">💰</span>Costing Sheet</a>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;"></div>
+                <!-- Existing Items -->
+                <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+            </div>
+
+            <a href="#" class="menu-item">
+                <span class="icon">📝</span>
+                Enquiries
+                <span class="badge">5</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">🛒</span>
+                Sale Orders
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">📦</span>
+                Sort Master
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-section-title">Attendance & HR</div>
+            <a href="attendance-dashboard.html" class="menu-item">
+                <span class="icon">🕒</span>
+                Attendance Dashboard
+            </a>
+            <a href="attendance-employees.html" class="menu-item">
+                <span class="icon">👥</span>
+                Employees
+            </a>
+            <a href="attendance-shifts.html" class="menu-item">
+                <span class="icon">⏰</span>
+                Shift Management
+            </a>
+            <a href="attendance-leaves.html" class="menu-item">
+                <span class="icon">🏖️</span>
+                Leave Management
+            </a>
+            <a href="salary-management.html" class="menu-item">
+                <span class="icon">💰</span>
+                Salary & Payroll
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-section-title">Reports</div>
+            <a href="#" class="menu-item">
+                <span class="icon">📈</span>
+                Analytics
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">📋</span>
+                Order Reports
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">💰</span>
+                Financial
+            </a>
+        </div>
+
+        <div class="menu-section" id="adminMenu" style="display: none;">
+            <div class="menu-section-title">Administration</div>
+            <a href="/Usermanagement.html" class="menu-item">
+                <span class="icon">👥</span>
+                User Management
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">📜</span>
+                Audit Logs
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">⚙️</span>
+                Settings
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="userName">Loading...</div>
+                <div class="user-role" id="userRole">-</div>
+            </div>
+            <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Add this script tag before closing </body> -->
+<script src="js/sidebar-component.js"></script>

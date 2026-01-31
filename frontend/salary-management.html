@@ -1,0 +1,2417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Management - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <!-- PDF and Excel Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: var(--bg-card);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .content-area {
+            padding: 25px 30px;
+            flex: 1;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-export {
+            background: var(--warning);
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: var(--bg-main);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #FAFAFA;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: #FFF3E0;
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: #FFEBEE;
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: #E3F2FD;
+            color: #2196f3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 4px;
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 20px 0 12px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title-green {
+            color: var(--success);
+        }
+
+        .section-title-red {
+            color: var(--danger);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+        }
+
+        /* Document Status Styles */
+        .doc-status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            min-width: 180px;
+        }
+
+        .doc-icon {
+            font-size: 24px;
+        }
+
+        .doc-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .doc-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .doc-badge.success {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+
+        .doc-badge.pending {
+            background: #FFEBEE;
+            color: var(--danger);
+        }
+
+        .upload-status {
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* Searchable Dropdown Styles */
+        .search-select-wrapper {
+            position: relative;
+        }
+
+        .search-select-wrapper input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .search-select-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .search-dropdown.show {
+            display: block;
+        }
+
+        .search-dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .search-dropdown-item:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .search-dropdown-item.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Modern Confirmation Modal */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .confirm-modal.active {
+            display: flex;
+        }
+
+        .confirm-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+
+        .confirm-header {
+            background: linear-gradient(135deg, #5D4037, #3d2314);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .confirm-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .confirm-body {
+            padding: 25px;
+            color: #333;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .confirm-message {
+            margin-bottom: 15px;
+        }
+
+        .confirm-details {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #5D4037;
+        }
+
+        .confirm-details p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .confirm-footer {
+            padding: 20px 25px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .confirm-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .confirm-btn-cancel {
+            background: white;
+            color: #666;
+            border: 2px solid #ddd;
+        }
+
+        .confirm-btn-cancel:hover {
+            background: #f5f5f5;
+            border-color: #bbb;
+        }
+
+        .confirm-btn-ok {
+            background: linear-gradient(135deg, #5D4037, #3d2314);
+            color: white;
+        }
+
+        .confirm-btn-ok:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 64, 55, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebarContainer"></div>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 class="page-title">💰 Salary Management</h1>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="tab active" onclick="showTab('salary-structure')">Salary Structure</button>
+                <button class="tab" onclick="showTab('monthly-salary')">Monthly Salary</button>
+                <button class="tab" onclick="showTab('advances')">Advances</button>
+                <button class="tab" onclick="showTab('bank-details')">Bank Details</button>
+                <button class="tab" onclick="showTab('documents')">Documents</button>
+            </div>
+
+            <!-- Tab 1: Salary Structure -->
+            <div id="salary-structure" class="tab-content active">
+                <div class="card">
+                    <h2>Create/Update Salary Structure</h2>
+                    <form id="salaryForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Select Employee *</label>
+                                <select id="employeeId" required>
+                                    <option value="">-- Select Employee --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Effective From *</label>
+                                <input type="date" id="effectiveFrom" required>
+                            </div>
+                        </div>
+
+                        <h3 class="section-title-green">💵 Earnings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Basic Salary *</label>
+                                <input type="number" id="basicSalary" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>HRA (House Rent)</label>
+                                <input type="number" id="hra" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>DA (Dearness Allowance)</label>
+                                <input type="number" id="da" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Medical Allowance</label>
+                                <input type="number" id="medicalAllowance" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Transport Allowance</label>
+                                <input type="number" id="transportAllowance" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Other Allowances</label>
+                                <input type="number" id="otherAllowances" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <h3 class="section-title-red">📉 Deductions</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>PF Deduction</label>
+                                <input type="number" id="pfDeduction" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>ESI Deduction</label>
+                                <input type="number" id="esiDeduction" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Professional Tax</label>
+                                <input type="number" id="professionalTax" step="0.01" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>TDS Deduction</label>
+                                <input type="number" id="tdsDeduction" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">💾 Save Salary Structure</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0;">Current Salary Structures</h2>
+                        <div>
+                            <button onclick="exportSalaryStructureExcel()" class="btn btn-success">📊 Excel</button>
+                            <button onclick="exportSalaryStructurePDF()" class="btn btn-danger">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="salaryStructureList">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Monthly Salary -->
+            <div id="monthly-salary" class="tab-content">
+                <div class="card">
+                    <h2>Process Monthly Salary</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Select Month</label>
+                            <select id="salaryMonth">
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Year</label>
+                            <input type="number" id="salaryYear" value="2026">
+                        </div>
+                    </div>
+                    <button onclick="processMonthlySalary()" class="btn btn-primary">⚙️ Process Salary</button>
+                    <button onclick="viewMonthlySalary()" class="btn btn-success">📊 View Register</button>
+                </div>
+
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0;">Monthly Salary Register</h2>
+                        <div>
+                            <button onclick="exportMonthlySalaryExcel()" class="btn btn-success">📊 Excel</button>
+                            <button onclick="exportMonthlySalaryPDF()" class="btn btn-danger">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="monthlySalaryList">
+                        <div class="loading">Select month and click "View Register"</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Advances -->
+            <div id="advances" class="tab-content">
+                <div class="card">
+                    <h2>Request Advance</h2>
+                    <form id="advanceForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Employee *</label>
+                                <select id="advanceEmployeeId" required>
+                                    <option value="">-- Select Employee --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Advance Amount *</label>
+                                <input type="number" id="advanceAmount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Advance Date *</label>
+                                <input type="date" id="advanceDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Number of Installments *</label>
+                                <input type="number" id="installments" min="1" value="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Recovery Start Month *</label>
+                                <input type="month" id="recoveryStartMonth" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Reason</label>
+                            <textarea id="advanceReason" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">📝 Request Advance</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0;">Advance Requests</h2>
+                        <div>
+                            <button onclick="exportAdvancesExcel()" class="btn btn-success">📊 Excel</button>
+                            <button onclick="exportAdvancesPDF()" class="btn btn-danger">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="advancesList">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Bank Details -->
+            <div id="bank-details" class="tab-content">
+                <div class="card">
+                    <h2>Add/Update Bank Details</h2>
+                    <form id="bankForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Employee *</label>
+                                <select id="bankEmployeeId" onchange="loadBankDetails(this.value)" required>
+                                    <option value="">-- Select Employee --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Account Number *</label>
+                                <input type="text" id="accountNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Account Holder Name *</label>
+                                <input type="text" id="accountHolderName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>IFSC Code *</label>
+                                <input type="text" id="ifscCode" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Bank Name *</label>
+                                <input type="text" id="bankName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Branch Name</label>
+                                <input type="text" id="branchName">
+                            </div>
+                            <div class="form-group">
+                                <label>Account Type</label>
+                                <select id="accountType">
+                                    <option value="savings">Savings</option>
+                                    <option value="current">Current</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>PAN Number</label>
+                                <input type="text" id="panNumber" maxlength="10">
+                            </div>
+                            <div class="form-group">
+                                <label>Aadhar Number</label>
+                                <input type="text" id="aadharNumber" maxlength="12">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">💾 Save Bank Details</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 5: Documents -->
+            <div id="documents" class="tab-content">
+                <!-- Mandatory Document Status Card -->
+                <div class="card" id="mandatoryDocsCard" style="display:none; border-left: 4px solid var(--warning);">
+                    <h2>⚠️ Mandatory Documents Status</h2>
+                    <div id="mandatoryDocsStatus" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
+                        <div class="doc-status-item" id="statusAadhar">
+                            <span class="doc-icon">🪪</span>
+                            <span class="doc-name">Aadhar Card</span>
+                            <span class="doc-badge pending">❌ Missing</span>
+                        </div>
+                        <div class="doc-status-item" id="statusPan">
+                            <span class="doc-icon">💳</span>
+                            <span class="doc-name">PAN Card</span>
+                            <span class="doc-badge pending">❌ Missing</span>
+                        </div>
+                        <div class="doc-status-item" id="statusBank">
+                            <span class="doc-icon">🏦</span>
+                            <span class="doc-name">Bank Passbook</span>
+                            <span class="doc-badge pending">❌ Missing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Upload Documents</h2>
+                    <div class="form-group">
+                        <label>Select Employee *</label>
+                        <select id="docEmployeeId" onchange="onDocEmployeeChange(this.value)" required>
+                            <option value="">-- Select Employee --</option>
+                        </select>
+                    </div>
+
+                    <!-- Multiple Document Upload Section -->
+                    <div id="docUploadSection" style="display:none;">
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h3 style="margin-bottom: 15px;">📤 Upload Required Documents</h3>
+
+                            <!-- Aadhar Upload -->
+                            <div class="doc-upload-row" id="uploadAadhar">
+                                <div
+                                    style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid var(--border);">
+                                    <span style="font-size: 20px;">🪪</span>
+                                    <strong style="min-width: 120px;">Aadhar Card *</strong>
+                                    <input type="text" id="aadharDocNumber" placeholder="Aadhar Number (12 digits)"
+                                        maxlength="12" style="max-width: 200px;">
+                                    <input type="file" id="aadharFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    <span class="upload-status" id="aadharStatus"></span>
+                                </div>
+                            </div>
+
+                            <!-- PAN Upload -->
+                            <div class="doc-upload-row" id="uploadPan">
+                                <div
+                                    style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid var(--border);">
+                                    <span style="font-size: 20px;">💳</span>
+                                    <strong style="min-width: 120px;">PAN Card *</strong>
+                                    <input type="text" id="panDocNumber" placeholder="PAN Number (10 chars)"
+                                        maxlength="10" style="max-width: 200px;">
+                                    <input type="file" id="panFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    <span class="upload-status" id="panStatus"></span>
+                                </div>
+                            </div>
+
+                            <!-- Bank Passbook Upload -->
+                            <div class="doc-upload-row" id="uploadBank">
+                                <div
+                                    style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid var(--border);">
+                                    <span style="font-size: 20px;">🏦</span>
+                                    <strong style="min-width: 120px;">Bank Passbook *</strong>
+                                    <input type="text" id="bankDocNumber" placeholder="Account Number"
+                                        style="max-width: 200px;">
+                                    <input type="file" id="bankFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    <span class="upload-status" id="bankStatus"></span>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="uploadMandatoryDocs()" class="btn btn-primary"
+                                style="margin-top: 10px;">📤 Upload All Mandatory Documents</button>
+                        </div>
+
+                        <hr style="margin: 20px 0; border: none; border-top: 1px dashed var(--border);">
+
+                        <!-- Additional Document Upload -->
+                        <h3>📎 Upload Additional Documents (Optional)</h3>
+                        <form id="documentForm" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Document Type *</label>
+                                    <select id="documentType" required>
+                                        <option value="">-- Select Type --</option>
+                                        <option value="passport">Passport</option>
+                                        <option value="driving_license">Driving License</option>
+                                        <option value="voter_id">Voter ID</option>
+                                        <option value="photo">Photo</option>
+                                        <option value="resume">Resume</option>
+                                        <option value="education_certificate">Education Certificate</option>
+                                        <option value="experience_letter">Experience Letter</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Document Number</label>
+                                    <input type="text" id="documentNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label>Issue Date</label>
+                                    <input type="date" id="issueDate">
+                                </div>
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="date" id="expiryDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Files (Max 5MB each - PDF, JPG, PNG, DOC)</label>
+                                <input type="file" id="documentFile" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            </div>
+                            <div class="form-group">
+                                <label>Remarks</label>
+                                <textarea id="documentRemarks" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">📤 Upload Additional Document</button>
+                        </form>
+                    </div>
+
+                    <div id="selectEmployeeMsg"
+                        style="text-align: center; padding: 30px; color: var(--text-secondary);">
+                        👆 Please select an employee first to upload documents
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0;">View Documents</h2>
+                        <button onclick="exportDocumentsPDF()" class="btn btn-danger">📄 Export PDF</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Employee</label>
+                        <select id="viewDocEmployeeId" onchange="loadEmployeeDocuments(this.value)">
+                            <option value="">-- Select Employee --</option>
+                        </select>
+                    </div>
+                    <div id="documentsList">
+                        <div class="loading">Select an employee to view documents</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Recovery Schedule Modal -->
+    <div id="advanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Recovery Schedule</h2>
+                <span class="close-btn" onclick="closeModal('advanceModal')">&times;</span>
+            </div>
+            <div id="advanceModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Edit Document Modal -->
+    <div id="editDocModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Document</h2>
+                <span class="close-btn" onclick="closeModal('editDocModal')">&times;</span>
+            </div>
+            <form id="editDocForm">
+                <input type="hidden" id="editDocId">
+                <input type="hidden" id="editDocEmployeeId">
+                <div class="form-group">
+                    <label>Document Type</label>
+                    <select id="editDocType">
+                        <option value="aadhar">Aadhar Card</option>
+                        <option value="pan">PAN Card</option>
+                        <option value="passport">Passport</option>
+                        <option value="driving_license">Driving License</option>
+                        <option value="voter_id">Voter ID</option>
+                        <option value="bank_passbook">Bank Passbook</option>
+                        <option value="photo">Photo</option>
+                        <option value="resume">Resume</option>
+                        <option value="education_certificate">Education Certificate</option>
+                        <option value="experience_letter">Experience Letter</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Document Number</label>
+                    <input type="text" id="editDocNumber">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Issue Date</label>
+                        <input type="date" id="editIssueDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="date" id="editExpiryDate">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Remarks</label>
+                    <textarea id="editDocRemarks" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                <button type="button" class="btn" onclick="closeModal('editDocModal')"
+                    style="background:#ccc;color:#333;">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modern Confirmation Modal -->
+    <div id="confirmModal" class="confirm-modal">
+        <div class="confirm-dialog">
+            <div class="confirm-header">
+                <div class="confirm-icon">⚙️</div>
+                <h3 class="confirm-title" id="confirmTitle">Confirm Action</h3>
+            </div>
+            <div class="confirm-body">
+                <div class="confirm-message" id="confirmMessage"></div>
+                <div class="confirm-details" id="confirmDetails" style="display:none;"></div>
+            </div>
+            <div class="confirm-footer">
+                <button class="confirm-btn confirm-btn-cancel" id="confirmCancel">Cancel</button>
+                <button class="confirm-btn confirm-btn-ok" id="confirmOk">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+        // Initialize sidebar
+        document.addEventListener('DOMContentLoaded', function () { initSidebar(); });
+
+        const API_BASE = '/api/salary';
+
+        // Cache variables for data access
+        let cachedSalaryStructures = [];
+        let cachedDocuments = [];
+        let cachedDocumentsEmployee = '';
+        let editSalaryId = null; // Track if we're editing an existing salary structure
+
+        // View/Edit Salary Structure - Populate form using index
+        function viewSalaryStructure(index) {
+            const s = cachedSalaryStructures[index];
+            if (!s) { showToast('Error: Structure not found', 'error'); return; }
+
+            // Update both hidden select and visible search input
+            document.getElementById('employeeId').value = s.employee_id;
+            const searchInput = document.getElementById('employeeId_search');
+            if (searchInput) {
+                searchInput.value = `${s.employee_code} - ${s.full_name}`;
+            }
+
+            document.getElementById('basicSalary').value = s.basic_salary;
+            document.getElementById('hra').value = s.hra || 0;
+            document.getElementById('da').value = s.da || 0;
+            document.getElementById('medicalAllowance').value = s.medical_allowance || 0;
+            document.getElementById('transportAllowance').value = s.transport_allowance || 0;
+            document.getElementById('otherAllowances').value = s.other_allowances || 0;
+            document.getElementById('pfDeduction').value = s.pf_deduction || 0;
+            document.getElementById('esiDeduction').value = s.esi_deduction || 0;
+            document.getElementById('professionalTax').value = s.professional_tax || 0;
+            document.getElementById('tdsDeduction').value = s.tds_deduction || 0;
+            document.getElementById('effectiveFrom').value = s.effective_from ? s.effective_from.split('T')[0] : '';
+
+            // Track that we're editing this salary structure
+            editSalaryId = s.salary_id;
+
+            // Scroll to form
+            document.querySelector('#salaryStructure .card').scrollIntoView({ behavior: 'smooth' });
+            showToast('Editing salary structure. Changes will update the existing record.', 'info');
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'monthly-salary') {
+                const now = new Date();
+                document.getElementById('salaryMonth').value = String(now.getMonth() + 1).padStart(2, '0');
+                document.getElementById('salaryYear').value = now.getFullYear();
+            } else if (tabName === 'advances') {
+                loadAdvances();
+            } else if (tabName === 'salary-structure') {
+                loadSalaryStructures();
+            }
+        }
+
+        // Employee data cache for searchable dropdowns
+        let allEmployees = [];
+
+        // Load Employees into searchable dropdowns
+        async function loadEmployees() {
+            try {
+                const res = await fetch('/api/attendance/employees?status=active', { credentials: 'include' });
+                const data = await res.json();
+                if (data.success) {
+                    allEmployees = data.data;
+
+                    // Create searchable dropdowns for these IDs
+                    const selectIds = ['employeeId', 'advanceEmployeeId', 'bankEmployeeId', 'docEmployeeId', 'viewDocEmployeeId'];
+
+                    selectIds.forEach(id => {
+                        const selectEl = document.getElementById(id);
+                        if (selectEl) {
+                            createSearchableDropdown(selectEl, id);
+                        }
+                    });
+                }
+            } catch (err) { console.error('Error loading employees:', err); }
+        }
+
+        // Create searchable dropdown from select element
+        function createSearchableDropdown(selectEl, id) {
+            // Create wrapper
+            const wrapper = document.createElement('div');
+            wrapper.className = 'search-select-wrapper';
+            selectEl.parentNode.insertBefore(wrapper, selectEl);
+
+            // Create hidden select for value
+            selectEl.style.display = 'none';
+            wrapper.appendChild(selectEl);
+
+            // Create search input
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Type to search employee...';
+            input.id = id + '_search';
+            input.autocomplete = 'off';
+            wrapper.appendChild(input);
+
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'search-dropdown';
+            dropdown.id = id + '_dropdown';
+            wrapper.appendChild(dropdown);
+
+            // Populate select options
+            selectEl.innerHTML = '<option value="">-- Select Employee --</option>';
+            allEmployees.forEach(emp => {
+                selectEl.innerHTML += `<option value="${emp.employee_id}">${emp.employee_code} - ${emp.full_name}</option>`;
+            });
+
+            // Filter and show dropdown on input
+            input.addEventListener('focus', () => {
+                filterDropdown(input, dropdown, selectEl, id);
+                dropdown.classList.add('show');
+            });
+
+            input.addEventListener('input', () => {
+                filterDropdown(input, dropdown, selectEl, id);
+                dropdown.classList.add('show');
+            });
+
+            // Hide dropdown on blur
+            input.addEventListener('blur', () => {
+                setTimeout(() => dropdown.classList.remove('show'), 200);
+            });
+        }
+
+        // Filter dropdown items
+        function filterDropdown(input, dropdown, selectEl, id) {
+            const query = input.value.toLowerCase();
+            let html = '';
+
+            allEmployees.forEach(emp => {
+                const text = `${emp.employee_code} - ${emp.full_name}`.toLowerCase();
+                if (text.includes(query) || query === '') {
+                    const isSelected = selectEl.value == emp.employee_id ? 'selected' : '';
+                    html += `<div class="search-dropdown-item ${isSelected}" data-value="${emp.employee_id}" data-text="${emp.employee_code} - ${emp.full_name}">
+                        ${emp.employee_code} - ${emp.full_name}
+                    </div>`;
+                }
+            });
+
+            dropdown.innerHTML = html || '<div class="search-dropdown-item" style="color:#888;">No employees found</div>';
+
+            // Add click handlers
+            dropdown.querySelectorAll('.search-dropdown-item[data-value]').forEach(item => {
+                item.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    const value = item.dataset.value;
+                    const text = item.dataset.text;
+                    selectEl.value = value;
+                    input.value = text;
+                    dropdown.classList.remove('show');
+
+                    // Trigger change event for any handlers
+                    selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+
+                    // Call specific handlers based on id
+                    if (id === 'bankEmployeeId') loadBankDetails(value);
+                    if (id === 'docEmployeeId') onDocEmployeeChange(value);
+                    if (id === 'viewDocEmployeeId') loadEmployeeDocuments(value);
+                });
+            });
+        }
+
+        // Salary Structure Form
+        document.getElementById('salaryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                employee_id: document.getElementById('employeeId').value,
+                basic_salary: parseFloat(document.getElementById('basicSalary').value) || 0,
+                hra: parseFloat(document.getElementById('hra').value) || 0,
+                da: parseFloat(document.getElementById('da').value) || 0,
+                medical_allowance: parseFloat(document.getElementById('medicalAllowance').value) || 0,
+                transport_allowance: parseFloat(document.getElementById('transportAllowance').value) || 0,
+                other_allowances: parseFloat(document.getElementById('otherAllowances').value) || 0,
+                pf_deduction: parseFloat(document.getElementById('pfDeduction').value) || 0,
+                esi_deduction: parseFloat(document.getElementById('esiDeduction').value) || 0,
+                professional_tax: parseFloat(document.getElementById('professionalTax').value) || 0,
+                tds_deduction: parseFloat(document.getElementById('tdsDeduction').value) || 0,
+                effective_from: document.getElementById('effectiveFrom').value
+            };
+
+            if (!data.employee_id) {
+                showToast('Please select an employee', 'error');
+                return;
+            }
+            if (!data.effective_from) {
+                showToast('Please select effective date', 'error');
+                return;
+            }
+
+            try {
+                // Use PUT if editing existing, POST for new
+                const isEditing = editSalaryId !== null;
+                const url = isEditing ? `${API_BASE}/structure/${editSalaryId}` : `${API_BASE}/structure`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast(isEditing ? 'Salary structure updated!' : 'Salary structure created!', 'success');
+                    document.getElementById('salaryForm').reset();
+                    editSalaryId = null; // Reset edit mode
+                    loadSalaryStructures();
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                console.error('Save error:', err);
+                showToast('Error: ' + err.message, 'error');
+            }
+        });
+
+        // Load Salary Structures
+        async function loadSalaryStructures() {
+            try {
+                const res = await fetch(`${API_BASE}/structure?is_active=true`, { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('salaryStructureList');
+                if (data.success && data.data.length > 0) {
+                    cachedSalaryStructures = data.data;
+                    let html = '<table><thead><tr><th>Employee</th><th>Basic</th><th>Gross</th><th>Deductions</th><th>Net</th><th>Per Day</th><th>Effective</th><th>Actions</th></tr></thead><tbody>';
+                    data.data.forEach((s, index) => {
+                        html += `<tr>
+                            <td><strong>${s.full_name}</strong><br><small style="color:#888">${s.employee_code}</small></td>
+                            <td>₹${parseFloat(s.basic_salary).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.gross_salary).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.total_deductions).toLocaleString('en-IN')}</td>
+                            <td><strong>₹${parseFloat(s.net_salary).toLocaleString('en-IN')}</strong></td>
+                            <td>₹${parseFloat(s.per_day_salary).toFixed(2)}</td>
+                            <td>${new Date(s.effective_from).toLocaleDateString('en-IN')}</td>
+                            <td>
+                                <button class="action-btn btn-primary" onclick="viewSalaryStructure(${index})">✏️ Edit</button>
+                                <button class="action-btn btn-danger" onclick="deleteSalaryStructure(${s.salary_id}, '${s.full_name}')" style="background:#FFEBEE;color:#C62828;margin-left:5px;">🗑️</button>
+                            </td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    cachedSalaryStructures = [];
+                    container.innerHTML = '<div class="loading">No salary structures found</div>';
+                }
+            } catch (err) { console.error('Error loading salary structures:', err); }
+        }
+
+        // Delete Salary Structure
+        async function deleteSalaryStructure(salaryId, employeeName) {
+            const confirmed = await showConfirm(
+                'Delete Salary Structure',
+                `Delete salary structure for <strong>${employeeName}</strong>?`,
+                '• This will deactivate the salary structure<br>• Data is preserved for records'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/structure/${salaryId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Salary structure deleted!', 'success');
+                    loadSalaryStructures();
+                } else {
+                    showToast('Error: ' + (result.error || 'Delete failed'), 'error');
+                }
+            } catch (err) {
+                showToast('Error: ' + err.message, 'error');
+            }
+        }
+
+        // Process Monthly Salary
+        async function processMonthlySalary() {
+            const month = document.getElementById('salaryMonth').value;
+            const year = document.getElementById('salaryYear').value;
+            if (!confirm(`Process salary for ${month}/${year}?`)) return;
+            try {
+                const res = await fetch(`${API_BASE}/process-month`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ month, year })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    viewMonthlySalary();
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        // View Monthly Salary
+        async function viewMonthlySalary() {
+            const month = document.getElementById('salaryMonth').value;
+            const year = document.getElementById('salaryYear').value;
+            try {
+                const res = await fetch(`${API_BASE}/monthly?month=${month}&year=${year}`, { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('monthlySalaryList');
+                if (data.success && data.data.length > 0) {
+                    let html = '<table><thead><tr><th>Employee</th><th>Present</th><th>Absent</th><th>Earned</th><th>Deductions</th><th>Advance</th><th>Net</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+                    data.data.forEach(s => {
+                        html += `<tr>
+                            <td><strong>${s.full_name}</strong><br><small style="color:#888">${s.employee_code}</small></td>
+                            <td>${s.present_days || 0}</td>
+                            <td>${s.absent_days || 0}</td>
+                            <td>₹${parseFloat(s.earned_salary || 0).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.total_deductions || 0).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.advance_deduction || 0).toLocaleString('en-IN')}</td>
+                            <td><strong>₹${parseFloat(s.net_payable || 0).toLocaleString('en-IN')}</strong></td>
+                            <td><span class="badge badge-${s.status === 'paid' ? 'success' : 'warning'}">${s.status}</span></td>
+                            <td>${s.status !== 'paid'
+                                ? `<button class="action-btn btn-success" onclick="markAsPaid(${s.register_id})">✓ Paid</button>`
+                                : `<button class="action-btn btn-warning" onclick="markAsUnpaid(${s.register_id})" style="background:#FFF3E0;color:#E65100;">↩ Undo</button>`}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="loading">No salary records. Click "Process Salary" first.</div>';
+                }
+            } catch (err) { console.error('Error loading monthly salary:', err); }
+        }
+
+        // Mark as Paid
+        async function markAsPaid(registerId) {
+            const paymentMode = prompt('Payment mode (bank_transfer/cash/cheque/upi):', 'bank_transfer');
+            if (!paymentMode) return;
+            const transactionRef = prompt('Transaction reference (optional):');
+            try {
+                const res = await fetch(`${API_BASE}/mark-paid`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        register_id: registerId,
+                        payment_mode: paymentMode,
+                        transaction_reference: transactionRef,
+                        payment_date: new Date().toISOString().split('T')[0]
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Salary marked as paid!', 'success');
+                    viewMonthlySalary();
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        // Mark as Unpaid (Undo payment)
+        async function markAsUnpaid(registerId) {
+            if (!confirm('Are you sure you want to mark this salary as unpaid? This will revert the payment status.')) return;
+            try {
+                const res = await fetch(`${API_BASE}/mark-unpaid`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ register_id: registerId })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Salary marked as unpaid!', 'success');
+                    viewMonthlySalary();
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        // Advance Form
+        document.getElementById('advanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                employee_id: document.getElementById('advanceEmployeeId').value,
+                advance_amount: parseFloat(document.getElementById('advanceAmount').value) || 0,
+                advance_date: document.getElementById('advanceDate').value,
+                reason: document.getElementById('advanceReason').value,
+                installments: parseInt(document.getElementById('installments').value) || 1,
+                recovery_start_month: document.getElementById('recoveryStartMonth').value + '-01'
+            };
+            try {
+                const res = await fetch(`${API_BASE}/advances`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Advance request created!', 'success');
+                    document.getElementById('advanceForm').reset();
+                    loadAdvances();
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        });
+
+        // Load Advances
+        async function loadAdvances() {
+            try {
+                const res = await fetch(`${API_BASE}/advances`, { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('advancesList');
+                if (data.success && data.data.length > 0) {
+                    let html = '<table><thead><tr><th>Employee</th><th>Amount</th><th>Installments</th><th>Recovered</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+                    data.data.forEach(a => {
+                        html += `<tr>
+                            <td><strong>${a.full_name}</strong><br><small style="color:#888">${a.employee_code}</small></td>
+                            <td>₹${parseFloat(a.advance_amount).toLocaleString('en-IN')}</td>
+                            <td>${a.installments} × ₹${parseFloat(a.installment_amount).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(a.recovered_amount || 0).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(a.balance_amount).toLocaleString('en-IN')}</td>
+                            <td><span class="badge badge-${a.status === 'recovered' ? 'success' : a.status === 'approved' ? 'info' : 'warning'}">${a.status}</span></td>
+                            <td>${a.status === 'pending' ? `
+                                <button class="action-btn btn-success" onclick="approveAdvance(${a.advance_id})">✓</button>
+                                <button class="action-btn btn-danger" onclick="rejectAdvance(${a.advance_id})">✗</button>
+                            ` : `<button class="action-btn btn-primary" onclick="viewRecoverySchedule(${a.advance_id})">View</button>`}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="loading">No advance requests found</div>';
+                }
+            } catch (err) { console.error('Error loading advances:', err); }
+        }
+
+        async function approveAdvance(id) {
+            if (!confirm('Approve this advance?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/advances/${id}/approve`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ approved_by: 1 }) });
+                const result = await res.json();
+                if (result.success) { showToast('Advance approved!', 'success'); loadAdvances(); }
+                else { showToast('Error: ' + (result.error || 'Unknown error'), 'error'); }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        async function rejectAdvance(id) {
+            const reason = prompt('Rejection reason:');
+            if (!reason) return;
+            try {
+                const res = await fetch(`${API_BASE}/advances/${id}/reject`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ rejection_reason: reason }) });
+                const result = await res.json();
+                if (result.success) { showToast('Advance rejected!', 'success'); loadAdvances(); }
+                else { showToast('Error: ' + (result.error || 'Unknown error'), 'error'); }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        async function viewRecoverySchedule(id) {
+            try {
+                const res = await fetch(`${API_BASE}/advances/${id}/recovery-schedule`, { credentials: 'include' });
+                const data = await res.json();
+                if (data.success) {
+                    let html = '<table><thead><tr><th>Month</th><th>Scheduled</th><th>Recovered</th><th>Status</th></tr></thead><tbody>';
+                    data.data.forEach(s => {
+                        html += `<tr>
+                            <td>${new Date(s.recovery_month).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</td>
+                            <td>₹${parseFloat(s.scheduled_amount).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.recovered_amount || 0).toLocaleString('en-IN')}</td>
+                            <td><span class="badge badge-${s.status === 'recovered' ? 'success' : 'warning'}">${s.status}</span></td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    document.getElementById('advanceModalContent').innerHTML = html;
+                    document.getElementById('advanceModal').classList.add('active');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        // Bank Details Form
+        document.getElementById('bankForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                employee_id: document.getElementById('bankEmployeeId').value,
+                account_number: document.getElementById('accountNumber').value,
+                account_holder_name: document.getElementById('accountHolderName').value,
+                ifsc_code: document.getElementById('ifscCode').value,
+                bank_name: document.getElementById('bankName').value,
+                branch_name: document.getElementById('branchName').value,
+                account_type: document.getElementById('accountType').value,
+                pan_number: document.getElementById('panNumber').value,
+                aadhar_number: document.getElementById('aadharNumber').value
+            };
+            try {
+                const res = await fetch(`${API_BASE}/bank-details`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Bank details saved!', 'success');
+                    document.getElementById('bankForm').reset();
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        });
+
+        // Load existing bank details when employee selected
+        async function loadBankDetails(empId) {
+            if (!empId) return;
+            try {
+                const res = await fetch(`${API_BASE}/bank-details/${empId}`, { credentials: 'include' });
+                const result = await res.json();
+                if (result.success && result.data) {
+                    const d = result.data;
+                    document.getElementById('accountNumber').value = d.account_number || '';
+                    document.getElementById('accountHolderName').value = d.account_holder_name || '';
+                    document.getElementById('ifscCode').value = d.ifsc_code || '';
+                    document.getElementById('bankName').value = d.bank_name || '';
+                    document.getElementById('branchName').value = d.branch_name || '';
+                    document.getElementById('accountType').value = d.account_type || 'savings';
+                    document.getElementById('panNumber').value = d.pan_number || '';
+                    document.getElementById('aadharNumber').value = d.aadhar_number || '';
+                    showToast('Existing bank details loaded', 'info');
+                } else {
+                    // Clear form for new entry
+                    document.getElementById('accountNumber').value = '';
+                    document.getElementById('accountHolderName').value = '';
+                    document.getElementById('ifscCode').value = '';
+                    document.getElementById('bankName').value = '';
+                    document.getElementById('branchName').value = '';
+                    document.getElementById('accountType').value = 'savings';
+                    document.getElementById('panNumber').value = '';
+                    document.getElementById('aadharNumber').value = '';
+                }
+            } catch (err) { console.error('Error loading bank details:', err); }
+        }
+
+        // Document Upload Form (Additional documents)
+        document.getElementById('documentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const empId = document.getElementById('docEmployeeId').value;
+            if (!empId) {
+                showToast('Please select an employee first', 'error');
+                return;
+            }
+            const files = document.getElementById('documentFile').files;
+            if (files.length === 0) {
+                showToast('Please select a file to upload', 'error');
+                return;
+            }
+
+            let uploadCount = 0;
+            for (let i = 0; i < files.length; i++) {
+                const formData = new FormData();
+                formData.append('employee_id', empId);
+                formData.append('document_type', document.getElementById('documentType').value);
+                formData.append('document_number', document.getElementById('documentNumber').value);
+                formData.append('issue_date', document.getElementById('issueDate').value);
+                formData.append('expiry_date', document.getElementById('expiryDate').value);
+                formData.append('remarks', document.getElementById('documentRemarks').value);
+                formData.append('document', files[i]);
+                try {
+                    const res = await fetch(`${API_BASE}/documents/upload`, { method: 'POST', credentials: 'include', body: formData });
+                    const result = await res.json();
+                    if (result.success) uploadCount++;
+                } catch (err) { console.error('Upload error:', err); }
+            }
+            showToast(`${uploadCount} document(s) uploaded!`, 'success');
+            document.getElementById('documentForm').reset();
+            loadEmployeeDocuments(empId);
+            checkMandatoryDocs(empId);
+        });
+
+        // On Employee Selection - Check mandatory docs and show upload section
+        async function onDocEmployeeChange(empId) {
+            if (!empId) {
+                document.getElementById('docUploadSection').style.display = 'none';
+                document.getElementById('selectEmployeeMsg').style.display = 'block';
+                document.getElementById('mandatoryDocsCard').style.display = 'none';
+                return;
+            }
+            document.getElementById('docUploadSection').style.display = 'block';
+            document.getElementById('selectEmployeeMsg').style.display = 'none';
+            document.getElementById('mandatoryDocsCard').style.display = 'block';
+
+            // Check mandatory docs status
+            await checkMandatoryDocs(empId);
+        }
+
+        // Check Mandatory Documents Status
+        async function checkMandatoryDocs(empId) {
+            try {
+                const res = await fetch(`${API_BASE}/documents/${empId}`, { credentials: 'include' });
+                const data = await res.json();
+
+                let hasAadhar = false, hasPan = false, hasBank = false;
+
+                if (data.success && data.data.length > 0) {
+                    data.data.forEach(doc => {
+                        if (doc.document_type === 'aadhar') hasAadhar = true;
+                        if (doc.document_type === 'pan') hasPan = true;
+                        if (doc.document_type === 'bank_passbook') hasBank = true;
+                    });
+                }
+
+                // Update status badges
+                updateDocStatus('statusAadhar', 'uploadAadhar', 'aadharStatus', hasAadhar);
+                updateDocStatus('statusPan', 'uploadPan', 'panStatus', hasPan);
+                updateDocStatus('statusBank', 'uploadBank', 'bankStatus', hasBank);
+
+                // Update card border color based on completion
+                const allComplete = hasAadhar && hasPan && hasBank;
+                document.getElementById('mandatoryDocsCard').style.borderLeftColor = allComplete ? 'var(--success)' : 'var(--warning)';
+                document.getElementById('mandatoryDocsCard').querySelector('h2').textContent = allComplete ? '✅ All Mandatory Documents Uploaded' : '⚠️ Mandatory Documents Status';
+
+            } catch (err) { console.error('Error checking mandatory docs:', err); }
+        }
+
+        function updateDocStatus(statusId, uploadRowId, uploadStatusId, hasDoc) {
+            const statusEl = document.getElementById(statusId);
+            const uploadRow = document.getElementById(uploadRowId);
+            const uploadStatus = document.getElementById(uploadStatusId);
+
+            if (hasDoc) {
+                statusEl.querySelector('.doc-badge').className = 'doc-badge success';
+                statusEl.querySelector('.doc-badge').textContent = '✅ Uploaded';
+                uploadRow.style.opacity = '0.5';
+                uploadStatus.innerHTML = '<span style="color: var(--success);">✅ Already uploaded</span>';
+            } else {
+                statusEl.querySelector('.doc-badge').className = 'doc-badge pending';
+                statusEl.querySelector('.doc-badge').textContent = '❌ Missing';
+                uploadRow.style.opacity = '1';
+                uploadStatus.innerHTML = '';
+            }
+        }
+
+        // Upload Mandatory Documents
+        async function uploadMandatoryDocs() {
+            const empId = document.getElementById('docEmployeeId').value;
+            if (!empId) {
+                showToast('Please select an employee first', 'error');
+                return;
+            }
+
+            const aadharFile = document.getElementById('aadharFile').files[0];
+            const panFile = document.getElementById('panFile').files[0];
+            const bankFile = document.getElementById('bankFile').files[0];
+
+            const aadharNum = document.getElementById('aadharDocNumber').value;
+            const panNum = document.getElementById('panDocNumber').value;
+            const bankNum = document.getElementById('bankDocNumber').value;
+
+            let uploadedCount = 0;
+            let errors = [];
+
+            // Upload Aadhar
+            if (aadharFile) {
+                try {
+                    const formData = new FormData();
+                    formData.append('employee_id', empId);
+                    formData.append('document_type', 'aadhar');
+                    formData.append('document_number', aadharNum);
+                    formData.append('document', aadharFile);
+                    const res = await fetch(`${API_BASE}/documents/upload`, { method: 'POST', credentials: 'include', body: formData });
+                    const result = await res.json();
+                    if (result.success) uploadedCount++;
+                    else errors.push('Aadhar: ' + result.error);
+                } catch (err) { errors.push('Aadhar upload failed'); }
+            }
+
+            // Upload PAN
+            if (panFile) {
+                try {
+                    const formData = new FormData();
+                    formData.append('employee_id', empId);
+                    formData.append('document_type', 'pan');
+                    formData.append('document_number', panNum);
+                    formData.append('document', panFile);
+                    const res = await fetch(`${API_BASE}/documents/upload`, { method: 'POST', credentials: 'include', body: formData });
+                    const result = await res.json();
+                    if (result.success) uploadedCount++;
+                    else errors.push('PAN: ' + result.error);
+                } catch (err) { errors.push('PAN upload failed'); }
+            }
+
+            // Upload Bank Passbook
+            if (bankFile) {
+                try {
+                    const formData = new FormData();
+                    formData.append('employee_id', empId);
+                    formData.append('document_type', 'bank_passbook');
+                    formData.append('document_number', bankNum);
+                    formData.append('document', bankFile);
+                    const res = await fetch(`${API_BASE}/documents/upload`, { method: 'POST', credentials: 'include', body: formData });
+                    const result = await res.json();
+                    if (result.success) uploadedCount++;
+                    else errors.push('Bank: ' + result.error);
+                } catch (err) { errors.push('Bank upload failed'); }
+            }
+
+            if (uploadedCount > 0) {
+                showToast(`${uploadedCount} mandatory document(s) uploaded!`, 'success');
+            }
+            if (errors.length > 0) {
+                showToast('Some uploads failed: ' + errors.join(', '), 'error');
+            }
+            if (uploadedCount === 0 && errors.length === 0) {
+                showToast('Please select at least one file to upload', 'warning');
+            }
+
+            // Clear file inputs
+            document.getElementById('aadharFile').value = '';
+            document.getElementById('panFile').value = '';
+            document.getElementById('bankFile').value = '';
+
+            // Refresh status
+            await checkMandatoryDocs(empId);
+            loadEmployeeDocuments(empId);
+        }
+
+        // Load Employee Documents
+        async function loadEmployeeDocuments(empId) {
+            if (!empId) {
+                document.getElementById('documentsList').innerHTML = '<div class="loading">Select an employee</div>';
+                cachedDocuments = [];
+                cachedDocumentsEmployee = '';
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/documents/${empId}`, { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('documentsList');
+
+                // Get employee name for PDF export
+                const empSelect = document.getElementById('viewDocEmployeeId');
+                cachedDocumentsEmployee = empSelect.options[empSelect.selectedIndex]?.text || 'Employee';
+
+                if (data.success && data.data.length > 0) {
+                    cachedDocuments = data.data;
+                    let html = '<table><thead><tr><th>Type</th><th>Name</th><th>Number</th><th>Issue Date</th><th>Expiry Date</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>';
+                    data.data.forEach((d, index) => {
+                        const issueDate = d.issue_date ? new Date(d.issue_date).toLocaleDateString('en-IN') : '-';
+                        const expiryDate = d.expiry_date ? new Date(d.expiry_date).toLocaleDateString('en-IN') : '-';
+                        html += `<tr>
+                            <td>${d.document_type}</td>
+                            <td>${d.document_name}</td>
+                            <td>${d.document_number || '-'}</td>
+                            <td>${issueDate}</td>
+                            <td>${expiryDate}</td>
+                            <td>${new Date(d.uploaded_at).toLocaleDateString('en-IN')}</td>
+                            <td>
+                                <button class="action-btn btn-primary" onclick="viewDocument('${d.file_path}')">👁️ View</button>
+                                <button class="action-btn btn-success" onclick="openEditDoc(${index})">✏️ Edit</button>
+                                <button class="action-btn btn-danger" onclick="deleteDocument(${d.document_id})">🗑️</button>
+                            </td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    cachedDocuments = [];
+                    container.innerHTML = '<div class="loading">No documents found</div>';
+                }
+            } catch (err) { console.error('Error loading documents:', err); }
+        }
+
+        // View Document - Open in new tab
+        function viewDocument(filePath) {
+            window.open(`${API_BASE}/documents/file/${filePath}`, '_blank');
+        }
+
+        // Open Edit Document Modal
+        function openEditDoc(index) {
+            const doc = cachedDocuments[index];
+            if (!doc) { showToast('Error: Document not found', 'error'); return; }
+            document.getElementById('editDocId').value = doc.document_id;
+            document.getElementById('editDocEmployeeId').value = doc.employee_id;
+            document.getElementById('editDocType').value = doc.document_type;
+            document.getElementById('editDocNumber').value = doc.document_number || '';
+            document.getElementById('editIssueDate').value = doc.issue_date ? doc.issue_date.split('T')[0] : '';
+            document.getElementById('editExpiryDate').value = doc.expiry_date ? doc.expiry_date.split('T')[0] : '';
+            document.getElementById('editDocRemarks').value = doc.remarks || '';
+            document.getElementById('editDocModal').classList.add('active');
+        }
+
+        // Edit Document Form Submit
+        document.getElementById('editDocForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const docId = document.getElementById('editDocId').value;
+            const empId = document.getElementById('editDocEmployeeId').value;
+            const data = {
+                document_type: document.getElementById('editDocType').value,
+                document_number: document.getElementById('editDocNumber').value,
+                issue_date: document.getElementById('editIssueDate').value || null,
+                expiry_date: document.getElementById('editExpiryDate').value || null,
+                remarks: document.getElementById('editDocRemarks').value
+            };
+            try {
+                const res = await fetch(`${API_BASE}/documents/${docId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Document updated successfully!', 'success');
+                    closeModal('editDocModal');
+                    loadEmployeeDocuments(empId);
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        });
+
+        async function deleteDocument(id) {
+            if (!confirm('Delete this document?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/documents/${id}`, { method: 'DELETE', credentials: 'include' });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Document deleted!', 'success');
+                    loadEmployeeDocuments(document.getElementById('viewDocEmployeeId').value);
+                } else {
+                    showToast('Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // Initialize
+        loadEmployees();
+        loadSalaryStructures();
+
+        // ================================================================================
+        // EXPORT FUNCTIONS - PDF & Excel
+        // ================================================================================
+
+        // Additional cache data for exports
+        let cachedMonthlySalary = [];
+        let cachedAdvances = [];
+
+        // Export Documents to PDF - Table first, then each document on separate page
+        async function exportDocumentsPDF() {
+            if (cachedDocuments.length === 0) {
+                showToast('No documents to export. Select an employee first.', 'warning');
+                return;
+            }
+
+            showToast('Generating PDF with documents... Please wait.', 'info');
+
+            const { jsPDF } = window.jspdf;
+            // First page landscape for table
+            const doc = new jsPDF('l', 'mm', 'a4');
+
+            // Page 1: Table list (like user liked)
+            doc.setFontSize(18);
+            doc.text(`Employee Documents - ${cachedDocumentsEmployee}`, 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 14, 22);
+            doc.text(`Total Documents: ${cachedDocuments.length}`, 14, 28);
+
+            const tableData = cachedDocuments.map(d => [
+                d.document_type,
+                d.document_name,
+                d.document_number || '-',
+                d.issue_date ? new Date(d.issue_date).toLocaleDateString('en-IN') : '-',
+                d.expiry_date ? new Date(d.expiry_date).toLocaleDateString('en-IN') : '-',
+                new Date(d.uploaded_at).toLocaleDateString('en-IN'),
+                d.remarks || '-'
+            ]);
+
+            doc.autoTable({
+                head: [['Type', 'File Name', 'Doc Number', 'Issue Date', 'Expiry Date', 'Uploaded', 'Remarks']],
+                body: tableData,
+                startY: 34,
+                styles: { fontSize: 9 },
+                headStyles: { fillColor: [93, 64, 55] }
+            });
+
+            // Following pages: Each document on its own page (portrait, full size)
+            for (let i = 0; i < cachedDocuments.length; i++) {
+                const d = cachedDocuments[i];
+                const fileName = d.file_path;
+                const fileUrl = `${API_BASE}/documents/file/${fileName}`;
+                const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileName);
+
+                // Add new page in portrait for document
+                doc.addPage('a4', 'p');
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 10;
+
+                // Small header
+                doc.setFontSize(12);
+                doc.setTextColor(93, 64, 55);
+                doc.text(`${d.document_type.toUpperCase()} - ${d.document_number || 'N/A'}`, margin, 12);
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(8);
+                doc.text(`Page ${i + 2} of ${cachedDocuments.length + 1}`, pageWidth - margin - 30, 12);
+
+                if (isImage) {
+                    try {
+                        // Fetch image and convert to base64
+                        const response = await fetch(fileUrl, { credentials: 'include' });
+                        const blob = await response.blob();
+                        const base64 = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+
+                        // Get original image dimensions
+                        const img = new Image();
+                        await new Promise((resolve) => {
+                            img.onload = resolve;
+                            img.src = base64;
+                        });
+
+                        // Calculate to fill page as much as possible (original quality)
+                        const availWidth = pageWidth - (margin * 2);
+                        const availHeight = pageHeight - 20; // Space for header
+                        let imgWidth = img.width * 0.264583; // px to mm (96 DPI)
+                        let imgHeight = img.height * 0.264583;
+
+                        // Scale to fit page while maintaining aspect ratio
+                        const scaleW = availWidth / imgWidth;
+                        const scaleH = availHeight / imgHeight;
+                        const scale = Math.min(scaleW, scaleH);
+
+                        if (scale < 1) {
+                            imgWidth = imgWidth * scale;
+                            imgHeight = imgHeight * scale;
+                        }
+
+                        // Center on page
+                        const x = (pageWidth - imgWidth) / 2;
+                        const y = 18 + ((availHeight - imgHeight) / 2);
+
+                        // Add image with no compression
+                        doc.addImage(base64, 'JPEG', x, y, imgWidth, imgHeight, undefined, 'NONE');
+                    } catch (err) {
+                        doc.setFontSize(12);
+                        doc.setTextColor(200, 0, 0);
+                        doc.text('Error loading image: ' + err.message, margin, 50);
+                        doc.setTextColor(0, 0, 0);
+                    }
+                } else {
+                    // For PDF/DOC files
+                    doc.setFontSize(14);
+                    doc.text('This document is a PDF/DOC file.', margin, 50);
+                    doc.text('View in the app to open it.', margin, 62);
+                    doc.setTextColor(0, 0, 200);
+                    doc.textWithLink('Click to view: ' + d.document_name, margin, 80, { url: window.location.origin + fileUrl });
+                    doc.setTextColor(0, 0, 0);
+                }
+            }
+
+            doc.save(`Documents_${cachedDocumentsEmployee.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
+            showToast('Documents PDF exported!', 'success');
+        }
+
+        // Salary Structure Exports
+        function exportSalaryStructureExcel() {
+            if (cachedSalaryStructures.length === 0) {
+                showToast('No data to export. Load data first.', 'warning');
+                return;
+            }
+            const data = cachedSalaryStructures.map(s => ({
+                'Employee': s.full_name,
+                'Code': s.employee_code,
+                'Basic': parseFloat(s.basic_salary),
+                'HRA': parseFloat(s.hra || 0),
+                'DA': parseFloat(s.da || 0),
+                'Gross': parseFloat(s.gross_salary),
+                'PF': parseFloat(s.pf_deduction || 0),
+                'ESI': parseFloat(s.esi_deduction || 0),
+                'Deductions': parseFloat(s.total_deductions),
+                'Net Salary': parseFloat(s.net_salary),
+                'Per Day': parseFloat(s.per_day_salary),
+                'Effective From': new Date(s.effective_from).toLocaleDateString('en-IN')
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Salary Structure');
+            XLSX.writeFile(wb, `Salary_Structure_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('Excel exported successfully!', 'success');
+        }
+
+        function exportSalaryStructurePDF() {
+            if (cachedSalaryStructures.length === 0) {
+                showToast('No data to export. Load data first.', 'warning');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            doc.setFontSize(18);
+            doc.text('Salary Structure Report', 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 14, 22);
+
+            const tableData = cachedSalaryStructures.map(s => [
+                s.full_name, s.employee_code,
+                parseFloat(s.basic_salary).toLocaleString('en-IN'),
+                parseFloat(s.gross_salary).toLocaleString('en-IN'),
+                parseFloat(s.total_deductions).toLocaleString('en-IN'),
+                parseFloat(s.net_salary).toLocaleString('en-IN'),
+                parseFloat(s.per_day_salary).toFixed(2),
+                new Date(s.effective_from).toLocaleDateString('en-IN')
+            ]);
+
+            doc.autoTable({
+                head: [['Employee', 'Code', 'Basic', 'Gross', 'Deductions', 'Net', 'Per Day', 'Effective']],
+                body: tableData,
+                startY: 28,
+                styles: { fontSize: 9 },
+                headStyles: { fillColor: [93, 64, 55] }
+            });
+
+            doc.save(`Salary_Structure_${new Date().toISOString().split('T')[0]}.pdf`);
+            showToast('PDF exported successfully!', 'success');
+        }
+
+        // Monthly Salary Exports
+        const originalViewMonthlySalary = viewMonthlySalary;
+        viewMonthlySalary = async function () {
+            const month = document.getElementById('salaryMonth').value;
+            const year = document.getElementById('salaryYear').value;
+            try {
+                const res = await fetch(`${API_BASE}/monthly?month=${month}&year=${year}`, { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('monthlySalaryList');
+                if (data.success && data.data.length > 0) {
+                    cachedMonthlySalary = data.data;
+                    cachedMonthlySalary._month = month;
+                    cachedMonthlySalary._year = year;
+                    let html = '<table><thead><tr><th>Employee</th><th>Present</th><th>Absent</th><th>Earned</th><th>Deductions</th><th>Advance</th><th>Net</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+                    data.data.forEach(s => {
+                        html += `<tr>
+                            <td><strong>${s.full_name}</strong><br><small style="color:#888">${s.employee_code}</small></td>
+                            <td>${s.present_days || 0}</td>
+                            <td>${s.absent_days || 0}</td>
+                            <td>₹${parseFloat(s.earned_salary || 0).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.total_deductions || 0).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(s.advance_deduction || 0).toLocaleString('en-IN')}</td>
+                            <td><strong>₹${parseFloat(s.net_payable || 0).toLocaleString('en-IN')}</strong></td>
+                            <td><span class="badge badge-${s.status === 'paid' ? 'success' : 'warning'}">${s.status}</span></td>
+                            <td>${s.status !== 'paid'
+                                ? `<button class="action-btn btn-success" onclick="markAsPaid(${s.register_id})">✓ Paid</button>`
+                                : `<button class="action-btn btn-warning" onclick="markAsUnpaid(${s.register_id})" style="background:#FFF3E0;color:#E65100;">↩ Undo</button>`}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    cachedMonthlySalary = [];
+                    container.innerHTML = '<div class="loading">No salary records. Click "Process Salary" first.</div>';
+                }
+            } catch (err) { console.error('Error loading monthly salary:', err); }
+        };
+
+        async function processMonthlySalary() {
+            const month = document.getElementById('salaryMonth').value;
+            const year = document.getElementById('salaryYear').value;
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthName = monthNames[parseInt(month) - 1];
+
+            const confirmed = await showConfirm(
+                'Process Monthly Salary',
+                `Process salary for all employees for <strong>${monthName} ${year}</strong>?`,
+                `• Calculate salary based on attendance<br>• Deduct advances as per schedule<br>• Generate monthly payroll register`
+            );
+
+            if (!confirmed) return;
+
+            try {
+                showToast('Processing...', 'info');
+                const r = await fetch(`${API_BASE}/process-month`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ month, year })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    showToast(d.message || 'Salary processed!', 'success');
+                    await viewMonthlySalary();
+                } else {
+                    showToast(d.error || 'Failed', 'error');
+                }
+            } catch (e) { showToast('Error processing salary', 'error'); }
+        }
+
+        // Modern Confirmation Dialog
+        function showConfirm(title, message, details = '') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmModal');
+                document.getElementById('confirmTitle').textContent = title;
+                document.getElementById('confirmMessage').innerHTML = message;
+
+                const detailsEl = document.getElementById('confirmDetails');
+                if (details) {
+                    detailsEl.innerHTML = details;
+                    detailsEl.style.display = 'block';
+                } else {
+                    detailsEl.style.display = 'none';
+                }
+
+                modal.classList.add('active');
+
+                const handleOk = () => {
+                    modal.classList.remove('active');
+                    document.getElementById('confirmOk').removeEventListener('click', handleOk);
+                    document.getElementById('confirmCancel').removeEventListener('click', handleCancel);
+                    modal.removeEventListener('click', handleBackdrop);
+                    resolve(true);
+                };
+
+                const handleCancel = () => {
+                    modal.classList.remove('active');
+                    document.getElementById('confirmOk').removeEventListener('click', handleOk);
+                    document.getElementById('confirmCancel').removeEventListener('click', handleCancel);
+                    modal.removeEventListener('click', handleBackdrop);
+                    resolve(false);
+                };
+
+                const handleBackdrop = (e) => {
+                    if (e.target === modal) handleCancel();
+                };
+
+                document.getElementById('confirmOk').addEventListener('click', handleOk);
+                document.getElementById('confirmCancel').addEventListener('click', handleCancel);
+                modal.addEventListener('click', handleBackdrop);
+            });
+        }
+
+        async function markAsPaid(registerId) {
+            const confirmed = await showConfirm(
+                'Mark as Paid',
+                'Mark this salary as <strong>paid</strong>?',
+                '• Payment status will be updated<br>• Advance recovery will be marked as recovered'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const paymentDate = new Date().toISOString().split('T')[0];
+                const r = await fetch(`${API_BASE}/mark-paid`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ register_id: registerId, payment_date: paymentDate, payment_mode: 'bank_transfer' })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    showToast('Marked as paid', 'success');
+                    await viewMonthlySalary();
+                } else {
+                    showToast(d.error || 'Failed', 'error');
+                }
+            } catch (e) { showToast('Error', 'error'); }
+        }
+
+        // Mark as Unpaid (Undo payment)
+        async function markAsUnpaid(registerId) {
+            const confirmed = await showConfirm(
+                'Undo Payment',
+                'Mark this salary as <strong>unpaid</strong>?',
+                '• Payment status will be reverted to processed<br>• Advance recovery will be set back to pending'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const r = await fetch(`${API_BASE}/mark-unpaid`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ register_id: registerId })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    showToast('Marked as unpaid', 'success');
+                    await viewMonthlySalary();
+                } else {
+                    showToast(d.error || 'Failed', 'error');
+                }
+            } catch (e) { showToast('Error', 'error'); }
+        }
+
+
+        function exportMonthlySalaryExcel() {
+            if (cachedMonthlySalary.length === 0) {
+                showToast('No data to export. View register first.', 'warning');
+                return;
+            }
+            const data = cachedMonthlySalary.map(s => ({
+                'Employee': s.full_name,
+                'Code': s.employee_code,
+                'Present Days': s.present_days || 0,
+                'Absent Days': s.absent_days || 0,
+                'Leave Days': s.leave_days || 0,
+                'Earned Salary': parseFloat(s.earned_salary || 0),
+                'Deductions': parseFloat(s.total_deductions || 0),
+                'Advance': parseFloat(s.advance_deduction || 0),
+                'Net Payable': parseFloat(s.net_payable || 0),
+                'Status': s.status
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Monthly Salary');
+            XLSX.writeFile(wb, `Monthly_Salary_${cachedMonthlySalary._month}_${cachedMonthlySalary._year}.xlsx`);
+            showToast('Excel exported successfully!', 'success');
+        }
+
+        function exportMonthlySalaryPDF() {
+            if (cachedMonthlySalary.length === 0) {
+                showToast('No data to export. View register first.', 'warning');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            doc.setFontSize(18);
+            doc.text(`Monthly Salary Register - ${cachedMonthlySalary._month}/${cachedMonthlySalary._year}`, 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 14, 22);
+
+            const tableData = cachedMonthlySalary.map(s => [
+                s.full_name, s.employee_code,
+                s.present_days || 0, s.absent_days || 0,
+                parseFloat(s.earned_salary || 0).toLocaleString('en-IN'),
+                parseFloat(s.total_deductions || 0).toLocaleString('en-IN'),
+                parseFloat(s.advance_deduction || 0).toLocaleString('en-IN'),
+                parseFloat(s.net_payable || 0).toLocaleString('en-IN'),
+                s.status
+            ]);
+
+            doc.autoTable({
+                head: [['Employee', 'Code', 'Present', 'Absent', 'Earned', 'Deductions', 'Advance', 'Net', 'Status']],
+                body: tableData,
+                startY: 28,
+                styles: { fontSize: 9 },
+                headStyles: { fillColor: [93, 64, 55] }
+            });
+
+            doc.save(`Monthly_Salary_${cachedMonthlySalary._month}_${cachedMonthlySalary._year}.pdf`);
+            showToast('PDF exported successfully!', 'success');
+        }
+
+        // Advances Exports
+        const originalLoadAdvances = loadAdvances;
+        loadAdvances = async function () {
+            try {
+                const res = await fetch(`${API_BASE}/advances`, { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('advancesList');
+                if (data.success && data.data.length > 0) {
+                    cachedAdvances = data.data;
+                    let html = '<table><thead><tr><th>Employee</th><th>Amount</th><th>Installments</th><th>Recovered</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+                    data.data.forEach(a => {
+                        html += `<tr>
+                            <td><strong>${a.full_name}</strong><br><small style="color:#888">${a.employee_code}</small></td>
+                            <td>₹${parseFloat(a.advance_amount).toLocaleString('en-IN')}</td>
+                            <td>${a.installments} × ₹${parseFloat(a.installment_amount).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(a.recovered_amount || 0).toLocaleString('en-IN')}</td>
+                            <td>₹${parseFloat(a.balance_amount).toLocaleString('en-IN')}</td>
+                            <td><span class="badge badge-${a.status === 'recovered' ? 'success' : a.status === 'approved' ? 'info' : 'warning'}">${a.status}</span></td>
+                            <td>${a.status === 'pending' ? `
+                                <button class="action-btn btn-success" onclick="approveAdvance(${a.advance_id})">✓</button>
+                                <button class="action-btn btn-danger" onclick="rejectAdvance(${a.advance_id})">✗</button>
+                            ` : `<button class="action-btn btn-primary" onclick="viewRecoverySchedule(${a.advance_id})">View</button>`}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                } else {
+                    cachedAdvances = [];
+                    container.innerHTML = '<div class="loading">No advance requests found</div>';
+                }
+            } catch (err) { console.error('Error loading advances:', err); }
+        };
+
+        function exportAdvancesExcel() {
+            if (cachedAdvances.length === 0) {
+                showToast('No data to export. Load data first.', 'warning');
+                return;
+            }
+            const data = cachedAdvances.map(a => ({
+                'Employee': a.full_name,
+                'Code': a.employee_code,
+                'Advance Amount': parseFloat(a.advance_amount),
+                'Installments': a.installments,
+                'Installment Amount': parseFloat(a.installment_amount),
+                'Recovered': parseFloat(a.recovered_amount || 0),
+                'Balance': parseFloat(a.balance_amount),
+                'Status': a.status,
+                'Reason': a.reason || ''
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Advances');
+            XLSX.writeFile(wb, `Advances_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('Excel exported successfully!', 'success');
+        }
+
+        function exportAdvancesPDF() {
+            if (cachedAdvances.length === 0) {
+                showToast('No data to export. Load data first.', 'warning');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            doc.setFontSize(18);
+            doc.text('Advance Requests Report', 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 14, 22);
+
+            const tableData = cachedAdvances.map(a => [
+                a.full_name, a.employee_code,
+                parseFloat(a.advance_amount).toLocaleString('en-IN'),
+                a.installments,
+                parseFloat(a.installment_amount).toLocaleString('en-IN'),
+                parseFloat(a.recovered_amount || 0).toLocaleString('en-IN'),
+                parseFloat(a.balance_amount).toLocaleString('en-IN'),
+                a.status
+            ]);
+
+            doc.autoTable({
+                head: [['Employee', 'Code', 'Amount', 'Installments', 'Per Month', 'Recovered', 'Balance', 'Status']],
+                body: tableData,
+                startY: 28,
+                styles: { fontSize: 9 },
+                headStyles: { fillColor: [93, 64, 55] }
+            });
+
+            doc.save(`Advances_${new Date().toISOString().split('T')[0]}.pdf`);
+            showToast('PDF exported successfully!', 'success');
+        }
+    </script>
+</body>
+
+</html>

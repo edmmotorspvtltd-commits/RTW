@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selvedge Master - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3d2314 0%, #5d3a2a 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #5d3a2a;
+        }
+
+        .btn-search {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-search:hover {
+            background: #45a049;
+        }
+
+        .btn-clear {
+            background: #5d3a2a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-clear:hover {
+            background: #3d2314;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #3d2314;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: #faf8f6;
+        }
+
+        .status-active {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .status-inactive {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3d2314 0%, #5d3a2a 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-section {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-section-title {
+            color: #5d3a2a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #5d3a2a;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #f44336;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #5d3a2a;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            background: #f9f9f9;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .container {
+                padding: 0 10px;
+                margin: 15px auto;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 550px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">
+                RTWE ERP
+                <small>Textile Management</small>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+
+                <!-- Master Data - Collapsible -->
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left">
+                        <span class="category-icon">📦</span>
+                        <span>Master Data</span>
+                    </div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item active"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+
+                <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+                <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+                <a href="#" class="menu-item"><span class="icon">📦</span>Sort Master</a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Reports</div>
+                <a href="#" class="menu-item"><span class="icon">📈</span>Analytics</a>
+                <a href="#" class="menu-item"><span class="icon">📋</span>Order Reports</a>
+                <a href="#" class="menu-item"><span class="icon">💰</span>Financial</a>
+            </div>
+
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+                <a href="#" class="menu-item"><span class="icon">📜</span>Audit Logs</a>
+                <a href="#" class="menu-item"><span class="icon">⚙️</span>Settings</a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <h1>📋 Selvedge Master</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn-add" onclick="openModal()">+ Add Selvedge</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by name, code, city..." onkeyup="filterTable()">
+                <button class="btn-search" onclick="filterTable()">🔍 Search</button>
+                <button class="btn-clear" onclick="clearSearch()">✕ Clear</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Selvedge Name</th>
+                            <th>Base Color</th>
+                            <th>Width</th>
+                            <th>Weave</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Add Selvedge</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <div class="form-section">
+                    <div class="form-section-title">Selvedge Details</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Selvedge Name</label>
+                            <input type="text" class="form-input" id="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Selvedge Text</label>
+                            <input type="text" class="form-input" id="text">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Selvedge Base Color</label>
+                            <select class="form-select" id="baseColor">
+                                <option value="">Select Selvedge Base Color</option>
+                                <option value="White">White</option>
+                                <option value="Black">Black</option>
+                                <option value="Red">Red</option>
+                                <option value="Blue">Blue</option>
+                                <option value="Green">Green</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Selvedge Text Color</label>
+                            <select class="form-select" id="textColor">
+                                <option value="">Select Selvedge Text Color</option>
+                                <option value="White">White</option>
+                                <option value="Black">Black</option>
+                                <option value="Red">Red</option>
+                                <option value="Gold">Gold</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Dents</label>
+                            <input type="text" class="form-input" id="dents">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Ends per Dent</label>
+                            <input type="text" class="form-input" id="endsPerDent">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Selvedge Ends</label>
+                            <input type="text" class="form-input" id="selvedgeEnds">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Extra Ends</label>
+                            <input type="text" class="form-input" id="extraEnds">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Selvedge Width</label>
+                            <input type="text" class="form-input" id="width">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Selvedge Weave</label>
+                            <select class="form-select" id="weave">
+                                <option value="">Select Weave</option>
+                                <option value="Plain">Plain</option>
+                                <option value="Twill">Twill</option>
+                                <option value="Satin">Satin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Ends per Heald</label>
+                            <input type="text" class="form-input" id="endsPerHeald">
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="isActive" checked>
+                                <label for="isActive">Is Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-save" onclick="saveData()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+
+    <script src="js/toast.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script>
+        const API_URL = '/api/master/selvedge';
+        let allData = [];
+
+        document.addEventListener('DOMContentLoaded', loadData);
+
+        async function loadData() {
+            try {
+                const res = await fetch(API_URL);
+                const result = await res.json();
+                if (result.success) { allData = result.data; renderTable(allData); }
+                else { document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state" style="color:red">Error: ' + result.message + '</td></tr>'; }
+            } catch (error) {
+                document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state" style="color:red">Error loading data</td></tr>';
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No records found</td></tr>'; return; }
+            tbody.innerHTML = data.map((item, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${item.name || ''}</td>
+                    <td>${item.base_color || '-'}</td>
+                    <td>${item.width || '-'}</td>
+                    <td>${item.weave || '-'}</td>
+                    <td class="${item.is_active ? 'status-active' : 'status-inactive'}">${item.is_active ? 'Active' : 'Inactive'}</td>
+                    <td><button class="btn-edit" onclick="editItem(${item.id})">Edit</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function filterTable() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            renderTable(allData.filter(d => d.name.toLowerCase().includes(q)));
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            renderTable(allData);
+        }
+
+        function openModal() { clearForm(); document.getElementById('modalTitle').innerText = 'Add Selvedge'; document.getElementById('modalOverlay').classList.add('active'); }
+        function closeModal(e) { if (!e || e.target === document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('active'); }
+
+        function clearForm() {
+            ['editId', 'name', 'text', 'baseColor', 'textColor', 'dents', 'endsPerDent', 'selvedgeEnds', 'extraEnds', 'width', 'weave', 'endsPerHeald'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('isActive').checked = true;
+        }
+
+        function editItem(id) {
+            const item = allData.find(d => d.id === id);
+            if (!item) return;
+            document.getElementById('editId').value = item.id;
+            document.getElementById('name').value = item.name || '';
+            document.getElementById('text').value = item.text || '';
+            document.getElementById('baseColor').value = item.base_color || '';
+            document.getElementById('textColor').value = item.text_color || '';
+            document.getElementById('dents').value = item.dents || '';
+            document.getElementById('endsPerDent').value = item.ends_per_dent || '';
+            document.getElementById('selvedgeEnds').value = item.selvedge_ends || '';
+            document.getElementById('extraEnds').value = item.extra_ends || '';
+            document.getElementById('width').value = item.width || '';
+            document.getElementById('weave').value = item.weave || '';
+            document.getElementById('endsPerHeald').value = item.ends_per_heald || '';
+            document.getElementById('isActive').checked = item.is_active;
+            document.getElementById('modalTitle').innerText = 'Edit Selvedge';
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        async function saveData() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('name').value;
+            if (!name) { showToast('Selvedge Name is required', 'error'); return; }
+
+            const payload = {
+                name, text: document.getElementById('text').value, base_color: document.getElementById('baseColor').value,
+                text_color: document.getElementById('textColor').value, dents: document.getElementById('dents').value,
+                ends_per_dent: document.getElementById('endsPerDent').value, selvedge_ends: document.getElementById('selvedgeEnds').value,
+                extra_ends: document.getElementById('extraEnds').value, width: document.getElementById('width').value,
+                weave: document.getElementById('weave').value, ends_per_heald: document.getElementById('endsPerHeald').value,
+                is_active: document.getElementById('isActive').checked
+            };
+
+            try {
+                const res = await fetch(id ? `${API_URL}/${id}` : API_URL, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const result = await res.json();
+                if (result.success) { closeModal(); loadData(); showToast('Saved successfully!', 'success'); }
+                else { showToast('Error: ' + result.message, 'error'); }
+            } catch (error) { showToast('Failed to save', 'error'); }
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg; toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+
+</html>

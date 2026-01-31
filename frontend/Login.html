@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - RTWE ERP System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .auth-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* Left Side - Image Sidebar */
+    .image-sidebar {
+      width: 45%;
+      background: url('images/textile-bg.jpg') center center;
+      background-size: cover;
+      position: relative;
+    }
+
+    .image-sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(62, 39, 35, 0.4) 0%, rgba(93, 64, 55, 0.2) 100%);
+    }
+
+    /* Right Side - Form Area */
+    .form-area {
+      width: 55%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #FAFAFA 0%, #F5F0ED 30%, #EDE4DF 70%, #E0D5CE 100%);
+      padding: 40px;
+      position: relative;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, #5D4037 0%, #3E2723 100%);
+      color: white;
+      padding: 28px 30px;
+      text-align: center;
+    }
+
+    .login-header .logo {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .login-header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .login-header p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .login-body {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .password-toggle-link {
+      color: #8D6E63;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: normal;
+    }
+
+    .password-toggle-link:hover {
+      color: #5D4037;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: #FAFAFA;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #5D4037;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #999;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: #5D4037;
+    }
+
+    .checkbox-group .checkbox-content label {
+      display: block;
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+
+    .checkbox-group .checkbox-content small {
+      color: #888;
+      font-size: 11px;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #8D6E63 0%, #5D4037 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(93, 64, 55, 0.3);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(93, 64, 55, 0.4);
+    }
+
+    .btn-login:disabled {
+      background: #BCAAA4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .message {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+
+    .message.error {
+      background: #FFEBEE;
+      color: #C62828;
+      border: 1px solid #EF9A9A;
+    }
+
+    .message.success {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border: 1px solid #A5D6A7;
+    }
+
+    .message.info {
+      background: #E3F2FD;
+      color: #1565C0;
+      border: 1px solid #90CAF9;
+    }
+
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    .links a {
+      color: #5D4037;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 12px;
+      color: #666;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #5D4037;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 8px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      .auth-container {
+        flex-direction: column;
+      }
+
+      .image-sidebar {
+        width: 100%;
+        height: 200px;
+      }
+
+      .form-area {
+        width: 100%;
+        padding: 30px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-header {
+        padding: 24px 20px;
+      }
+
+      .login-body {
+        padding: 24px 20px;
+      }
+
+      .links {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+    }
+
+    /* 2FA Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .modal-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .code-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 8px;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 20px;
+    }
+
+    .code-input:focus {
+      outline: none;
+      border-color: #5D4037;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .modal-btn.primary {
+      background: linear-gradient(135deg, #8D6E63 0%, #5D4037 100%);
+      color: white;
+    }
+
+    .modal-btn.secondary {
+      background: #E0E0E0;
+      color: #666;
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-container">
+    <!-- Left Image Sidebar -->
+    <div class="image-sidebar"></div>
+
+    <!-- Right Form Area -->
+    <div class="form-area">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="logo">🏭</div>
+          <h1>Welcome Back</h1>
+          <p>Sign in to your account</p>
+        </div>
+
+        <div class="login-body">
+          <!-- Message Area -->
+          <div id="messageArea"></div>
+
+          <!-- Loading Indicator -->
+          <div id="loadingArea" class="loading">
+            <div class="spinner"></div>
+            <div>Logging in...</div>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="username">Username or Email</label>
+              <input type="text" id="username" name="username" required autocomplete="username"
+                placeholder="Enter your username or email" aria-label="Username or email">
+            </div>
+
+            <div class="form-group">
+              <label for="password">
+                Password
+                <span class="password-toggle-link" onclick="togglePassword()">
+                  <span id="eyeIcon">👁</span> <span id="toggleText">Show</span>
+                </span>
+              </label>
+              <input type="password" id="password" name="password" required autocomplete="current-password"
+                placeholder="Enter your password" aria-label="Password">
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="rememberMe" name="rememberMe">
+              <div class="checkbox-content">
+                <label for="rememberMe">Keep me logged in</label>
+                <small>Session will remain active for 24 hours</small>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+              Sign In
+            </button>
+          </form>
+
+          <div class="links">
+            <a href="/Forgotpassword.html">Forgot Password?</a>
+            <a href="/Register.html">Create Account</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2FA Verification Modal -->
+  <div id="twoFactorModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🔐 Two-Factor Authentication</h2>
+        <p>Enter the 6-digit code from your authenticator app</p>
+      </div>
+      <input type="text" id="twoFactorCode" class="code-input" maxlength="6" placeholder="000000" inputmode="numeric"
+        pattern="[0-9]*">
+      <div class="modal-buttons">
+        <button class="modal-btn secondary" onclick="cancel2FA()">Cancel</button>
+        <button class="modal-btn primary" onclick="verify2FA()">Verify</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      initializePage();
+    });
+
+    function initializePage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const message = urlParams.get('message');
+
+      if (message) {
+        showMessage(decodeURIComponent(message), 'info');
+      }
+
+      // Check if we're in the middle of a login redirect
+      const isLoggingIn = localStorage.getItem('isLoggingIn');
+      if (isLoggingIn) {
+        // Clear the flag and skip session check to allow redirect to complete
+        localStorage.removeItem('isLoggingIn');
+        document.getElementById('username').focus();
+      } else {
+        // DISABLED: Auto-login causes loop with expired tokens
+        // Normal flow - check if user already has a valid session
+        // const userId = localStorage.getItem('userId');
+        // if (userId) {
+        //   checkSession();
+        // } else {
+        document.getElementById('username').focus();
+        // }
+      }
+
+      document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        handleLogin();
+      });
+    }
+
+    async function checkSession() {
+      try {
+        const authToken = localStorage.getItem('authToken');
+
+        if (!authToken) {
+          clearSession();
+          return;
+        }
+
+        const response = await fetch('/api/auth/check-session', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          window.location.href = '/dashboard.html';
+        } else {
+          clearSession();
+        }
+      } catch (error) {
+        clearSession();
+      }
+    }
+
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const toggleText = document.getElementById('toggleText');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = '🙈';
+        toggleText.textContent = 'Hide';
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = '👁';
+        toggleText.textContent = 'Show';
+      }
+    }
+
+    let tempUserId = null; // Temporary storage for 2FA flow
+
+    async function handleLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      if (!username || !password) {
+        showMessage('Please enter username and password', 'error');
+        return;
+      }
+
+      if (username.length < 3) {
+        showMessage('Username must be at least 3 characters', 'error');
+        return;
+      }
+
+      setLoadingState(true);
+      clearMessage();
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username: username, password: password })
+        });
+
+        const result = await response.json();
+
+        setLoadingState(false);
+
+        if (result.success) {
+          // Check if 2FA is required
+          if (result.requires2FA) {
+            tempUserId = result.tempUserId;
+            show2FAModal();
+            return;
+          }
+
+          // Check if email verification is required
+          if (result.requiresVerification) {
+            showMessage('Please verify your email address before logging in. Check your inbox.', 'error');
+            return;
+          }
+
+          // Login successful - store JWT tokens
+          localStorage.setItem('authToken', result.token);
+          localStorage.setItem('refreshToken', result.refreshToken);
+          localStorage.setItem('userId', result.user.id);
+          localStorage.setItem('userName', result.user.fullName);
+          localStorage.setItem('userEmail', result.user.email);
+          localStorage.setItem('userRole', result.user.role);
+
+          // Set flag to prevent session check during redirect
+          localStorage.setItem('isLoggingIn', 'true');
+
+          showMessage('Login successful! Redirecting...', 'success');
+
+          // Small delay to ensure localStorage writes complete
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 100);
+
+        } else {
+          showMessage(result.error || 'Login failed. Please try again.', 'error');
+          document.getElementById('username').focus();
+        }
+
+      } catch (error) {
+        setLoadingState(false);
+        console.error('Login error:', error);
+        showMessage('An error occurred while logging in. Please try again.', 'error');
+        document.getElementById('username').focus();
+      }
+    }
+
+    // Show 2FA Modal
+    function show2FAModal() {
+      document.getElementById('twoFactorModal').classList.add('show');
+      document.getElementById('twoFactorCode').value = '';
+      document.getElementById('twoFactorCode').focus();
+    }
+
+    // Hide 2FA Modal
+    function hide2FAModal() {
+      document.getElementById('twoFactorModal').classList.remove('show');
+      tempUserId = null;
+    }
+
+    // Cancel 2FA
+    function cancel2FA() {
+      hide2FAModal();
+      setLoadingState(false);
+      showMessage('2FA verification cancelled', 'info');
+    }
+
+    // Verify 2FA Code
+    async function verify2FA() {
+      const code = document.getElementById('twoFactorCode').value.trim();
+
+      if (!code || code.length !== 6) {
+        showMessage('Please enter a valid 6-digit code', 'error');
+        return;
+      }
+
+      setLoadingState(true);
+
+      try {
+        const response = await fetch('/api/auth/verify-2fa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ userId: tempUserId, code: code })
+        });
+
+        const result = await response.json();
+
+        setLoadingState(false);
+
+        if (result.success) {
+          hide2FAModal();
+
+          // Store JWT tokens
+          localStorage.setItem('authToken', result.token);
+          localStorage.setItem('refreshToken', result.refreshToken);
+          localStorage.setItem('userId', result.user.id);
+          localStorage.setItem('userName', result.user.fullName);
+          localStorage.setItem('userEmail', result.user.email);
+          localStorage.setItem('userRole', result.user.role);
+
+          // Set flag to prevent session check during redirect
+          localStorage.setItem('isLoggingIn', 'true');
+
+          showMessage('2FA verification successful! Redirecting...', 'success');
+
+          // Small delay to ensure localStorage writes complete
+          setTimeout(() => {
+            // Role-based redirect
+            if (result.user.role === 'super_admin') {
+              window.location.href = '/user-management-enhanced.html';
+            } else {
+              window.location.href = '/dashboard.html';
+            }
+          }, 100);
+
+        } else {
+          showMessage(result.error || 'Invalid 2FA code. Please try again.', 'error');
+          document.getElementById('twoFactorCode').value = '';
+          document.getElementById('twoFactorCode').focus();
+        }
+
+      } catch (error) {
+        setLoadingState(false);
+        console.error('2FA verification error:', error);
+        showMessage('Failed to verify 2FA code. Please try again.', 'error');
+      }
+    }
+
+    function setLoadingState(isLoading) {
+      const loadingArea = document.getElementById('loadingArea');
+      const loginBtn = document.getElementById('loginBtn');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+
+      if (isLoading) {
+        loadingArea.classList.add('show');
+        loginBtn.disabled = true;
+        usernameInput.disabled = true;
+        passwordInput.disabled = true;
+      } else {
+        loadingArea.classList.remove('show');
+        loginBtn.disabled = false;
+        usernameInput.disabled = false;
+        passwordInput.disabled = false;
+      }
+    }
+
+    function showMessage(text, type) {
+      const messageArea = document.getElementById('messageArea');
+      messageArea.innerHTML = '<div class="message ' + type + '">' + escapeHtml(text) + '</div>';
+    }
+
+    function clearMessage() {
+      document.getElementById('messageArea').innerHTML = '';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function clearSession() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('sessionId');
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+        const activeElement = document.activeElement;
+        if (activeElement.tagName === 'INPUT') {
+          e.preventDefault();
+          document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costing Calculator - RTWE ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Sidebar Styles - Matching Dashboard */
+        :root {
+            --primary-dark: #3E2723;
+            --primary: #5D4037;
+            --primary-light: #8D6E63;
+            --accent: #A1887F;
+            --sidebar-bg: #2C1810;
+            --sidebar-hover: #3E2723;
+            --sidebar-active: #5D4037;
+            --bg-main: #F5F5F5;
+            --bg-card: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --text-light: #FFFFFF;
+            --border: #E0E0E0;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section-title {
+            padding: 10px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-light);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: var(--sidebar-active);
+            color: var(--text-light);
+            border-left-color: var(--text-light);
+        }
+
+        .menu-item .icon {
+            width: 24px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .menu-item-badge {
+            margin-left: auto;
+            background: #F44336;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Collapsible Menu Styles */
+        .menu-category {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-category:hover {
+            background: var(--sidebar-hover);
+            border-left-color: var(--accent);
+        }
+
+        .menu-category .category-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-category .category-icon {
+            font-size: 18px;
+        }
+
+        .menu-category .category-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-category.expanded .category-arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu.expanded {
+            max-height: 1000px;
+        }
+
+        .submenu .menu-item {
+            padding-left: 50px;
+            font-size: 13px;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: #fff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 16px 8px 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 300px;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .notification-badge {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff3e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .notification-badge .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #FF5722;
+            border-radius: 50%;
+        }
+
+        .date-time {
+            text-align: right;
+        }
+
+        .date-time .time {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .date-time .date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 32px;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #5D4037 0%, #4E342E 100%);
+            color: #fff;
+            padding: 32px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-banner h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-banner p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Cards */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Form Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .form-input {
+            padding: 10px 14px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #FF9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .input-unit {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #999;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: #FF9800;
+            background: rgba(255, 152, 0, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #FF9800;
+            border-bottom-color: #FF9800;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Checkbox Cards */
+        .checkbox-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-card:hover {
+            border-color: #FF9800;
+            background: rgba(255, 152, 0, 0.02);
+        }
+
+        .checkbox-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-card input[type="checkbox"]:checked+.checkbox-label {
+            color: #FF9800;
+            font-weight: 600;
+        }
+
+        .checkbox-label {
+            flex: 1;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .checkbox-price {
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        /* Results Panel */
+        .results-panel {
+            position: sticky;
+            top: 100px;
+        }
+
+        .metric-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 100%);
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+
+        .metric-unit {
+            font-size: 14px;
+            color: #999;
+            margin-left: 4px;
+        }
+
+        .metric-change {
+            font-size: 12px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-change.positive {
+            color: #4CAF50;
+        }
+
+        .metric-change.negative {
+            color: #F44336;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #FF9800;
+        }
+
+        .status-processing {
+            background: #e3f2fd;
+            color: #2196F3;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #FF9800;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #F57C00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #666;
+            border: 1.5px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: #FF9800;
+            color: #FF9800;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #388E3C;
+        }
+
+        /* Cost Breakdown Table */
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .breakdown-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .breakdown-table td {
+            padding: 14px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .breakdown-table tr:hover {
+            background: #fafafa;
+        }
+
+        .breakdown-table .amount {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF9800 0%, #F57C00 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Help Icon */
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #666;
+            font-size: 11px;
+            cursor: help;
+        }
+
+        /* Dynamic Add/Remove Buttons */
+        .add-tab-btn {
+            padding: 8px 16px;
+            border: 2px dashed #FF9800;
+            background: rgba(255, 152, 0, 0.05);
+            color: #FF9800;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-tab-btn:hover {
+            background: rgba(255, 152, 0, 0.1);
+            border-style: solid;
+        }
+
+        .remove-tab-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #F44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        .tab-content:hover .remove-tab-btn {
+            opacity: 1;
+        }
+
+        .tab-content {
+            position: relative;
+        }
+
+        .tab-btn-close {
+            margin-left: 8px;
+            color: #F44336;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tab-btn:hover .tab-btn-close {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .results-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 2000;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: #FF9800;
+                color: white;
+                border: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                cursor: pointer;
+                z-index: 1001;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+            }
+
+            .top-bar {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .page-title {
+                font-size: 16px;
+                width: 100%;
+            }
+
+            .search-box input {
+                width: 200px;
+            }
+
+            .date-time {
+                display: none;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
+            .welcome-banner {
+                padding: 20px;
+            }
+
+            .welcome-banner h2 {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-value {
+                font-size: 22px;
+            }
+
+            .breakdown-table {
+                font-size: 12px;
+            }
+
+            .breakdown-table th,
+            .breakdown-table td {
+                padding: 10px 8px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab-btn {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .card-actions {
+                width: 100%;
+            }
+        }
+
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+        }
+
+        .mobile-overlay.show {
+            display: block;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Auto-calculated field indicator */
+        .auto-calculated {
+            background: #e8f5e9 !important;
+            position: relative;
+        }
+
+        .auto-calculated::after {
+            content: '●';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4CAF50;
+            font-size: 10px;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+            margin: 32px 0;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ===== TOAST NOTIFICATIONS ===== */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        .toast {
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            background: white;
+            border-left: 4px solid;
+            min-width: 300px;
+        }
+
+        .toast.success {
+            border-left-color: #4CAF50;
+            background: #E8F5E9;
+        }
+
+        .toast.error {
+            border-left-color: #f44336;
+            background: #FFEBEE;
+        }
+
+        .toast.warning {
+            border-left-color: #FF9800;
+            background: #FFF3E0;
+        }
+
+        .toast.info {
+            border-left-color: #2196F3;
+            background: #E3F2FD;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon::before {
+            content: '✅';
+        }
+
+        .toast.error .toast-icon::before {
+            content: '❌';
+        }
+
+        .toast.warning .toast-icon::before {
+            content: '⚠️';
+        }
+
+        .toast.info .toast-icon::before {
+            content: 'ℹ️';
+        }
+
+        .toast-message {
+            flex: 1;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .toast-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* CONFIRM MODAL */
+        #confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: fadeIn 0.2s;
+        }
+
+        #confirm-modal.show {
+            display: flex;
+        }
+
+        .confirm-box {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 450px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .confirm-message {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .confirm-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .confirm-btn.cancel {
+            background: #E0E0E0;
+            color: #666;
+        }
+
+        .confirm-btn.cancel:hover {
+            background: #BDBDBD;
+        }
+
+        .confirm-btn.confirm {
+            background: #f44336;
+            color: white;
+        }
+
+        .confirm-btn.confirm:hover {
+            background: #d32f2f;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* INPUT MODAL */
+        #input-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: fadeIn 0.2s;
+        }
+
+        #input-modal.show {
+            display: flex;
+        }
+
+        .input-box {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .input-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .input-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .input-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .input-btn.cancel {
+            background: #E0E0E0;
+            color: #666;
+        }
+
+        .input-btn.cancel:hover {
+            background: #BDBDBD;
+        }
+
+        .input-btn.submit {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .input-btn.submit:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal">
+        <div class="confirm-box">
+            <div class="confirm-message" id="confirm-message"></div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn cancel" onclick="closeConfirm(false)">Cancel</button>
+                <button class="confirm-btn confirm" onclick="closeConfirm(true)">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Modal -->
+    <div id="input-modal">
+        <div class="input-box">
+            <div class="input-title" id="input-title"></div>
+            <input type="text" class="input-field" id="input-field" placeholder="Enter value...">
+            <div class="input-buttons">
+                <button class="input-btn cancel" onclick="closeInput(null)">Cancel</button>
+                <button class="input-btn submit" onclick="submitInput()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">
+                RTWE ERP
+                <small>Textile Management</small>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+
+                <!-- Master Data - Collapsible -->
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left">
+                        <span class="category-icon">📦</span>
+                        <span>Master Data</span>
+                    </div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <!-- ⭐ PINNED AT TOP - ADD-ON SYSTEMS ⭐ -->
+                    <a href="add-company.html" class="menu-item"><span class="icon">🏢</span>Add Company</a>
+                    <a href="user-management-enhanced.html" class="menu-item"><span class="icon">👥</span>User
+                        Management</a>
+                    <a href="costing-management.html" class="menu-item active"><span class="icon">📊</span>Costing
+                        Management</a>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;"></div>
+                    <!-- Existing Items -->
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+
+                <a href="#" class="menu-item">
+                    <span class="icon">📝</span>
+                    Enquiries
+                    <span class="badge">5</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🛒</span>
+                    Sale Orders
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📦</span>
+                    Sort Master
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Attendance & HR</div>
+                <a href="attendance-dashboard.html" class="menu-item">
+                    <span class="icon">🕒</span>
+                    Attendance Dashboard
+                </a>
+                <a href="attendance-employees.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    Employees
+                </a>
+                <a href="attendance-shifts.html" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Shift Management
+                </a>
+                <a href="attendance-leaves.html" class="menu-item">
+                    <span class="icon">🏖️</span>
+                    Leave Management
+                </a>
+                <a href="salary-management.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    Salary & Payroll
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Reports</div>
+                <a href="#" class="menu-item">
+                    <span class="icon">📈</span>
+                    Analytics
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📋</span>
+                    Order Reports
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">💰</span>
+                    Financial
+                </a>
+            </div>
+
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="/Usermanagement.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    User Management
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📜</span>
+                    Audit Logs
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-title">Costing Calculator</div>
+            <div class="top-bar-actions">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search orders, enquiries...">
+                </div>
+                <div class="notification-badge">
+                    <span>🔔</span>
+                    <span class="badge-dot"></span>
+                </div>
+                <div class="date-time">
+                    <div class="time">04:07 am</div>
+                    <div class="date">Sun 11 Jan 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <h2>🌙 Costing Calculator</h2>
+                <p>Calculate precise costing for your rapier loom fabric orders with real-time calculations</p>
+            </div>
+
+            <div class="grid-3">
+                <!-- Left Column - Input Forms -->
+                <div>
+                    <!-- Order Details Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                📋 Order Information
+                            </h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Costing No</label>
+                                <input type="text" id="costingNumber" class="form-input" placeholder="RTW/25-26/001"
+                                    readonly style="background-color: #f5f5f5; cursor: not-allowed;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Order Length (mtrs)</label>
+                                <input type="number" id="orderLength" class="form-input" value="24000"
+                                    placeholder="Enter order length">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Buyer Name</label>
+                                <select id="partyName" class="form-input">
+                                    <option value="">Select buyer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Agent Name</label>
+                                <select id="agentName" class="form-input">
+                                    <option value="">Select agent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quality/Type</label>
+                                <input type="text" id="qualityType" class="form-input" placeholder="Enter quality">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sizing Set No</label>
+                                <input type="text" id="sizingSetNo" class="form-input" placeholder="Enter set number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Warp Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                🧵 Warp Configuration
+                            </h3>
+                        </div>
+
+                        <div class="tabs" id="warpTabs">
+                            <button class="tab-btn active" data-tab="warp-1">
+                                Warp 1 (Main)
+                            </button>
+                            <button class="add-tab-btn" onclick="addWarpTab()">
+                                + Add Warp
+                            </button>
+                        </div>
+
+                        <div class="tab-content active" id="warp-1" data-warp-index="1">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Panna
+                                        <span class="help-icon">?</span>
+                                    </label>
+                                    <input type="number" class="form-input" value="63">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">RS Gap</label>
+                                    <input type="number" class="form-input" value="4">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">DBF (Auto)</label>
+                                    <input type="number" class="form-input auto-calculated" value="67" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Reed</label>
+                                    <input type="number" class="form-input" value="132">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Total Ends (Auto)</label>
+                                    <input type="number" class="form-input auto-calculated" value="8844" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Warp Count</label>
+                                    <input type="number" class="form-input" value="40">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Rate of Yarn (₹)</label>
+                                    <input type="number" class="form-input" value="215">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Rate of Sizing (₹)</label>
+                                    <input type="number" class="form-input" value="28">
+                                </div>
+                            </div>
+
+                            <div class="section-divider"></div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Warp GLM (Auto)</label>
+                                    <input type="text" class="form-input auto-calculated" value="12.4567" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Cost per Meter (₹)</label>
+                                    <input type="text" class="form-input auto-calculated" value="12.34" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Yarn Required (kgs)</label>
+                                    <input type="text" class="form-input auto-calculated" value="2,400" disabled>
+                                </div>
+                            </div>
+
+                            <div class="section-divider"></div>
+
+                            <div class="form-grid">
+                                <div class="checkbox-card">
+                                    <input type="checkbox" id="topbeam-1">
+                                    <label class="checkbox-label" for="topbeam-1">
+                                        <strong>Top Beam Charges</strong><br>
+                                        <small>Additional processing fee</small>
+                                    </label>
+                                    <span class="checkbox-price">+₹0.50</span>
+                                </div>
+                                <div class="checkbox-card">
+                                    <input type="checkbox" id="bobin-1">
+                                    <label class="checkbox-label" for="bobin-1">
+                                        <strong>Bobin Charges</strong><br>
+                                        <small>Bobin preparation fee</small>
+                                    </label>
+                                    <span class="checkbox-price">+₹0.50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weft Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                🧶 Weft Configuration
+                            </h3>
+                        </div>
+
+                        <div class="tabs" id="weftTabs">
+                            <button class="tab-btn active" data-tab="weft-1">
+                                Weft 1
+                            </button>
+                            <button class="add-tab-btn" onclick="addWeftTab()">
+                                + Add Weft
+                            </button>
+                        </div>
+
+                        <div class="tab-content active" id="weft-1" data-weft-index="1">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">RS</label>
+                                    <input type="number" class="form-input" value="66.8">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Pick</label>
+                                    <input type="number" class="form-input" value="80">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Insertion</label>
+                                    <input type="number" class="form-input" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Weft Count</label>
+                                    <input type="number" class="form-input" value="60">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Rate of Yarn (₹)</label>
+                                    <input type="number" class="form-input" value="218">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">% of Total Weft</label>
+                                    <input type="number" class="form-input" value="100" max="100">
+                                </div>
+                            </div>
+
+                            <div class="section-divider"></div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Denier</label>
+                                    <input type="number" class="form-input" value="57.77">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Cotton Rate (₹)</label>
+                                    <input type="number" class="form-input" value="0">
+                                </div>
+                            </div>
+
+                            <div class="section-divider"></div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Consumption (g/m)</label>
+                                    <input type="text" class="form-input auto-calculated" value="8.4567" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Cost per Meter (₹)</label>
+                                    <input type="text" class="form-input auto-calculated" value="18.45" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Yarn Required (kgs)</label>
+                                    <input type="text" class="form-input auto-calculated" value="1,850" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div style="padding: 16px; background: #fff3e0; border-radius: 8px; margin-top: 16px;">
+                            <strong style="color: #FF9800;">Total Weft Distribution:</strong>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                            <small style="color: #666; display: block; margin-top: 8px;">Current Total: 100% ✓</small>
+                        </div>
+                    </div>
+
+                    <!-- Optional Charges -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                ⚙️ Optional Charges & Adjustments
+                            </h3>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="monogram">
+                                <label class="checkbox-label" for="monogram">
+                                    <strong>Monogram Charges</strong><br>
+                                    <small>Custom monogram design</small>
+                                </label>
+                                <span class="checkbox-price">+₹1.00</span>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="butta">
+                                <label class="checkbox-label" for="butta">
+                                    <strong>Butta Charges</strong><br>
+                                    <small>Decorative pattern work</small>
+                                </label>
+                                <span class="checkbox-price">+₹2.00</span>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Job Rate (%)</label>
+                                <input type="number" class="form-input" value="23" id="jobRatePercent">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Job Charges (Auto)</label>
+                                <input type="text" class="form-input auto-calculated"
+                                    value="₹18.40 /mtr (0.28 paisa/pick)" disabled id="jobChargesDisplay">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Expenses (%)</label>
+                                <input type="number" class="form-input" value="5" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Brokerage (%)</label>
+                                <input type="number" class="form-input" value="1" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Vatav (%)</label>
+                                <input type="number" class="form-input" value="0" disabled>
+                            </div>
+                        </div>
+
+                        <div style="padding: 16px; background: #e8f5e9; border-radius: 8px; margin-top: 16px;">
+                            <strong style="color: #4CAF50;">📊 Job Charges Calculation:</strong>
+                            <div style="color: #666; font-size: 13px; margin-top: 8px; line-height: 1.6;">
+                                • <strong>Per Meter:</strong> Pick × Job Rate% / 100 = 80 × 23 / 100 = ₹18.40 /mtr<br>
+                                • <strong>Per Pick (Paisa):</strong> (Net Profit + Job Charges) / Pick = ₹0.28 /pick
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                💲 Pricing & Profitability
+                            </h3>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Your Selling Price (₹/mtr)</label>
+                                <input type="number" id="yourSellingPrice" class="form-input" value="58.00" step="0.01"
+                                    placeholder="Enter your selling price"
+                                    style="font-size: 18px; font-weight: 600; border-color: #4CAF50; background-color: #f0f9ff;">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <table class="breakdown-table">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Per Meter</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Warp Cost</td>
+                                    <td class="amount">₹12.34</td>
+                                    <td>27%</td>
+                                </tr>
+                                <tr>
+                                    <td>Weft Cost</td>
+                                    <td class="amount">₹18.45</td>
+                                    <td>41%</td>
+                                </tr>
+                                <tr>
+                                    <td>Sizing Charges</td>
+                                    <td class="amount">₹3.20</td>
+                                    <td>7%</td>
+                                </tr>
+                                <tr>
+                                    <td>Job Charges</td>
+                                    <td class="amount">₹8.24</td>
+                                    <td>18%</td>
+                                </tr>
+                                <tr>
+                                    <td>Other Charges</td>
+                                    <td class="amount">₹3.00</td>
+                                    <td>7%</td>
+                                </tr>
+                                <tr style="border-top: 2px solid #e0e0e0; font-weight: 600;">
+                                    <td>Production Cost</td>
+                                    <td class="amount" style="color: #FF9800;">₹45.23</td>
+                                    <td>100%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="card">
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="saveToDatabase()">
+                                💾 Save to Database
+                            </button>
+                            <button class="btn btn-success" onclick="generatePDF()">
+                                📄 Generate PDF
+                            </button>
+                            <button class="btn btn-secondary" onclick="saveAsTemplate()">
+                                📋 Save as Template
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearForm()">
+                                🔄 Clear Form
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Results Panel -->
+                <div>
+                    <div class="results-panel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">💰 Cost Summary</h3>
+                            </div>                            
+                            <!-- ? YOUR SELLING PRICE INPUT - ENTER HERE ? -->
+                            <div class="metric-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 3px solid #667eea; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                                <div class="metric-label" style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 10px; text-align: center;">
+                                    ?? ENTER YOUR SELLING PRICE (?/mtr)
+                                </div>
+                                <input type="number" id="yourSellingPrice" class="form-input" 
+                                    value="58.00" step="0.01" min="0"
+                                    placeholder="Type your price here..."
+                                    style="font-size: 32px; font-weight: 700; text-align: center; 
+                                           border: 3px solid white; background: white;
+                                           color: #667eea; padding: 16px; border-radius: 12px; width: 100%; box-sizing: border-box;"
+                                    oninput="calculateCostSummary()">
+                                <div style="color: white; font-size: 12px; margin-top: 10px; text-align: center; font-weight: 600;">
+                                    ? Calculations update automatically as you type
+                                </div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Production Cost</div>
+                                <div class="metric-value">₹45.23<span class="metric-unit">/mtr</span></div>
+                                <div style="color: #999; font-size: 12px; margin-top: 4px;">₹10,855.20 per order</div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Minimum Selling Price</div>
+                                <div class="metric-value">₹52.89<span class="metric-unit">/mtr</span></div>
+                                <div style="color: #999; font-size: 12px; margin-top: 4px;">₹12,693.60 per order</div>
+                            </div>
+
+                            <div class="metric-card" style="border: 2px solid #4CAF50;">
+                                <div class="metric-label">Your Selling Price</div>
+                                <div class="metric-value" style="color: #4CAF50;">₹58.00<span
+                                        class="metric-unit">/mtr</span></div>
+                                <div style="color: #999; font-size: 12px; margin-top: 4px;">₹13,920.00 per order</div>
+                            </div>
+
+                            <div class="metric-card"
+                                style="background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); color: white;">
+                                <div class="metric-label" style="color: rgba(255,255,255,0.8);">Net Profit</div>
+                                <div class="metric-value" style="color: white;">₹12.77<span
+                                        class="metric-unit">/mtr</span></div>
+                                <div class="metric-change positive" style="color: rgba(255,255,255,0.9);">
+                                    ↑ 22% Margin
+                                </div>
+                                <div style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 4px;">₹3,064.80
+                                    per order</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">📏 Weight Summary</h3>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">GLM per Meter</div>
+                                <div class="metric-value" style="font-size: 22px;">42.15<span
+                                        class="metric-unit">g/m</span></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">GSM per Meter</div>
+                                <div class="metric-value" style="font-size: 22px;">165.23<span
+                                        class="metric-unit">g/m²</span></div>
+                            </div>
+
+                            <div style="padding: 16px; background: #f5f5f5; border-radius: 8px; margin-top: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 13px; color: #666;">Total Warp</span>
+                                    <strong style="font-family: 'Courier New', monospace;">12.45g</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-size: 13px; color: #666;">Total Weft</span>
+                                    <strong style="font-family: 'Courier New', monospace;">29.70g</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">📦 Yarn Requirements</h3>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="padding: 12px; background: #f5f5f5; border-radius: 8px;">
+                                    <div style="font-size: 12px; color: #666; margin-bottom: 4px;">Warp 1</div>
+                                    <strong style="font-size: 18px; font-family: 'Courier New', monospace;">2,400
+                                        kgs</strong>
+                                </div>
+                                <div style="padding: 12px; background: #f5f5f5; border-radius: 8px;">
+                                    <div style="font-size: 12px; color: #666; margin-bottom: 4px;">Warp 2</div>
+                                    <strong style="font-size: 18px; font-family: 'Courier New', monospace;">850
+                                        kgs</strong>
+                                </div>
+                                <div style="padding: 12px; background: #f5f5f5; border-radius: 8px;">
+                                    <div style="font-size: 12px; color: #666; margin-bottom: 4px;">Weft 1</div>
+                                    <strong style="font-size: 18px; font-family: 'Courier New', monospace;">1,850
+                                        kgs</strong>
+                                </div>
+                                <div style="padding: 12px; background: #f5f5f5; border-radius: 8px;">
+                                    <div style="font-size: 12px; color: #666; margin-bottom: 4px;">Weft 2</div>
+                                    <strong style="font-size: 18px; font-family: 'Courier New', monospace;">920
+                                        kgs</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Counter for dynamic tabs
+        let warpCounter = 1;
+        let weftCounter = 1;
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // Tab switching functionality
+        function switchTab(tabsContainer, tabId) {
+            const allTabs = tabsContainer.querySelectorAll('.tab-btn');
+            const allContents = tabsContainer.parentElement.querySelectorAll('.tab-content');
+
+            allTabs.forEach(tab => tab.classList.remove('active'));
+            allContents.forEach(content => content.classList.remove('active'));
+
+            const selectedTab = tabsContainer.querySelector(`[data-tab="${tabId}"]`);
+            const selectedContent = document.getElementById(tabId);
+
+            if (selectedTab) selectedTab.classList.add('active');
+            if (selectedContent) selectedContent.classList.add('active');
+        }
+
+        // Add Warp Tab
+        function addWarpTab() {
+            warpCounter++;
+            const tabsContainer = document.getElementById('warpTabs');
+            const addButton = tabsContainer.querySelector('.add-tab-btn');
+            const parentCard = tabsContainer.closest('.card');
+
+            // Create new tab button
+            const newTabBtn = document.createElement('button');
+            newTabBtn.className = 'tab-btn';
+            newTabBtn.setAttribute('data-tab', `warp-${warpCounter}`);
+            newTabBtn.innerHTML = `Warp ${warpCounter} <span class="tab-btn-close" onclick="removeWarpTab(${warpCounter}, event)">×</span>`;
+            newTabBtn.onclick = function () {
+                switchTab(tabsContainer, `warp-${warpCounter}`);
+            };
+
+            // Insert before add button
+            tabsContainer.insertBefore(newTabBtn, addButton);
+
+            // Create new tab content
+            const newContent = document.createElement('div');
+            newContent.className = 'tab-content';
+            newContent.id = `warp-${warpCounter}`;
+            newContent.setAttribute('data-warp-index', warpCounter);
+            newContent.innerHTML = `
+                <button class="remove-tab-btn" onclick="removeWarpTab(${warpCounter}, event)" title="Remove this warp">×</button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Panna
+                            <span class="help-icon">?</span>
+                        </label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">RS Gap</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">DBF (Auto)</label>
+                        <input type="number" class="form-input auto-calculated" value="0" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reed</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Ends (Auto)</label>
+                        <input type="number" class="form-input auto-calculated" value="0" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warp Count</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rate of Yarn (₹)</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rate of Sizing (₹)</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Warp GLM (Auto)</label>
+                        <input type="text" class="form-input auto-calculated" value="0.0000" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cost per Meter (₹)</label>
+                        <input type="text" class="form-input auto-calculated" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Yarn Required (kgs)</label>
+                        <input type="text" class="form-input auto-calculated" value="0" disabled>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="form-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="topbeam-${warpCounter}">
+                        <label class="checkbox-label" for="topbeam-${warpCounter}">
+                            <strong>Top Beam Charges</strong><br>
+                            <small>Additional processing fee</small>
+                        </label>
+                        <span class="checkbox-price">+₹0.50</span>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="bobin-${warpCounter}">
+                        <label class="checkbox-label" for="bobin-${warpCounter}">
+                            <strong>Bobin Charges</strong><br>
+                            <small>Bobin preparation fee</small>
+                        </label>
+                        <span class="checkbox-price">+₹0.50</span>
+                    </div>
+                </div>
+            `;
+
+            // Insert after last tab content
+            const lastContent = parentCard.querySelector('.tab-content:last-of-type');
+            lastContent.parentNode.insertBefore(newContent, lastContent.nextSibling);
+
+            // Switch to new tab
+            switchTab(tabsContainer, `warp-${warpCounter}`);
+        }
+
+        // Remove Warp Tab
+        function removeWarpTab(index, event) {
+            event.stopPropagation();
+
+            const tabsContainer = document.getElementById('warpTabs');
+            const tabBtn = tabsContainer.querySelector(`[data-tab="warp-${index}"]`);
+            const tabContent = document.getElementById(`warp-${index}`);
+
+            // Don't allow removing if it's the only tab
+            const remainingTabs = tabsContainer.querySelectorAll('.tab-btn:not(.add-tab-btn)');
+            if (remainingTabs.length <= 1) {
+                alert('You must have at least one warp configuration.');
+                return;
+            }
+
+            // If active tab is being removed, switch to first tab
+            if (tabBtn.classList.contains('active')) {
+                const firstTab = tabsContainer.querySelector('.tab-btn:first-child');
+                switchTab(tabsContainer, firstTab.getAttribute('data-tab'));
+            }
+
+            // Remove elements
+            tabBtn.remove();
+            tabContent.remove();
+        }
+
+        // Add Weft Tab
+        function addWeftTab() {
+            weftCounter++;
+            const tabsContainer = document.getElementById('weftTabs');
+            const addButton = tabsContainer.querySelector('.add-tab-btn');
+            const parentCard = tabsContainer.closest('.card');
+
+            // Create new tab button
+            const newTabBtn = document.createElement('button');
+            newTabBtn.className = 'tab-btn';
+            newTabBtn.setAttribute('data-tab', `weft-${weftCounter}`);
+            newTabBtn.innerHTML = `Weft ${weftCounter} <span class="tab-btn-close" onclick="removeWeftTab(${weftCounter}, event)">×</span>`;
+            newTabBtn.onclick = function () {
+                switchTab(tabsContainer, `weft-${weftCounter}`);
+            };
+
+            // Insert before add button
+            tabsContainer.insertBefore(newTabBtn, addButton);
+
+            // Create new tab content
+            const newContent = document.createElement('div');
+            newContent.className = 'tab-content';
+            newContent.id = `weft-${weftCounter}`;
+            newContent.setAttribute('data-weft-index', weftCounter);
+            newContent.innerHTML = `
+                <button class="remove-tab-btn" onclick="removeWeftTab(${weftCounter}, event)" title="Remove this weft">×</button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">RS</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pick</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Insertion</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weft Count</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rate of Yarn (₹)</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">% of Total Weft</label>
+                        <input type="number" class="form-input" value="0" max="100">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Denier</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cotton Rate (₹)</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Consumption (g/m)</label>
+                        <input type="text" class="form-input auto-calculated" value="0.0000" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cost per Meter (₹)</label>
+                        <input type="text" class="form-input auto-calculated" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Yarn Required (kgs)</label>
+                        <input type="text" class="form-input auto-calculated" value="0" disabled>
+                    </div>
+                </div>
+            `;
+
+            // Find the weft distribution section
+            const distributionSection = parentCard.querySelector('[style*="background: #fff3e0"]');
+
+            // Insert before distribution section
+            distributionSection.parentNode.insertBefore(newContent, distributionSection.previousSibling);
+
+            // Switch to new tab
+            switchTab(tabsContainer, `weft-${weftCounter}`);
+        }
+
+        // Remove Weft Tab
+        function removeWeftTab(index, event) {
+            event.stopPropagation();
+
+            const tabsContainer = document.getElementById('weftTabs');
+            const tabBtn = tabsContainer.querySelector(`[data-tab="weft-${index}"]`);
+            const tabContent = document.getElementById(`weft-${index}`);
+
+            // Don't allow removing if it's the only tab
+            const remainingTabs = tabsContainer.querySelectorAll('.tab-btn:not(.add-tab-btn)');
+            if (remainingTabs.length <= 1) {
+                alert('You must have at least one weft configuration.');
+                return;
+            }
+
+            // If active tab is being removed, switch to first tab
+            if (tabBtn.classList.contains('active')) {
+                const firstTab = tabsContainer.querySelector('.tab-btn:first-child');
+                switchTab(tabsContainer, firstTab.getAttribute('data-tab'));
+            }
+
+            // Remove elements
+            tabBtn.remove();
+            tabContent.remove();
+        }
+
+        // Initialize tab switching for warp tabs
+        document.addEventListener('DOMContentLoaded', function () {
+            const warpTabs = document.querySelectorAll('#warpTabs .tab-btn:not(.add-tab-btn)');
+            warpTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    switchTab(document.getElementById('warpTabs'), this.getAttribute('data-tab'));
+                });
+            });
+
+            const weftTabs = document.querySelectorAll('#weftTabs .tab-btn:not(.add-tab-btn)');
+            weftTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    switchTab(document.getElementById('weftTabs'), this.getAttribute('data-tab'));
+                });
+            });
+        });
+
+        // ===== TOAST NOTIFICATION SYSTEM =====
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon"></div>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // ===== CONFIRM MODAL SYSTEM =====
+        let confirmResolve;
+
+        function showConfirm(message) {
+            return new Promise((resolve) => {
+                confirmResolve = resolve;
+                document.getElementById('confirm-message').textContent = message;
+                document.getElementById('confirm-modal').classList.add('show');
+            });
+        }
+
+        function closeConfirm(result) {
+            document.getElementById('confirm-modal').classList.remove('show');
+            if (confirmResolve) {
+                confirmResolve(result);
+                confirmResolve = null;
+            }
+        }
+
+        // ===== INPUT MODAL SYSTEM =====
+        let inputResolve;
+
+        function showInput(title, placeholder = 'Enter value...') {
+            return new Promise((resolve) => {
+                inputResolve = resolve;
+                document.getElementById('input-title').textContent = title;
+                const inputField = document.getElementById('input-field');
+                inputField.placeholder = placeholder;
+                inputField.value = '';
+                document.getElementById('input-modal').classList.add('show');
+                inputField.focus();
+
+                // Allow Enter key to submit
+                inputField.onkeypress = (e) => {
+                    if (e.key === 'Enter') submitInput();
+                };
+            });
+        }
+
+        function submitInput() {
+            const value = document.getElementById('input-field').value;
+            closeInput(value);
+        }
+
+        function closeInput(result) {
+            document.getElementById('input-modal').classList.remove('show');
+            if (inputResolve) {
+                inputResolve(result);
+                inputResolve = null;
+            }
+        }
+    </script>
+
+
+
+    <!-- Load Costing Functions -->
+    <script src="js/costing-functions.js"></script>
+
+    <!-- Load Calculation Functions -->
+    <script src="js/costing-calculations.js"></script>
+    <script src="js/sidebar-metrics-update.js"></script>
+    <script src="js/load-selling-price-fix.js"></script>
+
+
+
+    <!-- Load Profit Helper -->
+    <script src="js/costing-profit-helper.js"></script>
+
+    <!-- Load Sidebar Component -->
+    <script src="js/sidebar-component.js"></script>
+
+    <!-- Logout Function -->
+    <script>
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                }).then(() => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/Login.html';
+                }).catch(() => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/Login.html';
+                });
+            }
+        }
+    </script>
+    <!-- Shared Sidebar JavaScript with logout confirmation -->
+    <script src="js/sidebar.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Order Target - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3d2314 0%, #5d3a2a 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #5d3a2a;
+        }
+
+        .btn-search {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-search:hover {
+            background: #45a049;
+        }
+
+        .btn-clear {
+            background: #5d3a2a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-clear:hover {
+            background: #3d2314;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #3d2314;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: #faf8f6;
+        }
+
+        .status-active {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .status-inactive {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3d2314 0%, #5d3a2a 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-section {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .form-section-title {
+            color: #5d3a2a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #5d3a2a;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #f44336;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #5d3a2a;
+        }
+
+        .form-hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            background: #f9f9f9;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .container {
+                padding: 0 10px;
+                margin: 15px auto;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .search-bar input {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .search-bar button {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 8px;
+            }
+
+            table {
+                min-width: 650px;
+            }
+
+            th,
+            td {
+                padding: 8px 6px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+            }
+
+            th {
+                font-size: 0.7rem;
+            }
+
+            .modal {
+                margin: 10px;
+                max-width: 100%;
+            }
+
+            .modal-header {
+                padding: 15px;
+            }
+
+            .modal-title {
+                font-size: 1.1rem;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 60vh;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .form-group {
+                margin-bottom: 8px;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+            }
+
+            .form-input,
+            .form-select {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .modal-footer button {
+                width: 100%;
+            }
+
+            .btn-add,
+            .btn-back {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+
+            .btn-edit {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .toast {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                font-size: 0.9rem;
+                padding: 12px;
+            }
+
+            .empty-state {
+                padding: 40px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1rem;
+            }
+
+            .btn-add,
+            .btn-back {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+
+            table {
+                min-width: 550px;
+            }
+
+            th,
+            td {
+                padding: 6px 4px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item active"><span class="icon">🎯</span>Sale Order
+                        Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+                <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+                <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+            </div>
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <h1>📊 Sales Order Target</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn-add" onclick="openModal()">+ Add Target</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by name, code, city..." onkeyup="filterTable()">
+                <button class="btn-search" onclick="filterTable()">🔍 Search</button>
+                <button class="btn-clear" onclick="clearSearch()">✕ Clear</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Target Year</th>
+                            <th>Export (Lakh)</th>
+                            <th>Domestic Grey (Lakh)</th>
+                            <th>Domestic Finish (Lakh)</th>
+                            <th>2 Months Target</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="8" class="empty-state">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+            <div class="modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Add Sales Target</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+                    <div class="form-section">
+                        <div class="form-section-title">Target Details</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required">SELECT YEAR</label>
+                                <select class="form-select" id="targetYear"></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">Target Quantity Domestic (Grey Fabric)</label>
+                                <input type="number" step="0.01" class="form-input" id="domesticGrey"
+                                    placeholder="Enter Quantity In Lakh">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required">Target Quantity Export</label>
+                                <input type="number" step="0.01" class="form-input" id="exportTarget"
+                                    placeholder="Enter Quantity In Lakh">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">Target Quantity Domestic (Finish Fabric)</label>
+                                <input type="number" step="0.01" class="form-input" id="domesticFinish"
+                                    placeholder="Enter Quantity In Lakh">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="isActive" checked>
+                                    <label for="isActive">Is Active</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">Two Months Target</label>
+                                <input type="number" step="0.01" class="form-input" id="twoMonthsTarget"
+                                    placeholder="Enter Quantity In Lakh">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button class="btn-save" onclick="saveData()">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+
+        <script>
+            const API_URL = '/api/master/sales-target';
+            let allData = [];
+
+            document.addEventListener('DOMContentLoaded', () => { loadData(); populateYears(); });
+
+            function populateYears() {
+                const select = document.getElementById('targetYear');
+                select.innerHTML = '<option value="">Select Year</option>';
+                const currentYear = new Date().getFullYear();
+                for (let i = -2; i < 8; i++) {
+                    const year = currentYear + i;
+                    select.innerHTML += `<option value="${year}-${(year + 1).toString().slice(-2)}">${year}-${(year + 1).toString().slice(-2)}</option>`;
+                }
+            }
+
+            async function loadData() {
+                try {
+                    const res = await fetch(API_URL);
+                    const result = await res.json();
+                    if (result.success) { allData = result.data; renderTable(allData); }
+                    else { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state" style="color:red">Error: ' + result.message + '</td></tr>'; }
+                } catch (error) {
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state" style="color:red">Error loading data</td></tr>';
+                }
+            }
+
+            function renderTable(data) {
+                const tbody = document.getElementById('tableBody');
+                if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No records found</td></tr>'; return; }
+                tbody.innerHTML = data.map((item, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${item.target_year}</td>
+                    <td>${Number(item.export_target).toFixed(2)}</td>
+                    <td>${Number(item.domestic_grey_target).toFixed(2)}</td>
+                    <td>${Number(item.domestic_finish_target).toFixed(2)}</td>
+                    <td>${Number(item.two_months_target).toFixed(2)}</td>
+                    <td class="${item.is_active ? 'status-active' : 'status-inactive'}">${item.is_active ? 'Active' : 'Inactive'}</td>
+                    <td><button class="btn-edit" onclick="editItem(${item.id})">Edit</button></td>
+                </tr>
+            `).join('');
+            }
+
+            function filterTable() {
+                const q = document.getElementById('searchInput').value.toLowerCase();
+                renderTable(allData.filter(d => d.target_year.toLowerCase().includes(q)));
+            }
+
+            function clearSearch() {
+                document.getElementById('searchInput').value = '';
+                renderTable(allData);
+            }
+
+            function openModal() { clearForm(); document.getElementById('modalTitle').innerText = 'Add Sales Target'; document.getElementById('modalOverlay').classList.add('active'); }
+            function closeModal(e) { if (!e || e.target === document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('active'); }
+
+            function clearForm() {
+                document.getElementById('editId').value = '';
+                document.getElementById('targetYear').value = '';
+                document.getElementById('exportTarget').value = '';
+                document.getElementById('domesticGrey').value = '';
+                document.getElementById('domesticFinish').value = '';
+                document.getElementById('twoMonthsTarget').value = '';
+                document.getElementById('isActive').checked = true;
+            }
+
+            function editItem(id) {
+                const item = allData.find(d => d.id === id);
+                if (!item) return;
+                document.getElementById('editId').value = item.id;
+                document.getElementById('targetYear').value = item.target_year;
+                document.getElementById('exportTarget').value = item.export_target;
+                document.getElementById('domesticGrey').value = item.domestic_grey_target;
+                document.getElementById('domesticFinish').value = item.domestic_finish_target;
+                document.getElementById('twoMonthsTarget').value = item.two_months_target;
+                document.getElementById('isActive').checked = item.is_active;
+                document.getElementById('modalTitle').innerText = 'Edit Sales Target';
+                document.getElementById('modalOverlay').classList.add('active');
+            }
+
+            async function saveData() {
+                const id = document.getElementById('editId').value;
+                const targetYear = document.getElementById('targetYear').value;
+                if (!targetYear) { showToast('Year is required', 'error'); return; }
+
+                const payload = {
+                    target_year: targetYear,
+                    export_target: document.getElementById('exportTarget').value || 0,
+                    domestic_grey_target: document.getElementById('domesticGrey').value || 0,
+                    domestic_finish_target: document.getElementById('domesticFinish').value || 0,
+                    two_months_target: document.getElementById('twoMonthsTarget').value || 0,
+                    is_active: document.getElementById('isActive').checked
+                };
+
+                try {
+                    const res = await fetch(id ? `${API_URL}/${id}` : API_URL, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const result = await res.json();
+                    if (result.success) { closeModal(); loadData(); showToast('Saved successfully!', 'success'); }
+                    else { showToast('Error: ' + result.message, 'error'); }
+                } catch (error) { showToast('Failed to save', 'error'); }
+            }
+
+            function showToast(msg, type) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg; toast.className = 'toast ' + type + ' show';
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        </script>
+        <script src="js/toast.js"></script>
+        <script src="js/sidebar.js"></script>
+    </main>
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+</body>
+
+</html>

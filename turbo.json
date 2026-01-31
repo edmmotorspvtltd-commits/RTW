@@ -1,0 +1,74 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": [
+        ".env"
+    ],
+    "tasks": {
+        "build": {
+            "dependsOn": [
+                "^build"
+            ],
+            "outputs": [
+                "dist/**",
+                "build/**",
+                ".next/**",
+                "public/dist/**"
+            ],
+            "env": [
+                "NODE_ENV"
+            ]
+        },
+        "dev": {
+            "cache": false,
+            "persistent": true,
+            "env": [
+                "NODE_ENV",
+                "PORT",
+                "DB_HOST",
+                "DB_PORT",
+                "DB_NAME",
+                "DB_USER",
+                "DB_PASSWORD",
+                "JWT_SECRET",
+                "JWT_REFRESH_SECRET",
+                "SESSION_SECRET"
+            ]
+        },
+        "start": {
+            "dependsOn": [
+                "build"
+            ],
+            "cache": false,
+            "persistent": true,
+            "env": [
+                "NODE_ENV",
+                "PORT",
+                "DB_HOST",
+                "DB_PORT",
+                "DB_NAME",
+                "DB_USER",
+                "DB_PASSWORD",
+                "JWT_SECRET",
+                "JWT_REFRESH_SECRET",
+                "SESSION_SECRET"
+            ]
+        },
+        "test": {
+            "dependsOn": [
+                "build"
+            ],
+            "outputs": [
+                "coverage/**"
+            ],
+            "env": [
+                "NODE_ENV"
+            ]
+        },
+        "lint": {
+            "outputs": []
+        },
+        "clean": {
+            "cache": false
+        }
+    }
+}

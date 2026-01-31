@@ -1,0 +1,1788 @@
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+ 
+<title>Domestic Buyer</title> 
+
+<meta http-equiv="Content-Type" content="text/html; charset = utf-8">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="/iTexRAMTest/resources/images/favicon.ico"
+	rel="shortcut icon" type="image/x-icon" />
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/moment.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/moment-with-locales.js"></script>
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/validate.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/bootstrapnew.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/loader.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/bootstrap-datetimepicker.min.js"></script>
+
+<script
+	src="/iTexRAMTest/resources/js/jquery-ui.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/fabric_spec_form.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/domestic_fabric_spec.js"></script>
+<link rel="stylesheet"
+	href="/iTexRAMTest/resources/css/jquery-ui.css">
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/bootstrap.min.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/style.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/menu.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/loginPage.css"
+	rel="Stylesheet" />
+
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/bootstrap-datetimepicker.min.css"
+	rel="Stylesheet" />
+<link rel="stylesheet"
+	href="/iTexRAMTest/resources/css/chosen.min.css">
+<script
+	src="/iTexRAMTest/resources/js/chosen.jquery.min.js"></script>
+	
+		
+	<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/datevalidation.js"></script>
+	<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/JsBarcode.all.min.js"></script>
+
+		<input type="hidden" value="1" id="editAccess"/>
+	<input type="hidden" value="1" id="addAccess"/>
+	<input type="hidden" value="yes" id="dynamiceMenuEnabled"/>
+	<input type="hidden" value="1" id="deleteAccess"/>
+<input type="hidden" id="fromFinancialDate" value="2025-04-01 00:00:00.0" />
+<input type="hidden" id="editModeDateLock" value="0" />
+<input type="hidden" id="prevDateSelectionRange" value="0" />
+
+<script>
+
+
+	$(document)
+	.ready(function() {
+	$( "select" ).addClass( "livesearch" );
+	$(".livesearch").chosen({max_selected_options:Infinity,search_contains: true});
+	$.validator.setDefaults({ ignore: ":hidden:not(select)" });
+	 $(".livesearch-deselect").chosen({allow_single_deselect:true});
+	 $('input[type="number"]').attr('onkeypress', ' return (event.charCode == 8 || event.charCode == 0) ? null : ((event.charCode >= 48 && event.charCode <= 57) || event.charCode==46)');
+	 try{
+			if('yes'== $("#dynamiceMenuEnabled").val())
+			checkAddEditAccess();
+		}catch(err){
+			
+		}
+	
+	});
+	 function checkAddEditAccess(){
+			
+			if($("#addAccess").val()==0){
+				$('.skyBlueBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Add")){
+						obj.style.display='none';
+					}
+				});
+			}
+			
+			if($("#editAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("images/edit.png") || obj.src.trim().includes("images/close.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				$('.greenBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Save")||compareValues(obj.value,"Submit")||compareValues(obj.value,"Update")){
+						obj.style.display='none';
+					}
+				});
+				 
+				
+				$('a').each(function(index,anchorTag) {
+				    
+				    if(compareValues(anchorTag.innerHTML,"Edit")){
+				    	anchorTag.style.display='none';
+				    }
+				});
+				
+				
+			}
+		
+			
+			
+			if($("#deleteAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("pageImg/delete.JPG") || obj.src.trim().includes("images/delete.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				 
+				
+				
+			}
+			
+		
+		} 
+		
+		function compareValues(val1,val2){
+			return val1.trim().toUpperCase() === val2.trim().toUpperCase();
+		}
+	
+	function getConfirmation(num){
+    	if(num == 2){
+       var retVal  =  confirm("Do you want to Cancel ?");
+    	}
+    	if(num == 1){
+    		var retVal  =  confirm("Do you want to Go Back ?");
+    	}
+       if( retVal == true ){
+    	   history.go(-1);
+           return false;
+       }
+    }
+	
+	 $(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+	
+	 
+	 $(function() {
+		 $('.txtBox').on('blur',function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    });
+		    
+		   /*  $('textarea').on('blur', function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    }); */
+		});
+	 function getDecimalValue(value)
+	{
+		 actual = Math.trunc(value); 
+		 return Number((value-actual).toFixed(2));
+	}
+	 $(document).ready(function(){
+			$('.indianFormat2').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 2,
+	                	minimumFractionDigits: 2,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		 $(document).ready(function(){
+			$('.indianFormat4').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 4,
+	                	minimumFractionDigits: 4,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		$(document).ready(function(){
+			$('.indianFormat3').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 3,
+	                	minimumFractionDigits: 3,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		
+		$(document).ready(function(){
+			$('.indianFormat0').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 0,
+	                	minimumFractionDigits: 0,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 
+		$(document).ready(function(){
+			$('.indianFormat1').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 1,
+	                	minimumFractionDigits: 1,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 function numberFormater(amount,divId,appendP,maximumFractionDigits_var,minimumFractionDigits_var){
+			var convertedVal = 0;
+			if($.isNumeric(amount)){
+				convertedVal =	amount.toLocaleString('en-IN', {
+			    maximumFractionDigits: maximumFractionDigits_var,minimumFractionDigits: minimumFractionDigits_var
+			});
+			}
+			document.getElementById(divId).innerHTML = convertedVal;
+		}
+	 function checkNumberValue(checkNumber){
+		 	if(checkNumber!=null){
+		 		return $.isNumeric(parseFloat(checkNumber)) ? parseFloat(checkNumber) : 0;	
+		 	}else{
+		 		return 0;
+		 	}
+			
+		} 
+	 
+	 function getDecimalValue(inputId,noOfDecimals){
+		 var value=$(inputId).val();
+		 if($.isNumeric(value)){
+			 value=decimalRound(value,noOfDecimals);
+		 }
+		 $(inputId).val(value);
+		}
+	 
+	 function decimalRound(num,scale){
+			if($.isNumeric(num)){
+				if(!("" + num).includes("e")) {
+				    return +(Math.round(num + "e+" + scale)  + "e-" + scale);
+				  } else {
+				    var arr = ("" + num).split("e");
+				    var sig = ""
+				    if(+arr[1] + scale > 0) {
+				      sig = "+";
+				    }
+				    return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
+				  }
+		 	}else{
+		 		return parseFloat(0).toFixed(scale);
+		 	}
+		} 
+	 function decimalRoundoff(num)
+	 {
+		
+		 if(num!=null)
+		 {
+			 if(Math.round((parseFloat(num)%0.2)*100) %2 !=0)
+		    	{
+				 return num=num+0.01;
+		    	}
+			 else{
+				 return num;
+			 }
+		 }
+		 else {
+			 return 0;
+		 }
+	 }
+	 
+	 (function waitForDatePicker() {
+		 
+		    var attempts = 0;
+		    var maxAttempts = 50;
+
+		    var interval = setInterval(function () {
+		        attempts++;
+
+		        var entryFields = $(".entry-date");
+		        var editFields = $(".edit-date");
+
+		        if (entryFields.length === 0 && editFields.length === 0) {
+		            if (attempts >= maxAttempts) clearInterval(interval);
+		            return;
+		        }
+
+		        var allReady = true;
+		        $(".entry-date, .edit-date").each(function () {
+		            if (!$(this).data("datepicker")) {
+		                allReady = false;
+		            }
+		        });
+
+		        if (!allReady) {
+		            if (attempts >= maxAttempts) clearInterval(interval);
+		            return;
+		        }
+
+		     // ENTRY MODE: allow last N days up to today
+		        $(".entry-date").each(function () {
+		            var f = $(this);
+		            var prevDateSelectionRange = parseInt($("#prevDateSelectionRange").val(), 10); // Convert to integer
+		            if (isNaN(prevDateSelectionRange)) { // Fallback if null/undefined/invalid
+		                prevDateSelectionRange = 0;
+		            }
+
+		            f.datepicker("option", {
+		                minDate: -prevDateSelectionRange,  // N days before today
+		                maxDate: 0                         // today
+		            });
+
+		            if (!f.val()) {
+		                f.datepicker("setDate", new Date());
+		            }
+		        });
+
+
+		        // EDIT MODE: lock date
+		        $(".edit-date").each(function () {
+		            var f = $(this);
+
+		            f.prop("readonly", true);
+
+		            f.datepicker("option", "beforeShow", function () {
+		                return false;
+		            });
+
+		            var t = setInterval(function () {
+		                var btn = f.next(".ui-datepicker-trigger");
+		                if (btn.length > 0) {
+		                    btn.css("pointer-events", "none");
+		                    btn.css("opacity", "0.5");
+		                    clearInterval(t);
+		                }
+		            }, 50);
+		        });
+
+		        clearInterval(interval);
+		    }, 100);
+
+		})();	 
+	</script>
+<script type="text/javascript">
+	
+function paginate(pageNum, formId) {
+	document.getElementById("pageNum").value = pageNum; 
+	document.getElementById(formId).submit();
+}
+function clrForm(formId) {
+	document.getElementById("buyerName").value = '';
+	document.getElementById(formId).submit();
+}
+function srch(pageNum, formId) {
+	if (document.getElementById("buyerName").value == "") {
+		alert("Please Enter buyerName");
+		return false;
+	}
+	document.getElementById("pageNum").value = pageNum;
+	document.getElementById(formId).submit();
+}
+
+</script>
+
+
+</head>
+<body>
+
+
+
+	
+
+
+<nav class="navbar navbar-default headerColor" role="navigation">
+<script type="text/javascript">
+ 
+
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ru7nwa3ncs");
+
+</script>
+	<div class="navbar-header menuItemsCss">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+			data-target="#example-navbar-collapse">
+			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
+			<span class="icon-bar"></span> <span class="icon-bar"></span>
+		</button>
+		<img
+			src="/iTexRAMTest/resources/images/i2tex_logo.png"
+			class="logo" /></div>
+			
+			 
+			 <div class="col-sm-2" style="margin-top: 20px;margin-left: 5px;">
+				
+				<select style="margin-left: -80px;!important" id="clientId"
+						name="clientId" onchange="setCompanyAndFinYearToSession()">
+						<option value="">Select
+							Company
+						</option>
+						
+							<option value="1"
+								selected="selected">RAMRATAN TECHNO WEAVE</option>
+						
+					</select> 
+				
+			
+					</div>
+					
+					
+					
+				
+				
+				
+							
+							
+							
+				<div class="col-sm-1" style="margin-top: 20px;">
+					<label class="LoginLblTxt fontFamily">25-26</label>
+					
+				</div>
+				
+				
+				
+	
+
+	
+	<div class="collapse navbar-collapse" id="example-navbar-collapse">
+		<div class="img-with-text">
+			<a href="/iTexRAMTest/lgn/logoutUser"> <img
+				src="/iTexRAMTest/resources/images/logout.png"
+				width="50px"
+				style="float: right; margin-top: 17px; margin-right: 33px;"
+				title="Logout"></a>
+		</div>
+			<ul class='nav navbar-nav menuAlignment'><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>ACCOUNT MASTER<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/buyermlist?buyerTypeStr=2&pageNum=1'>Domestic Buyer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/getvendorgrouplist?pageNum=1'>Vendor Group</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/vendorlist?pageNum=1'>Vendor</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/commonConsigneeMlist?pageNum=1'>Consignee</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/insuranceList'>INSURANCE</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/godownlocationlist?pageNum=1'>Godown Location</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/stocktype'>Stock Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/displayvendorprefix?pageNum=1'>Vendor Prefix</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/agentmlist?pageNum=1'>Agent</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/termsandconditionsmlist?pageNum=1'>Terms & Condition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/paymenttermsmlist?pageNum=1'>Payment Terms</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/sourcingByList?pageNum=1'>Sourcing By</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/transportationMlist?pageNum=1'>Transportation</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/showRateMasterList'>Rate</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnExcess'>YARN ADJUST ENTRY</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/orderTargetList?pageNum=1'>Sales Target</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/selvedgeMasterlist?pageNum=1'>Selvedge Master</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>QUICK ACCCESS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/productionnew/jobPendingReport?pageNum=1'>Job Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/warpPendingReport?pageNum=1'>Warp Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/report/sizingPlanReport'>Sizing Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/beaminwardreport?pageNum=1'>BEAM OUTWARD PENDING REPORT</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>APPROVAL<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/store/editinspection'>Yarn Inspected Edit</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/approval/displayjobworkapproval?isReset=0'>Po-Fabric Processing Jw</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/approval/domesticSalesOrderApprovalAdd?state=1&productionFor=2'>So-Domestic</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>DOMESTIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticpackinglist?pageNum=1'>Challan List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticinvoicelist?flow=invoice&pageNum=1'>Invoice List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itempurchaserequisitionlist?prStatus=0'>Item Purchase Requisition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itempolist?pageNum=1'>Item PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/iteminwardlist?pageNum=1&isOpeningBalance=0'>Item Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemtransferlist?pageNum=1'>Item Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemoutwardlist?pageNum=1'>Item Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemreturnlist?pageNum=1'>Item Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticinvoicelist?flow=jw&pageNum=1'>Trading Job Invoice</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/domesticsalesorderlist?state=1&moveToProduction=0'>Sales Order </a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkweavingcontractlistnew'>Job work Weaving Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/getsizingsetlistnew?pageNum=1'>Sizing Plan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnRequiredlist?pageNum=1'>Yarn Required</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/sortmasterlist?pageNum=1'>Sort Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/buyerProductQuality'>Buyer Quality Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/orderList?pageNum=1'>Order List</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN MASTER<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/fabricmaster/fabriccountlist?pageNum=1'>Count</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/fabricmaster/fabricplylist?pageNum=1'>Ply</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/uommlist?pageNum=1'>UOM</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/millMasterlist?pageNum=1'>Mill Master</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/yarnvarietylist?pageNum=1'>Yarn Variety</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/getyarntypelist?pageNum=1'>Yarn Type</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/getyarnlist?pageNum=1'>YARN LIST</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/tpmlist?pageNum=1'>TPM</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=1'>Yarn Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/displayyarnpO?pageNum=1'>Yarn PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=0'>Yarn Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/yarncontractlist?pageNum=1'>Yarn Sales Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarnsalescontractlist?pageNum=1'>Yarn Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarninvoicelist?pageNum=1&eInvoice=1'>Yarn sales Invoice</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarnSalesReturn?pageNum=1'>Yarn Sales Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/displayStockTransferNewLIST?pageNum=1&itemType=1'>Stock Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN ISSUE<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/sort/sizingsetjobworklist?pageNum=1&state=1'>Sizing Yarn Issue</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/jobworkweftcontractlist'>Job work Weaving Weft Issue</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/reWindingIssueListStockTypeWise?pageNum=1&&state=1'>Yarn Issue To Rewinding</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/getyarnissuetorewindinglist?pageNum=1'>Yarn Issued To Winding List</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN RETURN(TRADING)<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/yarnreceivefrpartytoloclist'>Party To Location</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/jobworkrewindingreceivelist?pageNum=1'>Winding Jobwork Receive</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/returningYarn'>Yarn Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnExcess'>YARN ADJUST ENTRY</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamBalanceAtWeaverList'>Beam Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beaminwardlist'>Beam Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamoutwardlist?productionType=0'>Beam Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamreceivefromweaver1'>Beam Receive From Weaver</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/jobworkweftbottomreceivelist?pageNum=1'>Bottom Receive Outside</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/karainwardlist?pageNum=1'>Kara Inward</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/displayfabricpO?pageNum=1'>Fabric PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInwardListpage?isOpeningBalance=0'>Fabric Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/purchaseFabricReturnList'>Purchase Fabric Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=1&fabricType=2'>Factory Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=0&fabricType=1'>Job work Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/balePackingList?state=2'>Bale Packing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/clothchallanList?state=2&pageNum=1&fromdate=&pageNum=1&todate=&sortMasterId=&orderId=&clothChallanId=&buyername=&buyerId=&slipno=&balepackingid='>Cloth Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/gradelist?pageNum=1'>Grade</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricOpenBalanceInwardListpage?isOpeningBalance=1'>Fabric Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/salesReturnList?pageNum=1'>Sales Retrun</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PROCESS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/designMaster?pageNum=1'>Design Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkprocesscontractlist?statusType=1'>Jobwork Process Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkprocesspiecedetailslist?pageNum=1'>Jobwork Process Contract Issue</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/finshedfabricreceiveList?isOpeningBalance=0'>Jobwork Finished Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/processReturnList?pageNum=1'>Process Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/srsortmasterlist?isexport=1&pageNum=1'>Quality</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MARKETING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/production/productDevelopment'>Product Development List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/pegPlanDesignList?pageNum=1'>Peg Plan Design</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/costinglist?pageNum=1'>Costing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/productionfabricsamplesstatuslist?pageNum=1'>Production Fabric Samples Status</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/costingreport'>Costing Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/othersamplestatuslist?pageNum=1'>Other Sample Status</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/ocrRepotList'>OCR Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/complaint/complaintReport?pageUse=1'>Complaint Register</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>REPORTS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/sostatus?state=1&productionFor=2'>Sales Order Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/salesorderstatusview?productionFor=2&listType=1'>Domestic Order Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/contractCompletedReport?pageNum=1'>Contract Completed Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/jobContractStatusReportNew1?pageNum=1'>Job Contract Detail Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/qualityWiseJobworkStatus?pageNum=1'>Job Contract Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/soosstatus?state=1&productionFor=2'>SO OS</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/orderstatusview'>SALES ORDER STATUS REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/report/dailyReportsview'>Daily Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/storesstockinwardreportlist'>Stock Inward Yarn Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/getOBCBReport'>Yarn Opening And Closing Balance Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/yarnPoStatusReport'>Yarn PO Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/yarnInvoiceReport?pageNum=1'>Yarn Invoice Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/domesticsalesorder/YarnSalesReturnReport?pageNum=1'>Yarn Sales Return Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarnEntryInOutReport?pageNum=1'>YARN IN OUT REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/locationWiseYarnStock'>Location Wise Yarn Stock</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/report/sizingPlanReport?pageNum=1'>SIZING PLAN REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/sizingReconcilationReport?pageNum=1'>Pending Set Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/qualityWiseSizingSetIssueReport?pageNum=1'>Quality Wise Sizing Set Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/dailysizingSetIssueReport?pageNum=1'>Daily Sizing Set Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarntoweftregisterreportlist?issueType=1'>Yarn To Sizing Register Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/beaminwardreport?pageNum=1'>BEAM OUTWARD PENDING REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/beaminwardagainstjobcontract'>BEAM INWARD AGAINST JOB CONTRACT REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/beamOutwardDetailReport?reportType=0'>BEAM OUTWARD REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/warpPendingReport?pageNum=1'>Warp Pending Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/jobPendingReport?pageNum=1'>Job Pending Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/SizingReconciliationReportList?pageNum=1'>Sizing Reconciliation Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WINDING <b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/warpbottomreport'>Bottom Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingissueandreceivereport?pageNum=1'>Rewinding Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingreceivereport?pageNum=1'>Rewinding Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingproductionreportlist?pageNum=1'>Rewinding Production Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingreceivependingreport?pageNum=1'>REWINDING RECEIVE PENDING REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/windinginoutreport'>Winding Issue and Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingEntryInOutReport'>REWINDING YARN ENTRY WISE IN-OUT REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/fabricobcbreport?state=1'>Fabric OBCB Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/commonStockReport'>Common Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/purchasestatusviewNew'>Fabric PO Status (PURCHASE) Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/fabricpostatusjobworkNew?state=1'>Fabric PO Status (JOBWORK) Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/fabricinwardreport?listType=1'>Jobwork Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/fabricinwardreport?listType=3'>Purchase Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/fabricoutwardRePort?pageNum=1'>Fabric Outward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/piecebalestock'>Piece And Bale Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/fabricinventory?state=1'>Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/qualitywiseinventoryfabric?state=3'>Quality Wise Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/domesticsalesorder/fabricInOutRpt'>Fabric In Out Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/YAndNReport?isCompleted=0&state=8'>Piecewise Available Details Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/YAndNReport?isCompleted=1'>PieceWise Dispatched Details Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/pendingBaleReport?pageNum=1'>PENDING BALE REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PROCESS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/salesfinishedorderstatusview?productionFor=2&listType=1'>Domestic Order Status (FINISHED)</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/processJobworkRepotList?'>Process Reconciliation Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/processJobworkDetailedRepotList?'>Process Jobwork RECO Detailed Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/processingjobworkissuechallanreport?pageNum=1'>Processing Challan Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WEAVER REPORTS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/weftissuereport'>Weft Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/weavingReconcilationRpt?isExport=1'>Weaving Reconciliation Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/wefiReconcilation'>Weaving Reconciliation Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarnStockReport'>Yarn Stock Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MARKETING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/approvalDashboard?pageNum=1'>Approval Dashboard</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/complaint/complaintReportList?pageUse=1'>Complaint Register Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/jobweavinginventoryreport?groupType=3'>JOB WEAVING INVENTORY REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/report/selfsovsactualso?pageNum=1'>SELF SO V/S ACTUAL SO REPORT</a></li><li class='divider'></li></ul></li></ul>
+	</div>
+</nav>
+
+
+
+<div class="container">
+	
+	
+	
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerr" style="display: none">
+		<a href="#" class="close"  onclick="$('#mastajxerr').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerror"></span>
+	</div>
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerrb" style="display: none">
+		<a href="#" class="close" onclick="$('#mastajxerrb').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerrorb"></span>
+	</div>
+	<div class="alert alert-info alert-dismissable fade in"
+		id="status1" style="display: none">
+		<a href="#" class="close"  onclick="$('#status1').hide();" aria-label="close">&times;</a>
+		<strong >Info! </strong> <span id="info"></span>
+	</div>
+</div>
+	
+	<script type="text/javascript">
+	$(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+</script>
+
+<style>
+.dropdown-menu1 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	
+}
+
+.dropdown-menu1 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu1>li>a {
+	display: block;
+	padding: 0px 80px;
+	clear: both;
+	font-weight: 400;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu {
+	display: block;
+	position: relative;
+	height: 30px;
+}
+
+.dropdown-submenu:hover .dropdown-menu1 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: 5px;
+	background-color: #1d1d1d;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu1 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+
+.glyphicon glyphicon-play {
+	width: 20px;
+	height: 20px;
+}
+
+.dropdown-menu2 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	height: auto;
+}
+
+.dropdown-menu2 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu2>li>a {
+	display: block;
+	padding: 2px 10px;
+	clear: both;
+	font-weight: 400;
+	line-height: 1.42857143;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu:hover .dropdown-menu2 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: -45px;
+	background-color: #6f1c17;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu2 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+</style>
+<script type="text/javascript">
+	function setCompanyAndFinYearToSession() {
+		var companyId = $('#clientId').val();
+		var finYearId = $('#financialYearId').val();
+		var url      = location.href;
+		$.ajax({
+			dataType : 'json',
+			type : "Post",
+			url : "/iTexRAMTest/fas/updatesession",
+			data : {
+				'companyId' : companyId,
+				'finYearId' : finYearId,
+				'pathName' : url
+			},
+			success : function(response) {
+				location.href=response.path;
+				
+			}
+
+		});
+
+	}
+</script>
+
+	<div class="container">
+		<div class="row"
+			style="border-bottom: 2px solid #909191; margin-right: 0px; margin-left: 0px;text-transform: uppercase;">
+			
+				<div class="col-md-4" style="padding-left: 0px;">
+					<label class="leftHeading fontFamily">
+						
+						 Trading
+					</label>
+				</div>
+				
+			<div class="col-md-4"
+				style="text-align: center; padding-left: 0px; ">
+				<label class="leftHeading fontFamily">
+					
+					 
+					 
+					Domestic 
+					Buyer LIST</label>
+			</div>
+		</div>
+		<ul class="breadcrumb fontFamily"></ul>
+
+		<div class="row">
+			<form method="post" id="forms"
+				action="/iTexRAMTest/mt/buyermlist?buyerTypeStr=2">
+				<input type="hidden" id="departmentId" name="departmentId" value="17"/>
+
+				<div class="col-md-8 paddingZero">
+					<div class="col-md-12 btn-group paddingZero">
+						<div class="col-md-2 paddingZero">
+							<label class="lblTxt fontFamily">Buyer Name</label>
+						</div>
+						<div class="col-md-8 paddingZero">
+							<div class="col-md-6 paddingZero">
+								<input type="hidden" name="pageNum"
+									id="pageNum" value="1" /> <select id="buyerName"
+									name="buyerName"class="txtBox fontFamily Select">
+
+										<option value="">Select
+											Buyer
+											Name
+										</option>
+										
+											<option value="PREET ENTERPRISES"
+												>PREET ENTERPRISES
+											</option>
+										
+											<option value="BHAWANI SHANKAR UDYOG (P) LTD"
+												>BHAWANI SHANKAR UDYOG (P) LTD
+											</option>
+										
+											<option value="RUCHIKA TEXFAB"
+												>RUCHIKA TEXFAB
+											</option>
+										
+											<option value="TEAM WORK TEXTILES"
+												>TEAM WORK TEXTILES
+											</option>
+										
+											<option value="R J ENTERPRISES"
+												>R J ENTERPRISES
+											</option>
+										
+											<option value="BHAWANI WINDING"
+												>BHAWANI WINDING
+											</option>
+										
+											<option value="SHAH KAMLESHKUMAR CHAMPALAL"
+												>SHAH KAMLESHKUMAR CHAMPALAL
+											</option>
+										
+											<option value="S V FEB"
+												>S V FEB
+											</option>
+										
+											<option value="ITALIAN SILK MILLS"
+												>ITALIAN SILK MILLS
+											</option>
+										
+											<option value="NATIONAL TEXTILES"
+												>NATIONAL TEXTILES
+											</option>
+										
+											<option value="MAHAVEER TEXTILE AGENCY"
+												>MAHAVEER TEXTILE AGENCY
+											</option>
+										
+											<option value="MEGHNA TEXTILES LLP"
+												>MEGHNA TEXTILES LLP
+											</option>
+										
+											<option value="JINDAL FABRICS PVT LTD"
+												>JINDAL FABRICS PVT LTD
+											</option>
+										
+											<option value="BAJAJ SILK FAB PVT LTD"
+												>BAJAJ SILK FAB PVT LTD
+											</option>
+										
+											<option value="N T C SILK MILL"
+												>N T C SILK MILL
+											</option>
+										
+											<option value="GRANTH SILK MILLS"
+												>GRANTH SILK MILLS
+											</option>
+										
+											<option value="BHAIRAV CORPORATION"
+												>BHAIRAV CORPORATION
+											</option>
+										
+											<option value="RAMPYARI TEXTILES"
+												>RAMPYARI TEXTILES
+											</option>
+										
+											<option value="K K SILK MILLS LIMITED"
+												>K K SILK MILLS LIMITED
+											</option>
+										
+											<option value="SIDHARTH TEXTILES"
+												>SIDHARTH TEXTILES
+											</option>
+										
+											<option value="M NARESHKUMAR & CO"
+												>M NARESHKUMAR & CO
+											</option>
+										
+											<option value="J K INTERNATIONAL"
+												>J K INTERNATIONAL
+											</option>
+										
+											<option value="COMBOZ INDUSTRIES"
+												>COMBOZ INDUSTRIES
+											</option>
+										
+											<option value="SUNRISE SYNTEX"
+												>SUNRISE SYNTEX
+											</option>
+										
+											<option value="MANAN TEXTILES"
+												>MANAN TEXTILES
+											</option>
+										
+											<option value="INDRAPUJA IMPEX"
+												>INDRAPUJA IMPEX
+											</option>
+										
+											<option value="SHIV TEX"
+												>SHIV TEX
+											</option>
+										
+											<option value="D J IMPEX & CO"
+												>D J IMPEX & CO
+											</option>
+										
+											<option value="MUKUT MANI CREATIONS PVT LTD"
+												>MUKUT MANI CREATIONS PVT LTD
+											</option>
+										
+											<option value="SHREE MAHAVIR FABRICS MFG CO"
+												>SHREE MAHAVIR FABRICS MFG CO
+											</option>
+										
+											<option value="D K FABRICS"
+												>D K FABRICS
+											</option>
+										
+											<option value="ENCOT FABRICS PVT LTD"
+												>ENCOT FABRICS PVT LTD
+											</option>
+										
+											<option value="MITTAL INDUSTRIES"
+												>MITTAL INDUSTRIES
+											</option>
+										
+											<option value="MR. MANGALAM INDUSTRIES"
+												>MR. MANGALAM INDUSTRIES
+											</option>
+										
+											<option value="MANGALAM CREATION"
+												>MANGALAM CREATION
+											</option>
+										
+											<option value="SHRAVAK FABRICS"
+												>SHRAVAK FABRICS
+											</option>
+										
+											<option value="HIND COTT"
+												>HIND COTT
+											</option>
+										
+											<option value="SAKARIA SILK INDUSTRIES"
+												>SAKARIA SILK INDUSTRIES
+											</option>
+										
+											<option value="SOMANI N SOMANI"
+												>SOMANI N SOMANI
+											</option>
+										
+											<option value="MITVA FABRICS PVT LTD ( VAMA )"
+												>MITVA FABRICS PVT LTD ( VAMA )
+											</option>
+										
+											<option value="YASHVI CREATION.32605114"
+												>YASHVI CREATION.32605114
+											</option>
+										
+											<option value="SHUBH SYNTEX"
+												>SHUBH SYNTEX
+											</option>
+										
+											<option value="S R FASHION"
+												>S R FASHION
+											</option>
+										
+											<option value="SATYAM FABRICS"
+												>SATYAM FABRICS
+											</option>
+										
+											<option value="SHASHWAT FABCOT"
+												>SHASHWAT FABCOT
+											</option>
+										
+											<option value="SANGEETA TRADING CO"
+												>SANGEETA TRADING CO
+											</option>
+										
+											<option value="ASHVIRA FASHION PVT LTD"
+												>ASHVIRA FASHION PVT LTD
+											</option>
+										
+											<option value="SWETA INTERNATIONAL"
+												>SWETA INTERNATIONAL
+											</option>
+										
+											<option value="SIDDH CORPORATION"
+												>SIDDH CORPORATION
+											</option>
+										
+											<option value="SHREE NARAYAN SILK HOUSE PVT LTD"
+												>SHREE NARAYAN SILK HOUSE PVT LTD
+											</option>
+										
+											<option value="B C TEXTILES"
+												>B C TEXTILES
+											</option>
+										
+											<option value="SHREE SACHIYA MA COTTON MILLS"
+												>SHREE SACHIYA MA COTTON MILLS
+											</option>
+										
+											<option value="WEAVE ART FABRICS"
+												>WEAVE ART FABRICS
+											</option>
+										
+											<option value="MAMTA FASHION"
+												>MAMTA FASHION
+											</option>
+										
+											<option value="INDRAPUJA POLYCOT ( INDIA )"
+												>INDRAPUJA POLYCOT ( INDIA )
+											</option>
+										
+											<option value="KRISHNA CREATION"
+												>KRISHNA CREATION
+											</option>
+										
+											<option value="SUDHIR ENTERPRISES"
+												>SUDHIR ENTERPRISES
+											</option>
+										
+											<option value="M NARESHKUMAR TEXTILES PRIVATE LIMITED"
+												>M NARESHKUMAR TEXTILES PRIVATE LIMITED
+											</option>
+										
+											<option value="AUREVIA GLOBAL CREATION LLP"
+												>AUREVIA GLOBAL CREATION LLP
+											</option>
+										
+											<option value="ENES TEXTILE MILLS ( B AND B )"
+												>ENES TEXTILE MILLS ( B AND B )
+											</option>
+										
+											<option value="K K P FASHIONS PVT LTD"
+												>K K P FASHIONS PVT LTD
+											</option>
+										
+											<option value="SHRIPAL TRADING CO"
+												>SHRIPAL TRADING CO
+											</option>
+										
+											<option value="BTM IMPEX"
+												>BTM IMPEX
+											</option>
+										
+											<option value="SOURABH RAYON"
+												>SOURABH RAYON
+											</option>
+										
+											<option value="R B AGENCIES "
+												>R B AGENCIES 
+											</option>
+										
+											<option value="BID INDUSTRIES"
+												>BID INDUSTRIES
+											</option>
+										
+											<option value="MAAN TEXTILE INDUSTRIES"
+												>MAAN TEXTILE INDUSTRIES
+											</option>
+										
+											<option value="SHIVAM ENTERPRISES"
+												>SHIVAM ENTERPRISES
+											</option>
+										
+											<option value="REGALIA FABRICS INTERNATIONAL LLP"
+												>REGALIA FABRICS INTERNATIONAL LLP
+											</option>
+										
+											<option value="ARIHANT EXIM (SANJAY BHAI)"
+												>ARIHANT EXIM (SANJAY BHAI)
+											</option>
+										
+											<option value="MOHATUL SILK INDUSTRIES"
+												>MOHATUL SILK INDUSTRIES
+											</option>
+										
+											<option value="SWADESH LIFESTYLE LLP"
+												>SWADESH LIFESTYLE LLP
+											</option>
+										
+											<option value="N MARGI TEXTILES AGENCY"
+												>N MARGI TEXTILES AGENCY
+											</option>
+										
+											<option value="M SANCHIT LEE TRENZ"
+												>M SANCHIT LEE TRENZ
+											</option>
+										
+								</select></div>
+								<div class="col-md-6 paddingZero">
+								<input class="searchBtn" type="submit" value=""
+									onclick="return srch('1','forms')" title="Search Button" />
+							</div>
+						</div>
+						<div class="col-md-2 paddingZero txtAlignCenter">
+							<input type="reset" id="btnClear" value="CLEAR SEARCH"
+								onclick="clrForm('forms')" class="skyBlueBtn fontFamily"
+								style="margin-right: 0px;" />
+						</div>
+
+
+					</div>
+				</div>
+			</form>
+			<div class="col-md-4 paddingZero txtAlignCenter"
+				style="text-align: right;">
+				<form method="post" id="countryAdd"
+					action="/iTexRAMTest/mt/BuyerM?buyerTypeStr=2">
+					<input type="hidden" id="departmentId" name="departmentId" value="17"/>
+					<input type="hidden" name="pageNum" id="pageNum" value="1">
+					<input id="addButton" type="submit"
+						value="Add "
+						class="skyBlueBtn fontFamily">
+				</form>
+			</div>
+		</div>
+		<div style="width: 100%; overflow-x: auto;">
+			<table class="colorTblCss"
+				style="margin-top: 20px; margin-bottom: 30px;table-layout:fixed;overflow:hidden;word-break:break-all;width: 100%">
+				<tr>
+					<th>Sl No</th>
+					<th>Buyer Name</th>
+							<th>Buyer No.</th>
+					<th>Buyer Country</th>
+					<th>Buyer State</th>
+					<th>Buyer City</th>
+					<th>Buyer Address</th>
+					<th>Buyer Pincode</th>
+					<th>Representative Name
+					</th>
+					<th>Created In</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+				
+					
+						<tr>
+							<td>1</td>
+							<td>M SANCHIT LEE TRENZ</td>
+							<td>BD00170</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >384 , M - BUILDING , SHOP NO 7 , <br>
+							    GROUND FLOOR , DHABOLKARWADI<br>
+							     KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=196&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>2</td>
+							<td>N MARGI TEXTILES AGENCY</td>
+							<td>BD00169</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >1301, TADMOR , SKYLINE OASIS VIDYAVIHAR , <br>
+							    GHATKOPAR(W)<br>
+							     </td>
+							<td>400086</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=195&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>3</td>
+							<td>SWADESH LIFESTYLE LLP</td>
+							<td>BD00168</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >384 - A , DHABOLKARWADI<br>
+							    2ND FLOOR , ROOM NO 15 <br>
+							     KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=194&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>4</td>
+							<td>MOHATUL SILK INDUSTRIES</td>
+							<td>BD00166</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >20, PATEL BUILDING, 3RD FLOOR<br>
+							    DADY SHETH AGARY LANE<br>
+							     KALBADEVI ROAD</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=192&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>5</td>
+							<td>ARIHANT EXIM (SANJAY BHAI)</td>
+							<td>BD00166</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >MUMBAI <br>
+							    MUMBAI<br>
+							     </td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=191&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>6</td>
+							<td>REGALIA FABRICS INTERNATIONAL LLP</td>
+							<td>BD00167</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >802 , AJMERA MIDTOWN , NEXT TO INDIAN ART STUD<br>
+							    POPATWADI ,<br>
+							     KALBADEVI ROAD</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=190&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>7</td>
+							<td>SHIVAM ENTERPRISES</td>
+							<td>BD00166</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >25 , RAMWADI , 3RD FLOOR , ROOM NO 82<br>
+							    KALBADEVI ROAD , <br>
+							     MUMBAI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=189&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>8</td>
+							<td>MAAN TEXTILE INDUSTRIES</td>
+							<td>BD00166</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >147 GAIWADI SADAN , ROOM NO 20 , <br>
+							    GROUND FLOOR  , DR VIEGAS STREET<br>
+							     KALBADEVI ROAD </td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=188&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>9</td>
+							<td>BID INDUSTRIES</td>
+							<td>BD00164</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >145-C , DR VIEGAS STREET , <br>
+							    5TH FLOOR , ROOM NO 23 <br>
+							     GAIWADI ,KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=185&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>10</td>
+							<td>R B AGENCIES </td>
+							<td>BD00163</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >C 25 APMC MASALA MARKET , <br>
+							    VASHI<br>
+							     </td>
+							<td>400703</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=184&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>11</td>
+							<td>SOURABH RAYON</td>
+							<td>BD00161</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >146 , KRISHNA BHAVAN , <br>
+							    1ST FLOOR  , R .NO 15 , DE VEIGAS STREET<br>
+							     KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=182&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>12</td>
+							<td>BTM IMPEX</td>
+							<td>BD00160</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>BHIWANDI</td>
+							<td >GROUND FLOOR , BLDG NO 1436/46 , 47<br>
+							    GALA NO 46 & 47 , ANMOL TEXTILE MARKET<br>
+							     RAHNAL , BHIWANDI</td>
+							<td>421308</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=181&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>13</td>
+							<td>SHRIPAL TRADING CO</td>
+							<td>BD00159</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >1ST FLOOR  , BLDG 95/A<br>
+							    ROOM NO 15 , DHANJI MULJI BLDG<br>
+							     OLD HANUMAN LANE , KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=180&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>14</td>
+							<td>K K P FASHIONS PVT LTD</td>
+							<td>BD00158</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>PALGHAR</td>
+							<td >PLOT NO G /7/2/1<br>
+							    MIDC BOISAR<br>
+							     TARAPUR</td>
+							<td>401404</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=179&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>15</td>
+							<td>ENES TEXTILE MILLS ( B AND B )</td>
+							<td>BD00157</td>
+							<td>INDIA</td>
+							<td>Tamil Nadu</td>
+							<td>TIRUPPUR</td>
+							<td >8/3 - C SENGUTHAPURAM<br>
+							    1ST STREET MANGALAM ROAD <br>
+							     </td>
+							<td>641604</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=178&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>16</td>
+							<td>AUREVIA GLOBAL CREATION LLP</td>
+							<td>BD00157</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >FLOOR - 3 , FLAT NO 37 , BLDG NO 20/24<br>
+							    PRAGJI VRINDAVAN , DHIRUBHAI PAREKH MARG<br>
+							     LAD WADI , KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=177&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>17</td>
+							<td>M NARESHKUMAR TEXTILES PRIVATE LIMITED</td>
+							<td>BD00157</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >PLOT NO 146 , OFFICE NO 9 , <br>
+							    KRISHNA BUILDING<br>
+							     DR VEIGAS STREET , KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=176&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>18</td>
+							<td>SUDHIR ENTERPRISES</td>
+							<td>BD00153</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >77 - 79 , 1ST FLOOR , VITTHALWADI<br>
+							    KALBADEVI ROAD <br>
+							     KALBADEVI ROAD</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=172&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>19</td>
+							<td>KRISHNA CREATION</td>
+							<td>BD00152</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >331 A  BANDAMWADI 2ND FLOOR<br>
+							    ROOM NO 61 A <br>
+							     KALBADEVI ROAD</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=171&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>20</td>
+							<td>INDRAPUJA POLYCOT ( INDIA )</td>
+							<td>BD00151</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >156 , DR VEIGAS STRET , <br>
+							    SHOP NO C2 , GROUND FLOOR <br>
+							     SWADESHI MARKET , KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=170&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>21</td>
+							<td>MAMTA FASHION</td>
+							<td>BD00150</td>
+							<td>INDIA</td>
+							<td>GUJRAT</td>
+							<td>SURAT</td>
+							<td >A/303 DMD LOGISTICS PARK <br>
+							    NEAR SALASAR TEXTILES MARKET<br>
+							     SAROLI </td>
+							<td>395010</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=169&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>22</td>
+							<td>WEAVE ART FABRICS</td>
+							<td>BD00149</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >173 , ROYAL SQUARE , 5TH FLOOR , <br>
+							    OFFICE NO 502 , DR VEIGAS STREET <br>
+							     KALBADEVI ROAD </td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=168&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>23</td>
+							<td>SHREE SACHIYA MA COTTON MILLS</td>
+							<td>BD00148</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >384E , DABHOLKARWADI , <br>
+							    OFF NO 15 , 1ST FLOOR <br>
+							     KALBADEVI ROAD</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=167&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>24</td>
+							<td>B C TEXTILES</td>
+							<td>BD00147</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >FLAT NO 176 , GODOWN NO 2 , <br>
+							    SAWANTWADI CLUB<br>
+							     DR VEIGAS STREET , KALBADEVI</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=166&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+						<tr>
+							<td>25</td>
+							<td>SHREE NARAYAN SILK HOUSE PVT LTD</td>
+							<td>BD00143</td>
+							<td>INDIA</td>
+							<td>MAHARASHTRA</td>
+							<td>MUMBAI</td>
+							<td >384-J , DABHOLKAR WADI , GR FLOOR<br>
+							    SHOP NO 84 , <br>
+							     KALBADEVI ROAD</td>
+							<td>400002</td>
+							<td ></td>
+							<td>Trading</td>
+							<td >Active</td>
+							<td><a
+								href="/iTexRAMTest/mt/editBuyerM?buyerId=162&buyerTypeStr=2"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="actionsImg" title="Edit" /></a> 
+									
+
+
+                                 
+								  
+								  
+								  
+									</td>
+						</tr>
+					
+				
+
+				
+			</table>
+		</div>
+	<div class="row" align="right" style="margin-bottom: 20px;">
+			<span class="firstImageTag"><img id='first' src='../resources/images/first.png' style='cursor:pointer' title='First' /> <span class="prevImageTag"><img id='prev' src='../resources/images/previous.png' style='cursor:pointer' title='Previous Set'/> <span class="prevImageTag"><img id='prev' src='../resources/images/previous.png' style='cursor:pointer' title='Previous Set'/>    1&nbsp;<a style='cursor:pointer !important;'   href="#" onclick="paginate('2','forms');">2</a>&nbsp;<a style='cursor:pointer !important;'   href="#" onclick="paginate('3','forms');">3</a>&nbsp; <a style='cursor:pointer !important;'  class="nextImageTag" href="#"  onclick="paginate('2','forms');"><span class="nextImageTag"><img id='next' src='../resources/images/next.png' title='Next Set' style='cursor:pointer'/></a>&nbsp; <span class="nextImageTag"><img id='next' src='../resources/images/next.png' title='Next Set' style='cursor:pointer'/> <a style='cursor:pointer !important;'  class="lastImageTag" href="#" onclick="paginate('3','forms');"><span class="lastImageTag"><img id='last' src='../resources/images/last.png' style='cursor:pointer' title='Last'/></a>&nbsp;</div>
+	</div>
+	
+
+
+    
+
+<!-- single user login -->
+
+<!-- single user login -->
+</body>
+</html>

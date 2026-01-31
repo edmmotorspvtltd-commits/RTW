@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Types - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-brown: #5D4037;
+            --dark-brown: #3E2723;
+            --light-brown: #8D6E63;
+            --bg-cream: #EFEBE9;
+            --bg-white: #FAFAFA;
+            --accent: #795548;
+            --success: #4CAF50;
+            --danger: #F44336;
+            --warning: #FF9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .search-btn {
+            background: var(--primary-brown);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--dark-brown);
+        }
+
+        /* Data Table */
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #FFF8E1;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-badge {
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-inactive {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #FAFAFA;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary-brown);
+            color: white;
+            border-color: var(--primary-brown);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-brown);
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 0;
+        }
+
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: #FAFAFA;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 10px;
+            }
+
+            .action-btns {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item active"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+                <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+                <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+            </div>
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <div>
+                    <h1 class="page-title">📦 Stock Types</h1>
+                    <p class="page-subtitle">Manage stock type classifications</p>
+                </div>
+            </div>
+            <button class="add-btn" onclick="openModal()" aria-label="Add new stock type">
+                <span aria-hidden="true">+</span> Add Stock Type
+            </button>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-bar" role="search">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by name or code..."
+                    onkeyup="handleSearch(event)" aria-label="Search stock types">
+                <button class="search-btn" onclick="loadData()" aria-label="Search">
+                    <span aria-hidden="true">🔍</span> Search
+                </button>
+                <button class="search-btn" onclick="clearSearch()" style="background: #757575;"
+                    aria-label="Clear search">
+                    <span aria-hidden="true">✕</span> Clear
+                </button>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <table class="data-table" role="grid" aria-label="Stock types list">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Stock Type Name</th>
+                            <th>Code</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                Loading data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <span class="pagination-info" id="pageInfo">Page 1 of 1</span>
+                    <div class="pagination-btns" id="paginationBtns"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Add Stock Type</h2>
+                    <button class="modal-close" onclick="closeModal()" aria-label="Close modal">×</button>
+                </div>
+                <form id="dataForm" onsubmit="saveData(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="dataId">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Stock Type Name *</label>
+                                <input type="text" class="form-input" id="name" required
+                                    placeholder="Enter stock type name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Code *</label>
+                                <input type="text" class="form-input" id="code" required
+                                    placeholder="Single char (D, V, E, F, R, K, W)" maxlength="1"
+                                    style="text-transform: uppercase;">
+                            </div>
+                        </div>
+
+                        <!-- Active Status -->
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="is_active" checked>
+                                <label for="is_active">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                        <button type="submit" class="btn-save">SAVE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const limit = 20;
+            const API_URL = '/api/master/stock-types';
+
+            // XSS Protection - Escape HTML to prevent script injection
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Check session on load
+            document.addEventListener('DOMContentLoaded', async () => {
+                await checkSession();
+                loadData();
+
+                // Keyboard navigation - Escape closes modal
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                        const modal = document.getElementById('modalOverlay');
+                        if (modal.classList.contains('active')) {
+                            closeModal();
+                        }
+                    }
+                });
+            });
+
+            async function checkSession() {
+                try {
+                    const response = await fetch('/api/auth/check-session');
+                    const data = await response.json();
+                    if (!data.success) {
+                        window.location.href = 'Login.html';
+                    }
+                } catch (error) {
+                    console.error('Session check failed:', error);
+                }
+            }
+
+            function handleSearch(event) {
+                if (event.key === 'Enter') loadData();
+            }
+
+            function clearSearch() {
+                document.getElementById('searchInput').value = '';
+                loadData();
+            }
+
+            async function loadData() {
+                const search = document.getElementById('searchInput').value;
+                try {
+                    const response = await fetch(`${API_URL}?search=${encodeURIComponent(search)}&page=${currentPage}&limit=${limit}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        renderTable(result.data, result.pagination);
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    document.getElementById('dataTable').innerHTML =
+                        '<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">⚠️</div>Error loading data</td></tr>';
+                }
+            }
+
+            function renderTable(data, pagination) {
+                const tbody = document.getElementById('dataTable');
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">📦</div>No stock types found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${(pagination.page - 1) * pagination.limit + index + 1}</td>
+                    <td><strong>${escapeHtml(item.name)}</strong></td>
+                    <td><span class="code-badge">${escapeHtml(item.code) || '-'}</span></td>
+                    <td>
+                        <span class="status-badge ${item.is_active ? 'status-active' : 'status-inactive'}">
+                            ${item.is_active ? 'Active' : 'Blocked'}
+                        </span>
+                    </td>
+                    <td class="action-btns">
+                        <button class="action-btn btn-edit" onclick="editData(${item.id})" aria-label="Edit ${escapeHtml(item.name)}">✏️ Edit</button>
+                        <button class="action-btn btn-delete" onclick="deleteData(${item.id}, '${escapeHtml(item.name).replace(/'/g, "\\\'")}')" aria-label="Delete ${escapeHtml(item.name)}">🗑️ Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+
+                document.getElementById('pageInfo').textContent = `Page ${pagination.page} of ${pagination.pages} (${pagination.total} records)`;
+
+                let paginationHtml = '';
+                for (let i = 1; i <= pagination.pages; i++) {
+                    paginationHtml += `<button class="page-btn ${i === pagination.page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
+                document.getElementById('paginationBtns').innerHTML = paginationHtml;
+            }
+
+            function goToPage(page) { currentPage = page; loadData(); }
+
+            function openModal(data = null) {
+                document.getElementById('modalOverlay').classList.add('active');
+                document.getElementById('dataForm').reset();
+                document.getElementById('dataId').value = '';
+                document.getElementById('is_active').checked = true;
+
+                if (data) {
+                    document.getElementById('modalTitle').textContent = 'Edit Stock Type';
+                    document.getElementById('dataId').value = data.id;
+                    document.getElementById('name').value = data.name || '';
+                    document.getElementById('code').value = data.code || '';
+                    document.getElementById('is_active').checked = data.is_active !== false;
+                } else {
+                    document.getElementById('modalTitle').textContent = 'Add Stock Type';
+                }
+            }
+
+            function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+
+            async function editData(id) {
+                try {
+                    const response = await fetch(`${API_URL}/${id}`);
+                    const result = await response.json();
+                    if (result.success) openModal(result.data);
+                } catch (error) { showToast('Error loading data', 'error'); }
+            }
+
+            async function saveData(event) {
+                event.preventDefault();
+                const id = document.getElementById('dataId').value;
+                const codeValue = document.getElementById('code').value.toUpperCase().trim();
+
+                // Validate code is single character
+                if (codeValue.length !== 1) {
+                    showToast('Stock Type Code must be exactly 1 character (e.g., D, V, E, F, R, K, W)', 'error');
+                    return;
+                }
+
+                const data = {
+                    name: document.getElementById('name').value.toUpperCase().trim(),
+                    code: codeValue,
+                    is_active: document.getElementById('is_active').checked
+                };
+
+                try {
+                    const url = id ? `${API_URL}/${id}` : API_URL;
+                    const response = await fetch(url, {
+                        method: id ? 'PUT' : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    if (result.success) { showToast(result.message, 'success'); closeModal(); loadData(); }
+                    else showToast(result.message, 'error');
+                } catch (error) { showToast('Error saving data', 'error'); }
+            }
+
+            async function deleteData(id, name) {
+                if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+                try {
+                    const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (result.success) { showToast(result.message, 'success'); loadData(); }
+                    else showToast(result.message, 'error');
+                } catch (error) { showToast('Error deleting data', 'error'); }
+            }
+        </script>
+        <script src="js/toast.js"></script>
+        <script src="js/sidebar.js"></script>
+    </main>
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+</body>
+
+</html>

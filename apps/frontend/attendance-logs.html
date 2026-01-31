@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Logs - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F5F5F5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #E0E0E0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #5D4037;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: #5D4037;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4E342E;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #5D4037;
+            border: 2px solid #D7CCC8;
+        }
+
+        .btn-secondary:hover {
+            background: #EFEBE9;
+            border-color: #BCAAA4;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            z-index: 1001;
+            margin-top: 8px;
+            border: 1px solid #E0E0E0;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 18px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #F5F5F5;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .content-area {
+            padding: 30px;
+            flex: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #E0E0E0;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 2px solid #F5F5F5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #5D4037;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 160px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 14px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #5D4037;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: #FAFAFA;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #E0E0E0;
+        }
+
+        .data-table tr {
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #FAFAFA;
+        }
+
+        .verify-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .verify-badge.face {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .verify-badge.finger {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .verify-badge.card {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .time-badge.in {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .time-badge.out {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #E0E0E0;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #5D4037;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #F0F0F0;
+            border-top-color: #5D4037;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebarContainer"></div>
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 class="page-title">📋 Attendance Logs</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-success" id="adminActions" onclick="showManualEntryModal()">➕ Add Manual</button>
+                <div class="dropdown">
+                    <button class="btn btn-secondary">📥 Export</button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="exportToExcel('logs'); return false;">📊 Export to Excel (Logs)</a>
+                        <a href="#" onclick="exportToExcel('daily'); return false;">📊 Export to Excel (Daily
+                            Summary)</a>
+                        <a href="#" onclick="exportToPDF('logs'); return false;">📄 Export to PDF (Logs)</a>
+                        <a href="#" onclick="exportToPDF('daily'); return false;">📄 Export to PDF (Daily Summary)</a>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="loadLogs()">🔄 Refresh</button>
+            </div>
+        </header>
+        <div class="content-area">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalLogs">-</div>
+                    <div class="stat-label">Total Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayLogs">-</div>
+                    <div class="stat-label">Today's Punches</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="faceCount">-</div>
+                    <div class="stat-label">Face Punches</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="fingerCount">-</div>
+                    <div class="stat-label">Fingerprint</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Filters</h2>
+                </div>
+                <div class="card-body">
+                    <div class="filter-bar">
+                        <div class="filter-group"><label>Start Date</label><input type="date" id="startDate"></div>
+                        <div class="filter-group"><label>End Date</label><input type="date" id="endDate"></div>
+                        <div class="filter-group"><label>Employee</label><select id="employeeFilter">
+                                <option value="">All Employees</option>
+                            </select></div>
+                        <div class="filter-group"><label>&nbsp;</label><button class="btn btn-primary"
+                                onclick="applyFilters()">Apply Filters</button></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Daily Attendance Records</h2><span id="recordCount">0 records</span>
+                </div>
+                <div class="card-body">
+                    <div id="logsTableContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Attendance Modal -->
+    <div id="editPunchModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Edit Attendance Record</h3>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editEmployeeId">
+                <input type="hidden" id="editDate">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="editAttendanceDate" class="form-control" readonly
+                        style="background: #f5f5f5;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>IN Time *</label>
+                        <input type="time" id="editInTime" class="form-control" required>
+                        <small style="color: #666; font-size: 11px;">First punch of day</small>
+                    </div>
+                    <div class="form-group">
+                        <label>OUT Time *</label>
+                        <input type="time" id="editOutTime" class="form-control" required>
+                        <small style="color: #666; font-size: 11px;">Last punch of day</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Total Hours (Auto-calculated)</label>
+                    <input type="text" id="calculatedHours" class="form-control" readonly
+                        style="background: #f5f5f5; font-weight: 600; color: #5D4037;">
+                </div>
+                <div class="form-group">
+                    <label>Remarks</label>
+                    <textarea id="editRemarks" class="form-control" rows="3"
+                        placeholder="Reason for editing attendance..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="savePunchEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Entry Modal -->
+    <div id="manualEntryModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Add Manual Punch</h3>
+                <span class="close" onclick="closeManualModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Employee *</label>
+                    <select id="manualEmployee" class="form-control" required>
+                        <option value="">Select Employee</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date *</label>
+                    <input type="date" id="manualDate" class="form-control" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>IN Time *</label>
+                        <input type="time" id="manualInTime" class="form-control" required>
+                        <small style="color: #666; font-size: 11px;">First punch of day</small>
+                    </div>
+                    <div class="form-group">
+                        <label>OUT Time *</label>
+                        <input type="time" id="manualOutTime" class="form-control" required>
+                        <small style="color: #666; font-size: 11px;">Last punch of day</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Total Hours (Auto-calculated)</label>
+                    <input type="text" id="manualCalculatedHours" class="form-control" readonly
+                        style="background: #f5f5f5; font-weight: 600; color: #5D4037;">
+                </div>
+                <div class="form-group">
+                    <label>Remarks</label>
+                    <textarea id="manualRemarks" class="form-control" rows="3"
+                        placeholder="Reason for manual entry"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeManualModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveManualPunch()">Add Punch</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/modal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initSidebar();
+            checkUserRole();
+
+            // Add event listeners for time calculation
+            const inTimeInput = document.getElementById('editInTime');
+            const outTimeInput = document.getElementById('editOutTime');
+            if (inTimeInput && outTimeInput) {
+                inTimeInput.addEventListener('change', calculateHours);
+                outTimeInput.addEventListener('change', calculateHours);
+            }
+
+            // Add event listeners for manual entry time calculation
+            const manualInTime = document.getElementById('manualInTime');
+            const manualOutTime = document.getElementById('manualOutTime');
+            if (manualInTime && manualOutTime) {
+                manualInTime.addEventListener('change', calculateManualHours);
+                manualOutTime.addEventListener('change', calculateManualHours);
+            }
+        });
+
+        const API_BASE = '/api/attendance';
+        let currentUserRole = null;
+        let saveInProgress = false;  // Prevent concurrent edits
+
+        document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+        async function checkUserRole() {
+            try {
+                const token = localStorage.getItem('authToken'); // Match Login.html key
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const r = await fetch('/api/auth/check-session', {
+                    credentials: 'include',
+                    headers: headers
+                });
+                const d = await r.json();
+                if (d.success && d.user) {
+                    currentUserRole = d.user.role;
+                    if (currentUserRole === 'admin' || currentUserRole === 'super_admin') {
+                        document.getElementById('adminActions').style.display = 'inline-block';
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+
+        async function loadEmployees() {
+            try {
+                const r = await fetch(`${API_BASE}/employees`, { credentials: 'include' });
+                const d = await r.json();
+                if (d.success) {
+                    const options = d.data.map(e => `<option value="${e.employee_id}">${e.full_name || e.first_name} (${e.employee_code || e.user_id})</option>`).join('');
+                    document.getElementById('employeeFilter').innerHTML = '<option value="">All Employees</option>' + options;
+                    document.getElementById('manualEmployee').innerHTML = '<option value="">Select Employee</option>' + options;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadLogs() {
+            const c = document.getElementById('logsTableContainer');
+            c.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            const employee = document.getElementById('employeeFilter').value;
+            let url = `${API_BASE}/logs?limit=500`;
+            if (start) url += `&start_date=${start}`;
+            if (end) url += `&end_date=${end}`;
+            if (employee) url += `&employee_id=${employee}`;
+            try {
+                const r = await fetch(url, { credentials: 'include' });
+                const d = await r.json();
+                if (d.success && d.data.length > 0) {
+                    updateStats(d.data);
+                    renderLogs(d.data);
+                    return true;  // Success
+                } else {
+                    c.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No attendance records found</p></div>';
+                    return false;  // No data
+                }
+            } catch (e) {
+                c.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Error loading attendance logs</p></div>';
+                console.error(e);
+                return false;  // Error
+            }
+        }
+
+        function renderLogs(logs) {
+            const c = document.getElementById('logsTableContainer');
+            if (!logs.length) {
+                c.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No attendance logs found</p></div>';
+                document.getElementById('recordCount').textContent = '0 records';
+                return;
+            }
+
+            // Group logs by employee and date to create daily summaries
+            const dailySummaries = {};
+            logs.forEach(log => {
+                if (log.status === 'deleted') return; // Skip deleted records
+                const date = new Date(log.punch_time).toISOString().split('T')[0];
+                const key = `${log.employee_id}_${date}`;
+                if (!dailySummaries[key]) {
+                    dailySummaries[key] = {
+                        employee_id: log.employee_id,
+                        full_name: log.full_name,
+                        employee_code: log.employee_code,
+                        date: date,
+                        punches: [],
+                        device_name: log.device_name,
+                        verify_mode: log.verify_mode
+                    };
+                }
+                dailySummaries[key].punches.push(log);
+            });
+
+            // Convert to array and calculate IN/OUT times
+            const summaries = Object.values(dailySummaries).map(s => {
+                const sortedPunches = s.punches.sort((a, b) => new Date(a.punch_time) - new Date(b.punch_time));
+                const firstPunch = sortedPunches[0];
+                const lastPunch = sortedPunches[sortedPunches.length - 1];
+
+                const inTime = new Date(firstPunch.punch_time);
+                const outTime = new Date(lastPunch.punch_time);
+                const hours = ((outTime - inTime) / (1000 * 60 * 60)).toFixed(2);
+
+                return {
+                    ...s,
+                    in_time: inTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+                    out_time: outTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+                    total_hours: hours,
+                    raw_in_time: inTime.toISOString(),
+                    raw_out_time: outTime.toISOString()
+                };
+            });
+
+            // Sort by date (newest first)
+            summaries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            document.getElementById('recordCount').textContent = summaries.length + ' records';
+
+            const actionsHeader = (currentUserRole === 'admin' || currentUserRole === 'super_admin') ? '<th>Actions</th>' : '';
+            const rows = summaries.map(s => {
+                const verifyClass = { 1: 'finger', 2: 'password', 3: 'card', 15: 'face' }[s.verify_mode] || 'finger';
+                const verifyText = { 1: 'Fingerprint', 2: 'Password', 3: 'Card', 15: 'Face' }[s.verify_mode] || 'Unknown';
+                const dateObj = new Date(s.date);
+
+                // Create a clean summary object for onclick
+                const summaryData = {
+                    employee_id: s.employee_id,
+                    full_name: s.full_name,
+                    employee_code: s.employee_code,
+                    date: s.date,
+                    raw_in_time: s.raw_in_time,
+                    raw_out_time: s.raw_out_time
+                };
+
+                const actions = (currentUserRole === 'admin' || currentUserRole === 'super_admin') ?
+                    `<td><div class="action-btns"><button class="btn btn-sm btn-secondary" onclick='editDailyAttendance(${JSON.stringify(summaryData)})'>✏️ Edit</button></div></td>` : '';
+
+                return `<tr>
+                    <td><strong>${dateObj.toLocaleDateString('en-IN')}</strong><br><small>${dateObj.toLocaleDateString('en-IN', { weekday: 'short' })}</small></td>
+                    <td><strong>${s.full_name || 'Unknown'}</strong><br><small>${s.employee_code || '-'}</small></td>
+                    <td>${s.device_name || '-'}</td>
+                    <td><span class="verify-badge ${verifyClass}">${verifyText}</span></td>
+                    <td><span class="time-badge in">🟢 ${s.in_time}</span></td>
+                    <td><span class="time-badge out">🔴 ${s.out_time}</span></td>
+                    <td><strong style="color: #5D4037; font-size: 15px;">${s.total_hours} hrs</strong></td>
+                    ${actions}
+                </tr>`;
+            }).join('');
+
+            c.innerHTML = `<table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th>Device</th>
+                        <th>Verify Mode</th>
+                        <th>IN Time</th>
+                        <th>OUT Time</th>
+                        <th>Total Hours</th>
+                        ${actionsHeader}
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+        }
+
+        function updateStats(logs) {
+            document.getElementById('totalLogs').textContent = logs.length;
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('todayLogs').textContent = logs.filter(l => l.punch_time.startsWith(today)).length;
+            document.getElementById('faceCount').textContent = logs.filter(l => l.verify_mode === 15).length;
+            document.getElementById('fingerCount').textContent = logs.filter(l => l.verify_mode === 1).length;
+        }
+
+        function applyFilters() { loadLogs(); }
+
+        // Export functions
+        function exportToExcel(format) {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            const employee = document.getElementById('employeeFilter').value;
+            let url = `${API_BASE}/export/excel?format=${format}`;
+            if (start) url += `&start_date=${start}`;
+            if (end) url += `&end_date=${end}`;
+            if (employee) url += `&employee_id=${employee}`;
+            window.open(url, '_blank');
+            showToast('Downloading Excel file...', 'success');
+        }
+
+        function exportToPDF(format) {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            const employee = document.getElementById('employeeFilter').value;
+            let url = `${API_BASE}/export/pdf?format=${format}`;
+            if (start) url += `&start_date=${start}`;
+            if (end) url += `&end_date=${end}`;
+            if (employee) url += `&employee_id=${employee}`;
+            window.open(url, '_blank');
+            showToast('Downloading PDF file...', 'success');
+        }
+
+        // Edit daily attendance
+        function editDailyAttendance(summary) {
+            document.getElementById('editEmployeeId').value = summary.employee_id;
+            document.getElementById('editDate').value = summary.date;
+            document.getElementById('editAttendanceDate').value = summary.date;
+
+            // Parse ISO date strings
+            const inTime = new Date(summary.raw_in_time);
+            const outTime = new Date(summary.raw_out_time);
+
+            // Extract time in HH:MM format
+            const inTimeStr = inTime.toTimeString().slice(0, 5);
+            const outTimeStr = outTime.toTimeString().slice(0, 5);
+
+            document.getElementById('editInTime').value = inTimeStr;
+            document.getElementById('editOutTime').value = outTimeStr;
+            calculateHours();
+
+            document.getElementById('editRemarks').value = '';
+            document.getElementById('editPunchModal').style.display = 'block';
+        }
+
+        function calculateHours() {
+            const inTime = document.getElementById('editInTime').value;
+            const outTime = document.getElementById('editOutTime').value;
+            if (inTime && outTime) {
+                const [inH, inM] = inTime.split(':').map(Number);
+                const [outH, outM] = outTime.split(':').map(Number);
+                const inMinutes = inH * 60 + inM;
+                const outMinutes = outH * 60 + outM;
+                const diffMinutes = outMinutes - inMinutes;
+                const hours = (diffMinutes / 60).toFixed(2);
+                document.getElementById('calculatedHours').value = hours + ' hours';
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editPunchModal').style.display = 'none';
+        }
+
+        async function savePunchEdit() {
+            // FIX #3: Prevent concurrent edits
+            if (saveInProgress) {
+                showToast('Save in progress, please wait...', 'warning');
+                return;
+            }
+
+            const employeeId = document.getElementById('editEmployeeId').value;
+            const date = document.getElementById('editDate').value;
+            const inTime = document.getElementById('editInTime').value;
+            const outTime = document.getElementById('editOutTime').value;
+            const remarks = document.getElementById('editRemarks').value;
+
+            if (!inTime || !outTime) {
+                showToast('Please fill in both IN and OUT times', 'warning');
+                return;
+            }
+
+            const inDateTime = `${date}T${inTime}:00`;
+            const outDateTime = `${date}T${outTime}:00`;
+
+            // Lock to prevent double-clicks
+            saveInProgress = true;
+            const saveButton = document.querySelector('#editPunchModal .btn-success');
+            const originalButtonText = saveButton ? saveButton.textContent : '';
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.textContent = '⏳ Saving...';
+            }
+
+            try {
+                // Step 1: Get all logs for this employee on this date
+                const logsUrl = `${API_BASE}/logs?employee_id=${employeeId}&start_date=${date}&end_date=${date}`;
+                const logsResp = await fetch(logsUrl, { credentials: 'include' });
+
+                // FIX #2: Validate response
+                if (!logsResp.ok) {
+                    throw new Error(`Failed to fetch logs: ${logsResp.status} ${logsResp.statusText}`);
+                }
+
+                const logsData = await logsResp.json();
+
+                if (!logsData.success) {
+                    throw new Error(logsData.error || 'Failed to fetch existing logs');
+                }
+
+                // Step 2: Delete all existing punches for this date
+                if (logsData.data && logsData.data.length > 0) {
+                    for (const log of logsData.data) {
+                        if (log.status !== 'deleted') {
+                            const deleteResp = await fetch(`${API_BASE}/logs/${log.log_id}/delete`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
+                                body: JSON.stringify({ remarks: 'Replaced with corrected time' })
+                            });
+
+                            // FIX #2: Validate delete response
+                            if (!deleteResp.ok) {
+                                console.warn(`Failed to delete log ${log.log_id}:`, deleteResp.status);
+                            }
+                        }
+                    }
+                }
+
+                // Step 3: Create corrected IN punch
+                const inResp = await fetch(`${API_BASE}/logs/manual`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        employee_id: parseInt(employeeId),
+                        punch_time: inDateTime,
+                        in_out_mode: 0,
+                        remarks: remarks || 'Corrected IN time'
+                    })
+                });
+
+                // FIX #2: Validate IN punch creation
+                if (!inResp.ok) {
+                    throw new Error(`Failed to create IN punch: ${inResp.status} ${inResp.statusText}`);
+                }
+
+                const inData = await inResp.json();
+                if (!inData.success) {
+                    throw new Error(`IN punch failed: ${inData.error || 'Unknown error'}`);
+                }
+
+                // Step 4: Create corrected OUT punch
+                const outResp = await fetch(`${API_BASE}/logs/manual`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        employee_id: parseInt(employeeId),
+                        punch_time: outDateTime,
+                        in_out_mode: 1,
+                        remarks: remarks || 'Corrected OUT time'
+                    })
+                });
+
+                // FIX #2: Validate OUT punch creation
+                if (!outResp.ok) {
+                    throw new Error(`Failed to create OUT punch: ${outResp.status} ${outResp.statusText}`);
+                }
+
+                const outData = await outResp.json();
+                if (!outData.success) {
+                    throw new Error(`OUT punch failed: ${outData.error || 'Unknown error'}`);
+                }
+
+                showToast('Attendance corrected successfully!', 'success');
+                closeEditModal();
+
+                // FIX #1 & #4: Proper async/await with increased delay
+                // Wait for database to fully commit (increased from 500ms to 1000ms)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // FIX #4: Properly await the reload
+                await loadLogs();
+
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+                console.error('Save error:', e);
+            } finally {
+                // Always unlock, even if there was an error
+                saveInProgress = false;
+                if (saveButton) {
+                    saveButton.disabled = false;
+                    saveButton.textContent = originalButtonText || 'Save Changes';
+                }
+            }
+        }
+
+        // Delete punch
+        async function deletePunch(logId) {
+            if (!confirm('Are you sure you want to delete this punch record?')) return;
+
+            try {
+                const r = await fetch(`${API_BASE}/logs/${logId}/delete`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ remarks: 'Deleted by admin' })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    showToast('Punch record deleted successfully', 'success');
+                    loadLogs();
+                } else {
+                    showToast(d.error || 'Failed to delete punch record', 'error');
+                }
+            } catch (e) {
+                showToast('Error deleting punch record', 'error');
+            }
+        }
+
+        // Manual entry
+        function showManualEntryModal() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('manualDate').value = today;
+            document.getElementById('manualInTime').value = '09:00';
+            document.getElementById('manualOutTime').value = '18:00';
+            calculateManualHours();
+            document.getElementById('manualEntryModal').style.display = 'block';
+        }
+
+        function calculateManualHours() {
+            const inTime = document.getElementById('manualInTime').value;
+            const outTime = document.getElementById('manualOutTime').value;
+            if (inTime && outTime) {
+                const [inH, inM] = inTime.split(':').map(Number);
+                const [outH, outM] = outTime.split(':').map(Number);
+                const inMinutes = inH * 60 + inM;
+                const outMinutes = outH * 60 + outM;
+                const diffMinutes = outMinutes - inMinutes;
+                const hours = (diffMinutes / 60).toFixed(2);
+                document.getElementById('manualCalculatedHours').value = hours + ' hours';
+            }
+        }
+
+        function closeManualModal() {
+            document.getElementById('manualEntryModal').style.display = 'none';
+            document.getElementById('manualEmployee').value = '';
+            document.getElementById('manualDate').value = '';
+            document.getElementById('manualInTime').value = '';
+            document.getElementById('manualOutTime').value = '';
+            document.getElementById('manualRemarks').value = '';
+        }
+
+        async function saveManualPunch() {
+            const employeeId = document.getElementById('manualEmployee').value;
+            const date = document.getElementById('manualDate').value;
+            const inTime = document.getElementById('manualInTime').value;
+            const outTime = document.getElementById('manualOutTime').value;
+            const remarks = document.getElementById('manualRemarks').value;
+
+            if (!employeeId || !date || !inTime || !outTime) {
+                showToast('Please fill all required fields', 'warning');
+                return;
+            }
+
+            const inDateTime = `${date}T${inTime}:00`;
+            const outDateTime = `${date}T${outTime}:00`;
+
+            try {
+                // Step 1: Check if attendance already exists for this date
+                const checkUrl = `${API_BASE}/logs?employee_id=${employeeId}&start_date=${date}&end_date=${date}`;
+                const checkResp = await fetch(checkUrl, { credentials: 'include' });
+                const checkData = await checkResp.json();
+
+                // Step 2: Delete existing records if found
+                if (checkData.success && checkData.data && checkData.data.length > 0) {
+                    const confirmed = confirm(
+                        `This employee already has ${checkData.data.length} punch record(s) on ${date}.\n\n` +
+                        `Do you want to replace them with the new times?`
+                    );
+
+                    if (!confirmed) {
+                        return; // User cancelled
+                    }
+
+                    // Delete all existing punches for this date
+                    for (const log of checkData.data) {
+                        if (log.status !== 'deleted') {
+                            await fetch(`${API_BASE}/logs/${log.log_id}/delete`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
+                                body: JSON.stringify({ remarks: 'Replaced with manual entry' })
+                            });
+                        }
+                    }
+                }
+
+                // Step 3: Create IN punch
+                const inResp = await fetch(`${API_BASE}/logs/manual`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        employee_id: parseInt(employeeId),
+                        punch_time: inDateTime,
+                        in_out_mode: 0,
+                        remarks: remarks || 'Manual IN punch'
+                    })
+                });
+                const inData = await inResp.json();
+
+                if (!inData.success) {
+                    throw new Error('Failed to create IN punch: ' + (inData.error || ''));
+                }
+
+                // Create OUT punch
+                const outResp = await fetch(`${API_BASE}/logs/manual`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        employee_id: parseInt(employeeId),
+                        punch_time: outDateTime,
+                        in_out_mode: 1,
+                        remarks: remarks || 'Manual OUT punch'
+                    })
+                });
+                const outData = await outResp.json();
+
+                if (!outData.success) {
+                    throw new Error('Failed to create OUT punch: ' + (outData.error || ''));
+                }
+
+                showToast('Manual attendance added successfully!', 'success');
+                closeManualModal();
+                setTimeout(() => loadLogs(), 500);
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+
+        loadEmployees(); loadLogs();
+    </script>
+</body>
+
+</html>

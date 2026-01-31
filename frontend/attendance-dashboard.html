@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Dashboard - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: var(--bg-card);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .device-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #E8F5E9;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #2E7D32;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .date-time {
+            text-align: right;
+        }
+
+        .current-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .current-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .content-area {
+            padding: 25px 30px;
+            flex: 1;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue {
+            background: #E3F2FD;
+        }
+
+        .stat-icon.green {
+            background: #E8F5E9;
+        }
+
+        .stat-icon.red {
+            background: #FFEBEE;
+        }
+
+        .stat-icon.orange {
+            background: #FFF3E0;
+        }
+
+        .stat-icon.brown {
+            background: #EFEBE9;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+        }
+
+        .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .btn-refresh {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .card-body {
+            padding: 20px 22px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            background: var(--bg-main);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:hover {
+            background: #FAFAFA;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.present {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-badge.absent {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .status-badge.late {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .punch-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: var(--bg-main);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .punch-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .punch-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .punch-details h4 {
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .punch-details span {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .punch-time-badge {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .punch-type {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: #E3F2FD;
+            color: #1565C0;
+            margin-left: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .stats-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebarContainer"></div>
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 class="page-title">🕒 Live Dashboard</h1>
+            </div>
+            <div class="header-actions">
+                <div class="device-status"><span class="status-dot"></span><span>Device Connected</span></div>
+                <div class="date-time">
+                    <div class="current-time" id="currentTime">--:--</div>
+                    <div class="current-date" id="currentDate">Loading...</div>
+                </div>
+            </div>
+        </header>
+        <div class="content-area">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">👥</div>
+                    </div>
+                    <div class="stat-value" id="statTotalEmployees">-</div>
+                    <div class="stat-label">Total Employees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">✅</div>
+                    </div>
+                    <div class="stat-value" id="statPresent">-</div>
+                    <div class="stat-label">Present Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon red">❌</div>
+                    </div>
+                    <div class="stat-value" id="statAbsent">-</div>
+                    <div class="stat-label">Absent Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange">⚠️</div>
+                    </div>
+                    <div class="stat-value" id="statLate">-</div>
+                    <div class="stat-label">Late Arrivals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon brown">📡</div>
+                    </div>
+                    <div class="stat-value" id="statPunches">-</div>
+                    <div class="stat-label">Today's Punches</div>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📋 Today's Attendance</h2><button class="btn-refresh"
+                            onclick="loadTodayAttendance()">Refresh</button>
+                    </div>
+                    <div class="card-body" id="todayAttendanceContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>Loading...
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">⚡ Live Punch Feed</h2><button class="btn-refresh"
+                            onclick="loadLivePunches()">Refresh</button>
+                    </div>
+                    <div class="card-body" id="livePunchContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>Loading...
+                        </div>
+                    </div>
+                </div>
+                <div class="card full-width">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Recent Attendance Records</h2><button class="btn-refresh"
+                            onclick="loadRecentAttendance()">Refresh</button>
+                    </div>
+                    <div class="card-body" id="recentAttendanceContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="js/sidebar.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () { initSidebar(); });
+        const API_BASE = '/api/attendance';
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-IN');
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        setInterval(updateDateTime, 1000); updateDateTime();
+
+        async function loadDashboardStats() {
+            try {
+                const r = await fetch(`${API_BASE}/reports/dashboard-stats`, { credentials: 'include' });
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById('statTotalEmployees').textContent = d.data.totalEmployees || 0;
+                    document.getElementById('statPresent').textContent = d.data.presentToday || 0;
+                    document.getElementById('statAbsent').textContent = d.data.absentToday || 0;
+                    document.getElementById('statLate').textContent = d.data.lateToday || 0;
+                    document.getElementById('statPunches').textContent = d.data.todayPunches || 0;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadTodayAttendance() {
+            const c = document.getElementById('todayAttendanceContainer');
+            c.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+            try {
+                const r = await fetch(`${API_BASE}/today`, { credentials: 'include' });
+                const d = await r.json();
+                if (d.success && d.data.length > 0) {
+                    c.innerHTML = `<table class="data-table"><thead><tr><th>Employee</th><th>First In</th><th>Last Out</th><th>Hours</th><th>Status</th></tr></thead><tbody>${d.data.slice(0, 10).map(rec => `<tr><td><strong>${rec.full_name || 'Unknown'}</strong><br><small>${rec.employee_code || '-'}</small></td><td>${rec.first_in || '-'}</td><td>${rec.last_out || '-'}</td><td>${rec.total_hours ? parseFloat(rec.total_hours).toFixed(2) : '-'}</td><td><span class="status-badge ${rec.status || 'present'}">${(rec.status || 'PRESENT').toUpperCase()}</span></td></tr>`).join('')}</tbody></table>`;
+                } else c.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No attendance records for today</p></div>';
+            } catch (e) { c.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Error loading data</p></div>'; }
+        }
+
+        async function loadLivePunches() {
+            const c = document.getElementById('livePunchContainer');
+            c.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+            try {
+                const r = await fetch(`${API_BASE}/live-punches`, { credentials: 'include' });
+                const d = await r.json();
+                if (d.success && d.data.length > 0) {
+                    c.innerHTML = d.data.slice(0, 8).map(p => {
+                        const time = new Date(p.punch_time).toLocaleTimeString('en-IN');
+                        const initials = p.full_name ? p.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : '??';
+                        return `<div class="punch-item"><div class="punch-info"><div class="punch-avatar">${initials}</div><div class="punch-details"><h4>${p.full_name || 'Unknown'}</h4><span>${p.employee_code || '-'}</span></div></div><div><span class="punch-time-badge">${time}</span><span class="punch-type">${p.in_out_mode === 0 ? 'IN' : 'OUT'}</span></div></div>`;
+                    }).join('');
+                } else c.innerHTML = '<div class="empty-state"><div class="icon">⚡</div><p>No recent punches today</p></div>';
+            } catch (e) { c.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Error loading data</p></div>'; }
+        }
+
+        async function loadRecentAttendance() {
+            const c = document.getElementById('recentAttendanceContainer');
+            c.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                const r = await fetch(`${API_BASE}/daily?start_date=${weekAgo}&end_date=${today}`, { credentials: 'include' });
+                const d = await r.json();
+                if (d.success && d.data.length > 0) {
+                    c.innerHTML = `<table class="data-table"><thead><tr><th>Date</th><th>Employee</th><th>Department</th><th>First In</th><th>Last Out</th><th>Hours</th><th>Status</th></tr></thead><tbody>${d.data.slice(0, 20).map(rec => `<tr><td>${new Date(rec.attendance_date).toLocaleDateString('en-IN')}</td><td><strong>${rec.full_name || 'Unknown'}</strong><br><small>${rec.employee_code || '-'}</small></td><td>${rec.department_name || '-'}</td><td>${rec.first_in || '-'}</td><td>${rec.last_out || '-'}</td><td>${rec.total_hours ? parseFloat(rec.total_hours).toFixed(2) : '-'}</td><td><span class="status-badge ${rec.status || 'present'}">${(rec.status || 'PRESENT').toUpperCase()}</span></td></tr>`).join('')}</tbody></table>`;
+                } else c.innerHTML = '<div class="empty-state"><div class="icon">📊</div><p>No recent attendance records</p></div>';
+            } catch (e) { c.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Error loading data</p></div>'; }
+        }
+
+        loadDashboardStats(); loadTodayAttendance(); loadLivePunches(); loadRecentAttendance();
+        setInterval(() => { loadDashboardStats(); loadLivePunches(); }, 30000);
+    </script>
+</body>
+
+</html>

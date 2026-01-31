@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-brown: #5D4037;
+            --dark-brown: #3E2723;
+            --light-brown: #8D6E63;
+            --bg-cream: #EFEBE9;
+            --bg-white: #FAFAFA;
+            --accent: #795548;
+            --success: #4CAF50;
+            --danger: #F44336;
+            --warning: #FF9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .search-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .search-btn {
+            background: var(--primary-brown);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--dark-brown);
+        }
+
+        .filter-badge {
+            background: var(--bg-cream);
+            color: var(--primary-brown);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #FFF8E1;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-inactive {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #FAFAFA;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary-brown);
+            color: white;
+            border-color: var(--primary-brown);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-brown);
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: #FAFAFA;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid var(--primary-brown);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 10px;
+            }
+
+            .action-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item active"><span
+                            class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+            </div>
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <div>
+                    <h1 class="page-title">🚚 Transportation</h1>
+                    <p class="page-subtitle">Manage transportation companies and logistics</p>
+                </div>
+            </div>
+            <button class="add-btn" onclick="openModal()">
+                <span>+</span> Add New Transportation
+            </button>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by transportation name...">
+                <button class="search-btn" onclick="loadTransportations()">🔍 Search</button>
+                <button class="search-btn" onclick="clearSearch()" style="background: #757575;">✕ Clear</button>
+                <div class="filter-badge" id="totalCount">📊 Total: 0</div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Transportation Name</th>
+                            <th>Contact Number</th>
+                            <th>Address</th>
+                            <th>GST Number</th>
+                            <th>Remark</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transportationsTable">
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading transportations...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <div class="pagination-info" id="paginationInfo">Showing 0 of 0</div>
+                    <div class="pagination-btns" id="paginationBtns"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Add New Transportation</h2>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="transportationForm" onsubmit="saveTransportation(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="transportationId">
+
+                        <!-- Transportation Name -->
+                        <div class="form-group">
+                            <label class="form-label">Transportation Name *</label>
+                            <input type="text" class="form-input" id="transportation_name" required
+                                placeholder="Enter transportation company name">
+                        </div>
+
+                        <!-- Contact Number / GST Number -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Contact Number</label>
+                                <input type="text" class="form-input" id="contact_number" placeholder="Phone number">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">GST Number</label>
+                                <input type="text" class="form-input" id="gst_number"
+                                    placeholder="e.g., 27XXXXX1234X1X1">
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-textarea" id="address" placeholder="Enter full address"></textarea>
+                        </div>
+
+                        <!-- Remark / Is Active -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Remark</label>
+                                <input type="text" class="form-input" id="remark" placeholder="Any remarks">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Is Active</label>
+                                <div style="padding: 12px 0;">
+                                    <input type="checkbox" id="is_active" checked
+                                        style="width: 20px; height: 20px; cursor: pointer;">
+                                    <label for="is_active"
+                                        style="margin-left: 8px; font-weight: normal; cursor: pointer;">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn-save">SAVE</button>
+                        <button type="button" class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast is handled by toast.js -->
+        <script src="js/toast.js"></script>
+        <script src="js/sidebar.js"></script>
+
+        <script>
+            let currentPage = 1;
+            const limit = 20;
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // checkSession(); // Removed - auth handled by sidebar.js
+                loadTransportations();
+
+                document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') loadTransportations();
+                });
+            });
+
+            async function checkSession() {
+                try {
+                    const response = await fetch('/api/auth/check-session');
+                    const data = await response.json();
+                    if (!data.success) {
+                        window.location.href = 'Login.html';
+                    }
+                } catch (error) {
+                    console.error('Session check error:', error);
+                }
+            }
+
+            function clearSearch() {
+                document.getElementById('searchInput').value = '';
+                loadTransportations();
+            }
+
+            async function loadTransportations() {
+                const search = document.getElementById('searchInput').value;
+                const tableBody = document.getElementById('transportationsTable');
+
+                tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="loading">
+                        <div class="loading-spinner"></div>
+                        Loading transportations...
+                    </td>
+                </tr>`;
+
+                try {
+                    const response = await fetch(`/api/master/transportations?search=${encodeURIComponent(search)}&page=${currentPage}&limit=${limit}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        renderTable(result.data, result.pagination);
+                    } else {
+                        showToast('Error loading transportations', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error loading transportations', 'error');
+                }
+            }
+
+            function renderTable(transportations, pagination) {
+                const tableBody = document.getElementById('transportationsTable');
+
+                if (transportations.length === 0) {
+                    tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            No transportations found
+                        </td>
+                    </tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = transportations.map((t, index) => `
+                <tr>
+                    <td>${(pagination.page - 1) * pagination.limit + index + 1}</td>
+                    <td><strong>${t.transportation_name}</strong></td>
+                    <td>${t.contact_number || '-'}</td>
+                    <td>${t.address || '-'}</td>
+                    <td>${t.gst_number || '-'}</td>
+                    <td>${t.remark || '-'}</td>
+                    <td>
+                        <span class="status-badge ${t.is_active ? 'status-active' : 'status-inactive'}">
+                            ${t.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="action-btns">
+                        <button class="action-btn btn-edit" onclick="editTransportation(${t.transportation_id})">✏️ Edit</button>
+                        <button class="action-btn btn-delete" onclick="deleteTransportation(${t.transportation_id}, '${t.transportation_name}')">🗑️</button>
+                    </td>
+                </tr>`).join('');
+
+                document.getElementById('totalCount').innerHTML = `📊 Total: ${pagination.total}`;
+                document.getElementById('paginationInfo').innerHTML =
+                    `Showing ${(pagination.page - 1) * pagination.limit + 1} - ${Math.min(pagination.page * pagination.limit, pagination.total)} of ${pagination.total}`;
+
+                let paginationHtml = '';
+                for (let i = 1; i <= pagination.pages; i++) {
+                    paginationHtml += `<button class="page-btn ${i === pagination.page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
+                document.getElementById('paginationBtns').innerHTML = paginationHtml;
+            }
+
+            function goToPage(page) {
+                currentPage = page;
+                loadTransportations();
+            }
+
+            function openModal(transportationData = null) {
+                document.getElementById('modalOverlay').classList.add('active');
+                document.getElementById('transportationForm').reset();
+                document.getElementById('transportationId').value = '';
+                document.getElementById('is_active').checked = true;
+
+                if (transportationData) {
+                    document.getElementById('modalTitle').textContent = 'Edit Transportation';
+                    document.getElementById('transportationId').value = transportationData.transportation_id;
+                    document.getElementById('transportation_name').value = transportationData.transportation_name || '';
+                    document.getElementById('contact_number').value = transportationData.contact_number || '';
+                    document.getElementById('gst_number').value = transportationData.gst_number || '';
+                    document.getElementById('address').value = transportationData.address || '';
+                    document.getElementById('remark').value = transportationData.remark || '';
+                    document.getElementById('is_active').checked = transportationData.is_active !== false;
+                } else {
+                    document.getElementById('modalTitle').textContent = 'Add New Transportation';
+                }
+            }
+
+            function closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+
+            async function editTransportation(id) {
+                try {
+                    const response = await fetch(`/api/master/transportations/${id}`);
+                    const result = await response.json();
+                    if (result.success) {
+                        openModal(result.data);
+                    }
+                } catch (error) {
+                    showToast('Error loading transportation', 'error');
+                }
+            }
+
+            async function saveTransportation(event) {
+                event.preventDefault();
+
+                const id = document.getElementById('transportationId').value;
+                const data = {
+                    transportation_name: document.getElementById('transportation_name').value.toUpperCase(),
+                    contact_number: document.getElementById('contact_number').value,
+                    gst_number: document.getElementById('gst_number').value.toUpperCase(),
+                    address: document.getElementById('address').value,
+                    remark: document.getElementById('remark').value,
+                    is_active: document.getElementById('is_active').checked
+                };
+
+                try {
+                    const url = id ? `/api/master/transportations/${id}` : '/api/master/transportations';
+                    const method = id ? 'PUT' : 'POST';
+
+                    const response = await fetch(url, {
+                        method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeModal();
+                        loadTransportations();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error saving transportation', 'error');
+                }
+            }
+
+            async function deleteTransportation(id, name) {
+                if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+                try {
+                    const response = await fetch(`/api/master/transportations/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast('Transportation deleted successfully', 'success');
+                        loadTransportations();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error deleting transportation', 'error');
+                }
+            }
+
+            document.getElementById('modalOverlay').addEventListener('click', function (e) {
+                if (e.target === this) closeModal();
+            });
+        </script>
+    </main>
+
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+</body>
+
+</html>

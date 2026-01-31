@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consignees - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-brown: #5D4037;
+            --dark-brown: #3E2723;
+            --light-brown: #8D6E63;
+            --bg-cream: #EFEBE9;
+            --bg-white: #FAFAFA;
+            --accent: #795548;
+            --success: #4CAF50;
+            --danger: #F44336;
+            --warning: #FF9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .search-btn {
+            background: var(--primary-brown);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--dark-brown);
+        }
+
+        .filter-badge {
+            background: var(--bg-cream);
+            color: var(--primary-brown);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Data Table */
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #FFF8E1;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-inactive {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #FAFAFA;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary-brown);
+            color: white;
+            border-color: var(--primary-brown);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-brown);
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 0;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary-brown);
+        }
+
+        .checkbox-wrapper label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: #FAFAFA;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-brown);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            animation: toastSlide 0.3s ease;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        @keyframes toastSlide {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid var(--primary-brown);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .header-left {
+                flex-direction: column;
+            }
+
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 10px;
+            }
+
+            .action-btns {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .modal {
+                max-width: 95%;
+                margin: 10px;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-footer button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item active"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+                <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+                <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+            </div>
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <div>
+                    <h1 class="page-title">🏢 Consignee Master</h1>
+                    <p class="page-subtitle">Manage consignees and shipping addresses</p>
+                </div>
+            </div>
+            <button class="add-btn" onclick="openModal()">
+                <span>+</span> Add New Consignee
+            </button>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by name, city, GSTN...">
+                <button class="search-btn" onclick="loadConsignees()">
+                    🔍 Search
+                </button>
+                <button class="search-btn" onclick="clearSearch()" style="background: #757575;">
+                    ✕ Clear
+                </button>
+                <div class="filter-badge" id="totalCount">
+                    📊 Total: 0
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Consignee Name</th>
+                            <th>State</th>
+                            <th>City</th>
+                            <th>GSTN</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="consigneesTable">
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading consignees...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <div class="pagination-info" id="paginationInfo">Showing 0 of 0</div>
+                    <div class="pagination-btns" id="paginationBtns"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Add New Consignee</h2>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="consigneeForm" onsubmit="saveConsignee(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="consigneeId">
+
+                        <!-- Row 1: Consignee Name -->
+                        <div class="form-group">
+                            <label class="form-label">Consignee Name *</label>
+                            <input type="text" class="form-input" id="name" required placeholder="Enter consignee name">
+                        </div>
+
+                        <!-- Row 2: State / City -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <select class="form-select" id="state" onchange="loadCities()">
+                                    <option value="">Loading states...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <select class="form-select" id="city">
+                                    <option value="">Select State First</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Address Line 1 / Address Line 2 -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Address Line 1</label>
+                                <input type="text" class="form-input" id="address_line1" placeholder="Address Line 1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address Line 2</label>
+                                <input type="text" class="form-input" id="address_line2" placeholder="Address Line 2">
+                            </div>
+                        </div>
+
+                        <!-- Row 4: GSTN / Pin Code -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">GSTN</label>
+                                <input type="text" class="form-input" id="gstn" placeholder="GST Number" maxlength="15">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Pin Code</label>
+                                <input type="text" class="form-input" id="pin_code" placeholder="PIN Code"
+                                    maxlength="6">
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Contact No -->
+                        <div class="form-group">
+                            <label class="form-label">Contact No</label>
+                            <input type="text" class="form-input" id="contact_no" placeholder="Contact Number">
+                        </div>
+
+                        <!-- Row 6: Is Active -->
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="is_active" checked>
+                                <label for="is_active">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                        <button type="submit" class="btn-save">💾 SAVE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span id="toastMessage">Success!</span>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const limit = 20;
+
+            // Check session on load
+            document.addEventListener('DOMContentLoaded', function () {
+                // checkSession(); // Removed - auth handled by sidebar.js
+                loadStates();
+                loadConsignees();
+
+                // Search on Enter
+                document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') loadConsignees();
+                });
+            });
+
+            // Store states data for lookup
+            let statesData = [];
+
+            // Load states from API (India = country_id 105)
+            async function loadStates() {
+                try {
+                    const response = await fetch('/api/location/states?country_id=105');
+                    const result = await response.json();
+                    const select = document.getElementById('state');
+                    select.innerHTML = '<option value="">Select State</option>';
+                    if (result.success) {
+                        statesData = result.data;
+                        result.data.forEach(state => {
+                            const option = document.createElement('option');
+                            option.value = state.name;
+                            option.dataset.stateId = state.id;
+                            option.textContent = state.name;
+                            select.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading states:', error);
+                }
+            }
+
+            // Load cities based on selected state
+            async function loadCities() {
+                const stateSelect = document.getElementById('state');
+                const citySelect = document.getElementById('city');
+                const selectedOption = stateSelect.options[stateSelect.selectedIndex];
+                const stateId = selectedOption?.dataset?.stateId;
+
+                citySelect.innerHTML = '<option value="">Loading cities...</option>';
+
+                if (!stateId) {
+                    citySelect.innerHTML = '<option value="">Select State First</option>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/location/cities?state_id=${stateId}`);
+                    const result = await response.json();
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+                    if (result.success) {
+                        result.data.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.city.toUpperCase();
+                            option.textContent = city.city;
+                            citySelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading cities:', error);
+                    citySelect.innerHTML = '<option value="">Error loading cities</option>';
+                }
+            }
+
+            async function checkSession() {
+                try {
+                    const response = await fetch('/api/auth/check-session');
+                    const data = await response.json();
+                    if (!data.success) {
+                        window.location.href = 'Login.html';
+                    }
+                } catch (error) {
+                    console.error('Session check error:', error);
+                }
+            }
+
+            function clearSearch() {
+                document.getElementById('searchInput').value = '';
+                loadConsignees();
+            }
+
+            async function loadConsignees() {
+                const search = document.getElementById('searchInput').value;
+                const tableBody = document.getElementById('consigneesTable');
+
+                tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="loading">
+                        <div class="loading-spinner"></div>
+                        Loading consignees...
+                    </td>
+                </tr>
+            `;
+
+                try {
+                    const response = await fetch(`/api/master/consignees?search=${encodeURIComponent(search)}&page=${currentPage}&limit=${limit}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        renderTable(result.data, result.pagination);
+                    } else {
+                        showToast('Error loading consignees', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error loading consignees', 'error');
+                }
+            }
+
+            function renderTable(consignees, pagination) {
+                const tableBody = document.getElementById('consigneesTable');
+
+                if (consignees.length === 0) {
+                    tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            No consignees found
+                        </td>
+                    </tr>
+                `;
+                    return;
+                }
+
+                tableBody.innerHTML = consignees.map((c, index) => `
+                <tr>
+                    <td>${(pagination.page - 1) * pagination.limit + index + 1}</td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.state || '-'}</td>
+                    <td>${c.city || '-'}</td>
+                    <td>${c.gstn || '-'}</td>
+                    <td>${c.contact_no || '-'}</td>
+                    <td>
+                        <span class="status-badge ${c.is_active ? 'status-active' : 'status-inactive'}">
+                            ${c.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="action-btns">
+                        <button class="action-btn btn-edit" onclick="editConsignee(${c.id})">✏️ Edit</button>
+                        <button class="action-btn btn-delete" onclick="deleteConsignee(${c.id}, '${c.name}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+
+                // Update pagination
+                document.getElementById('totalCount').innerHTML = `📊 Total: ${pagination.total}`;
+                document.getElementById('paginationInfo').innerHTML =
+                    `Showing ${(pagination.page - 1) * pagination.limit + 1} - ${Math.min(pagination.page * pagination.limit, pagination.total)} of ${pagination.total}`;
+
+                // Render pagination buttons
+                let btnsHtml = '';
+                for (let i = 1; i <= pagination.pages; i++) {
+                    btnsHtml += `<button class="page-btn ${i === pagination.page ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
+                document.getElementById('paginationBtns').innerHTML = btnsHtml;
+            }
+
+            function goToPage(page) {
+                currentPage = page;
+                loadConsignees();
+            }
+
+            function openModal(data = null) {
+                document.getElementById('modalOverlay').classList.add('active');
+                document.getElementById('consigneeForm').reset();
+                document.getElementById('consigneeId').value = '';
+                document.getElementById('is_active').checked = true;
+                document.getElementById('city').innerHTML = '<option value="">Select State First</option>';
+
+                if (data) {
+                    document.getElementById('modalTitle').textContent = 'Edit Consignee';
+                    document.getElementById('consigneeId').value = data.id;
+                    document.getElementById('name').value = data.name || '';
+                    document.getElementById('state').value = data.state || '';
+                    document.getElementById('gstn').value = data.gstn || '';
+                    document.getElementById('pin_code').value = data.pin_code || '';
+                    document.getElementById('address_line1').value = data.address_line1 || '';
+                    document.getElementById('address_line2').value = data.address_line2 || '';
+                    document.getElementById('contact_no').value = data.contact_no || '';
+                    document.getElementById('is_active').checked = data.is_active !== false;
+
+                    // Load cities for the selected state, then set the city value
+                    if (data.state) {
+                        loadCitiesAndSelect(data.state, data.city);
+                    }
+                } else {
+                    document.getElementById('modalTitle').textContent = 'Add New Consignee';
+                }
+            }
+
+            // Load cities and select a specific city (for edit mode)
+            async function loadCitiesAndSelect(stateName, cityValue) {
+                const stateSelect = document.getElementById('state');
+                const citySelect = document.getElementById('city');
+
+                // Find state ID from statesData
+                const state = statesData.find(s => s.name === stateName);
+                if (!state) return;
+
+                try {
+                    const response = await fetch(`/api/location/cities?state_id=${state.id}`);
+                    const result = await response.json();
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+                    if (result.success) {
+                        result.data.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.city.toUpperCase();
+                            option.textContent = city.city;
+                            if (city.city.toUpperCase() === cityValue?.toUpperCase()) {
+                                option.selected = true;
+                            }
+                            citySelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading cities:', error);
+                }
+            }
+
+            function closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+
+            async function editConsignee(id) {
+                try {
+                    const response = await fetch(`/api/master/consignees/${id}`);
+                    const result = await response.json();
+                    if (result.success) {
+                        openModal(result.data);
+                    }
+                } catch (error) {
+                    showToast('Error loading consignee', 'error');
+                }
+            }
+
+            async function saveConsignee(event) {
+                event.preventDefault();
+                const id = document.getElementById('consigneeId').value;
+
+                const data = {
+                    name: document.getElementById('name').value.toUpperCase(),
+                    state: document.getElementById('state').value,
+                    city: document.getElementById('city').value.toUpperCase(),
+                    gstn: document.getElementById('gstn').value.toUpperCase(),
+                    pin_code: document.getElementById('pin_code').value,
+                    address_line1: document.getElementById('address_line1').value,
+                    address_line2: document.getElementById('address_line2').value,
+                    contact_no: document.getElementById('contact_no').value,
+                    is_active: document.getElementById('is_active').checked
+                };
+
+                try {
+                    const url = id ? `/api/master/consignees/${id}` : '/api/master/consignees';
+                    const response = await fetch(url, {
+                        method: id ? 'PUT' : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeModal();
+                        loadConsignees();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error saving consignee', 'error');
+                }
+            }
+
+            async function deleteConsignee(id, name) {
+                if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+                try {
+                    const response = await fetch(`/api/master/consignees/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        loadConsignees();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error deleting consignee', 'error');
+                }
+            }
+
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                document.getElementById('toastMessage').textContent = message;
+                toast.className = 'toast show ' + type;
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        </script>
+        <script src="js/toast.js"></script>
+        <script src="js/sidebar.js"></script>
+    </main>
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+</body>
+
+</html>

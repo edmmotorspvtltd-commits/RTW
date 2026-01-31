@@ -1,0 +1,114 @@
+// ================================================================================
+//                    SESSION GUARD - Prevent Back Button Access
+//     Protects pages after logout by checking session validity
+// ================================================================================
+
+(function () {
+    'use strict';
+
+    // Skip session guard on public pages
+    const publicPages = ['Login.html', 'Register.html', 'ForgotPassword.html', 'ResetPassword.html'];
+    const currentPage = window.location.pathname.split('/').pop();
+
+    if (publicPages.includes(currentPage)) {
+        console.log('📄 Public page, skipping session guard');
+        return;
+    }
+
+    // Prevent browser from caching this page
+    if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, null, window.location.href);
+        };
+    }
+
+    // Check if user is logged in
+    async function checkAuth(silent = false) {
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                if (!silent) console.log('⚠️ No token found, redirecting to login');
+                redirectToLogin();
+                return;
+            }
+
+            const response = await fetch('/api/auth/check-session', {
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                if (!silent) console.log('⚠️ Session invalid, redirecting to login');
+                redirectToLogin();
+                return;
+            }
+
+            const data = await response.json();
+            if (!data.success) {
+                if (!silent) console.log('⚠️ Session check failed, redirecting to login');
+                redirectToLogin();
+            } else {
+                if (!silent) console.log('✅ Session valid');
+            }
+        } catch (error) {
+            // Only redirect on network errors if we're sure there's no token
+            if (!silent) console.error('Session check error:', error);
+
+            // Don't redirect immediately on fetch errors - might be temporary network issue
+            const token = localStorage.getItem('token');
+            if (!token) {
+                redirectToLogin();
+            }
+        }
+    }
+
+    function redirectToLogin() {
+        // Clear all auth data
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+
+        // Redirect to login
+        window.location.replace('/Login.html');
+    }
+
+    // Wait a bit before first check to allow login process to complete
+    let initialCheckDone = false;
+
+    // Run on page load with delay
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Wait 500ms before first check to allow login to complete
+            setTimeout(function () {
+                checkAuth(false);
+                initialCheckDone = true;
+            }, 500);
+        });
+    } else {
+        // Page already loaded
+        setTimeout(function () {
+            checkAuth(false);
+            initialCheckDone = true;
+        }, 500);
+    }
+
+    // Also check when page becomes visible (user switches back to tab)
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && initialCheckDone) {
+            checkAuth(true); // Silent check
+        }
+    });
+
+    // Check session every 5 minutes (silent)
+    setInterval(function () {
+        if (initialCheckDone) {
+            checkAuth(true);
+        }
+    }, 5 * 60 * 1000);
+
+})();

@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Company - RTWE ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling - Matching Dashboard */
+        :root {
+            --primary-dark: #3E2723;
+            --primary: #5D4037;
+            --primary-light: #8D6E63;
+            --accent: #A1887F;
+            --sidebar-bg: #2C1810;
+            --sidebar-hover: #3E2723;
+            --sidebar-active: #5D4037;
+            --bg-main: #F5F5F5;
+            --bg-card: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --text-light: #FFFFFF;
+            --border: #E0E0E0;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section-title {
+            padding: 10px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-light);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: var(--sidebar-active);
+            color: var(--text-light);
+            border-left-color: var(--text-light);
+        }
+
+        .menu-item .icon {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .menu-item .badge {
+            margin-left: auto;
+            background: #F44336;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Collapsible Menu Styles */
+        .menu-category {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-category:hover {
+            background: var(--sidebar-hover);
+            border-left-color: var(--accent);
+        }
+
+        .menu-category .category-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-category .category-icon {
+            font-size: 18px;
+        }
+
+        .menu-category .category-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-category.expanded .category-arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu.expanded {
+            max-height: 1000px;
+        }
+
+        .submenu .menu-item {
+            padding-left: 50px;
+            font-size: 13px;
+        }
+
+        .submenu .menu-item .icon {
+            font-size: 14px;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 30px;
+            background-color: #f5f5f5;
+        }
+
+        /* Header */
+        .page-header {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            color: #2c2013;
+            font-weight: 600;
+        }
+
+        .breadcrumb {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .breadcrumb a {
+            color: #4a3520;
+            text-decoration: none;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 30px;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #2c2013;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a3520;
+            display: inline-block;
+        }
+
+        /* Form Grid */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row.triple {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4a3520;
+            box-shadow: 0 0 0 3px rgba(74, 53, 32, 0.1);
+        }
+
+        .form-group input[readonly] {
+            background-color: #f9f9f9;
+            cursor: not-allowed;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Checkbox Group */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Units Section */
+        .units-section {
+            background-color: #fafafa;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .unit-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+        .unit-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .unit-item-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c2013;
+        }
+
+        .remove-unit-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.3s;
+        }
+
+        .remove-unit-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .add-unit-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+
+        .add-unit-btn:hover {
+            background-color: #229954;
+        }
+
+        /* Form Buttons */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #4a3520;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2c2013;
+        }
+
+        .btn-secondary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row.triple {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Icons (using simple emoji/text for now) */
+        .icon {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+    </style>
+
+    <!-- Session Guard - Prevent unauthorized access -->
+    <script src="js/session-guard.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">
+                RTWE ERP
+                <small>Textile Management</small>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+
+                <!-- Master Data - Collapsible -->
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left">
+                        <span class="category-icon">📦</span>
+                        <span>Master Data</span>
+                    </div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <!-- ⭐ PINNED AT TOP - ADD-ON SYSTEMS ⭐ -->
+                    <a href="add-company.html" class="menu-item active"><span class="icon">🏢</span>Add Company</a>
+                    <a href="user-management-enhanced.html" class="menu-item"><span class="icon">👥</span>User
+                        Management</a>
+                    <a href="rapier-costing.html" class="menu-item"><span class="icon">💰</span>Costing Sheet</a>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;"></div>
+                    <!-- Existing Items -->
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+
+                <a href="#" class="menu-item">
+                    <span class="icon">📝</span>
+                    Enquiries
+                    <span class="badge">5</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🛒</span>
+                    Sale Orders
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📦</span>
+                    Sort Master
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Attendance & HR</div>
+                <a href="attendance-dashboard.html" class="menu-item">
+                    <span class="icon">🕒</span>
+                    Attendance Dashboard
+                </a>
+                <a href="attendance-employees.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    Employees
+                </a>
+                <a href="attendance-shifts.html" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Shift Management
+                </a>
+                <a href="attendance-leaves.html" class="menu-item">
+                    <span class="icon">🏖️</span>
+                    Leave Management
+                </a>
+                <a href="salary-management.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    Salary & Payroll
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Reports</div>
+                <a href="#" class="menu-item">
+                    <span class="icon">📈</span>
+                    Analytics
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📋</span>
+                    Order Reports
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">💰</span>
+                    Financial
+                </a>
+            </div>
+
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="/Usermanagement.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    User Management
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📜</span>
+                    Audit Logs
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>Add New Company</h1>
+                <div class="breadcrumb">
+                    <a href="#">Master Data</a> / <a href="companies.html">Companies</a> / <span>Add Company</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alert-success" class="alert alert-success"></div>
+        <div id="alert-error" class="alert alert-error"></div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <form id="addCompanyForm">
+
+                <!-- SECTION 1: BASIC INFORMATION -->
+                <div class="form-section">
+                    <h2 class="section-title">📋 Basic Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Company Name <span class="required">*</span></label>
+                            <input type="text" id="companyName" name="companyName" placeholder="Enter company name"
+                                required>
+                            <span class="hint">Example: ABC Textiles Ltd</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Company Code <span class="required">*</span></label>
+                            <input type="text" id="companyCode" name="companyCode" value="COMP-001" readonly>
+                            <span class="hint">Auto-generated company code</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Company Type <span class="required">*</span></label>
+                            <select id="companyType" name="companyType" required>
+                                <option value="">-- Select Company Type --</option>
+                                <option value="trading">Trading</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="both">Both (Trading + Manufacturing)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Registration Date <span class="required">*</span></label>
+                            <input type="date" id="registrationDate" name="registrationDate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: OWNER INFORMATION -->
+                <div class="form-section">
+                    <h2 class="section-title">👤 Owner / Contact Person Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Owner Name <span class="required">*</span></label>
+                            <input type="text" id="ownerName" name="ownerName"
+                                placeholder="Enter owner/contact person name" required>
+                            <span class="hint">Example: Mr. Rajesh Sharma</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Owner Email <span class="required">*</span></label>
+                            <input type="email" id="ownerEmail" name="ownerEmail" placeholder="owner@company.com"
+                                required>
+                            <span class="hint">Used for login and notifications</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Owner Phone <span class="required">*</span></label>
+                            <input type="tel" id="ownerPhone" name="ownerPhone"
+                                placeholder="Enter 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required>
+                            <span class="hint">Example: 9876543210 (10 digits only)</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Alternate Phone</label>
+                            <input type="tel" id="alternatePhone" name="alternatePhone"
+                                placeholder="Enter alternate phone (optional)" pattern="[0-9]{10}" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: COMPANY ADDRESS -->
+                <div class="form-section">
+                    <h2 class="section-title">📍 Company Address</h2>
+
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>Address Line 1 <span class="required">*</span></label>
+                            <input type="text" id="addressLine1" name="addressLine1"
+                                placeholder="Building/Plot number, Street name" required>
+                            <span class="hint">Example: Plot No. 123, Industrial Area</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>Address Line 2</label>
+                            <input type="text" id="addressLine2" name="addressLine2"
+                                placeholder="Landmark, Area (optional)">
+                            <span class="hint">Example: Near Railway Station, MIDC Area</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row triple">
+                        <div class="form-group">
+                            <label>State <span class="required">*</span></label>
+                            <select id="state" name="state" required onchange="loadCitiesByState(this.value)">
+                                <option value="">-- Select State --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>City <span class="required">*</span></label>
+                            <select id="city" name="city" required>
+                                <option value="">-- Select City --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pincode <span class="required">*</span></label>
+                            <input type="text" id="pincode" name="pincode" placeholder="Enter 6-digit pincode"
+                                pattern="[0-9]{6}" maxlength="6" required>
+                            <span class="hint">Example: 400001</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: LEGAL INFORMATION -->
+                <div class="form-section">
+                    <h2 class="section-title">📜 Legal Information (Optional)</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>GST Number</label>
+                            <input type="text" id="gstNumber" name="gstNumber" placeholder="Enter GST number (optional)"
+                                maxlength="15" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}">
+                            <span class="hint">Format: 27AABCU9603R1ZX (15 characters)</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>PAN Number</label>
+                            <input type="text" id="panNumber" name="panNumber" placeholder="Enter PAN number (optional)"
+                                maxlength="10" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" style="text-transform: uppercase;">
+                            <span class="hint">Format: AABCU9603R (10 characters)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>TAN Number</label>
+                            <input type="text" id="tanNumber" name="tanNumber" placeholder="Enter TAN number (optional)"
+                                maxlength="10" style="text-transform: uppercase;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CIN Number</label>
+                            <input type="text" id="cinNumber" name="cinNumber" placeholder="Enter CIN number (optional)"
+                                maxlength="21" style="text-transform: uppercase;">
+                            <span class="hint">Corporate Identification Number</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: UNITS/BRANCHES SETUP -->
+                <div class="form-section">
+                    <h2 class="section-title">🏭 Units / Branches Setup</h2>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="hasMultipleUnits" name="hasMultipleUnits">
+                        <label for="hasMultipleUnits">Does this company have multiple units/branches/locations?</label>
+                    </div>
+
+                    <div id="unitsSection" class="units-section" style="display: none;">
+                        <p style="margin-bottom: 20px; color: #666; font-size: 14px;">
+                            ℹ️ Add all units/branches for this company. You can add more units later from the company
+                            details page.
+                        </p>
+
+                        <div id="unitsContainer">
+                            <!-- Unit items will be added dynamically here -->
+                        </div>
+
+                        <button type="button" class="add-unit-btn" id="addUnitBtn">
+                            <span>➕</span> Add Another Unit
+                        </button>
+                    </div>
+
+                    <div id="singleUnitNote"
+                        style="color: #666; font-size: 14px; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+                        ℹ️ This company will be set up as a single location. You can add multiple units later if needed.
+                    </div>
+                </div>
+
+                <!-- SECTION 6: STATUS -->
+                <div class="form-section">
+                    <h2 class="section-title">✅ Status</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Company Status <span class="required">*</span></label>
+                            <select id="status" name="status" required>
+                                <option value="active" selected>Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                            <span class="hint">Select 'Active' to enable this company immediately</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notes / Remarks</label>
+                            <textarea id="notes" name="notes"
+                                placeholder="Add any additional notes or remarks (optional)" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="window.location.href='companies.html'">
+                        ❌ Cancel
+                    </button>
+                    <button type="submit" class="btn btn-secondary">
+                        💾 Save & Add Units Later
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveCompanyBtn">
+                        ✅ Save Company
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for Dynamic Unit Addition -->
+    <script>
+        let unitCounter = 0;
+
+        // Toggle units section when checkbox is checked/unchecked
+        document.getElementById('hasMultipleUnits').addEventListener('change', function () {
+            const unitsSection = document.getElementById('unitsSection');
+            const singleUnitNote = document.getElementById('singleUnitNote');
+
+            if (this.checked) {
+                unitsSection.style.display = 'block';
+                singleUnitNote.style.display = 'none';
+
+                // Add first unit automatically
+                if (unitCounter === 0) {
+                    addUnit();
+                }
+            } else {
+                unitsSection.style.display = 'none';
+                singleUnitNote.style.display = 'block';
+
+                // Clear all units
+                document.getElementById('unitsContainer').innerHTML = '';
+                unitCounter = 0;
+            }
+        });
+
+        // Add Unit Button Click
+        document.getElementById('addUnitBtn').addEventListener('click', function () {
+            addUnit();
+        });
+
+        // Function to add a new unit
+        function addUnit() {
+            unitCounter++;
+
+            const unitHTML = `
+                <div class="unit-item" id="unit-${unitCounter}">
+                    <div class="unit-item-header">
+                        <span class="unit-item-title">🏭 Unit #${unitCounter}</span>
+                        <button type="button" class="remove-unit-btn" onclick="removeUnit(${unitCounter})">
+                            ❌ Remove
+                        </button>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Unit Name <span class="required">*</span></label>
+                            <input type="text" name="unitName[]" placeholder="e.g., Mumbai Factory" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Unit Type <span class="required">*</span></label>
+                            <select name="unitType[]" required>
+                                <option value="">-- Select Type --</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="processing">Processing</option>
+                                <option value="warehouse">Warehouse</option>
+                                <option value="distribution">Distribution Center</option>
+                                <option value="office">Office</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Location (City, State) <span class="required">*</span></label>
+                            <input type="text" name="unitLocation[]" placeholder="e.g., Mumbai, Maharashtra" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" name="unitAddress[]" placeholder="Plot/Building, Street">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Manager Name</label>
+                            <input type="text" name="unitManager[]" placeholder="Unit manager name (optional)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Manager Email</label>
+                            <input type="email" name="unitManagerEmail[]" placeholder="manager@company.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Manager Phone</label>
+                            <input type="tel" name="unitManagerPhone[]" placeholder="10-digit phone" pattern="[0-9]{10}" maxlength="10">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Production Capacity (Optional)</label>
+                            <input type="number" name="unitCapacity[]" placeholder="Units per day/month">
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('unitsContainer').insertAdjacentHTML('beforeend', unitHTML);
+        }
+
+        // Function to remove a unit
+        function removeUnit(unitId) {
+            const unitElement = document.getElementById(`unit-${unitId}`);
+            if (unitElement) {
+                unitElement.remove();
+            }
+
+            // If no units left, uncheck the checkbox
+            const remainingUnits = document.querySelectorAll('.unit-item');
+            if (remainingUnits.length === 0) {
+                document.getElementById('hasMultipleUnits').checked = false;
+                document.getElementById('unitsSection').style.display = 'none';
+                document.getElementById('singleUnitNote').style.display = 'block';
+                unitCounter = 0;
+            }
+        }
+
+        // Set today's date as default for registration date
+        document.getElementById('registrationDate').valueAsDate = new Date();
+
+        // Check if editing existing company
+        let editingCompanyId = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('id')) {
+            editingCompanyId = urlParams.get('id');
+            loadCompanyForEdit(editingCompanyId);
+        }
+
+        // Load company data for editing
+        async function loadCompanyForEdit(id) {
+            try {
+                const res = await fetch(`/api/company/${id}`, { credentials: 'include' });
+                const data = await res.json();
+                if (data.success && data.company) {
+                    const c = data.company;
+                    // Update page title
+                    document.querySelector('.page-header h1').textContent = 'Edit Company';
+                    document.querySelector('.breadcrumb span').textContent = 'Edit Company';
+
+                    // Populate form fields
+                    document.getElementById('companyName').value = c.company_name || '';
+                    document.getElementById('companyCode').value = c.company_code || '';
+                    document.getElementById('companyCode').disabled = true; // Can't change code
+                    document.getElementById('companyType').value = c.company_type || '';
+                    document.getElementById('registrationDate').value = c.registration_date ? c.registration_date.split('T')[0] : '';
+                    document.getElementById('ownerName').value = c.owner_name || '';
+                    document.getElementById('ownerEmail').value = c.owner_email || '';
+                    document.getElementById('ownerPhone').value = c.owner_phone || '';
+                    document.getElementById('alternatePhone').value = c.alternate_phone || '';
+                    document.getElementById('addressLine1').value = c.address_line1 || '';
+                    document.getElementById('addressLine2').value = c.address_line2 || '';
+                    document.getElementById('pincode').value = c.pincode || '';
+                    document.getElementById('gstNumber').value = c.gst_number || '';
+                    document.getElementById('panNumber').value = c.pan_number || '';
+                    document.getElementById('tanNumber').value = c.tan_number || '';
+                    document.getElementById('cinNumber').value = c.cin_number || '';
+                    document.getElementById('status').value = c.status || 'active';
+                    document.getElementById('notes').value = c.notes || '';
+
+                    // Load states first, then set the selected state and load cities
+                    await loadStates();
+
+                    // Find and select the state by name (case-insensitive)
+                    const stateSelect = document.getElementById('state');
+                    const stateOptions = stateSelect.options;
+                    const stateName = (c.state || '').toLowerCase();
+
+                    for (let i = 0; i < stateOptions.length; i++) {
+                        const optionName = (stateOptions[i].getAttribute('data-name') || '').toLowerCase();
+                        if (optionName === stateName) {
+                            stateSelect.selectedIndex = i;
+                            // Load cities for this state
+                            if (stateOptions[i].value) {
+                                await loadCitiesByState(stateOptions[i].value);
+
+                                // Select the city (case-insensitive)
+                                const citySelect = document.getElementById('city');
+                                const cityOptions = citySelect.options;
+                                const cityName = (c.city || '').toLowerCase();
+
+                                for (let j = 0; j < cityOptions.length; j++) {
+                                    const cityOptionName = (cityOptions[j].getAttribute('data-name') || '').toLowerCase();
+                                    if (cityOptionName === cityName) {
+                                        citySelect.selectedIndex = j;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    // Load units for this company
+                    await loadUnitsForEdit(id);
+                }
+            } catch (err) {
+                console.error('Error loading company for edit:', err);
+                alert('Error loading company data');
+            }
+        }
+
+        // Load units when editing a company
+        async function loadUnitsForEdit(companyId) {
+            try {
+                const res = await fetch(`/api/company/${companyId}/units`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success && data.units && data.units.length > 0) {
+                    // Check the "has multiple units" checkbox
+                    document.getElementById('hasMultipleUnits').checked = true;
+                    document.getElementById('unitsSection').style.display = 'block';
+                    document.getElementById('singleUnitNote').style.display = 'none';
+
+                    // Clear existing units
+                    document.getElementById('unitsContainer').innerHTML = '';
+                    unitCounter = 0;
+
+                    // Add each unit to the form
+                    data.units.forEach(unit => {
+                        unitCounter++;
+                        const unitHTML = `
+                            <div class="unit-item" id="unit-${unitCounter}" data-unit-id="${unit.id}">
+                                <div class="unit-item-header">
+                                    <span class="unit-item-title">🏭 Unit #${unitCounter} - ${unit.unit_name}</span>
+                                    <button type="button" class="remove-unit-btn" onclick="removeUnit(${unitCounter})">
+                                        ❌ Remove
+                                    </button>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Unit Name <span class="required">*</span></label>
+                                        <input type="text" name="unitName[]" value="${unit.unit_name || ''}" placeholder="e.g., Mumbai Factory" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Unit Type <span class="required">*</span></label>
+                                        <select name="unitType[]" required>
+                                            <option value="">-- Select Type --</option>
+                                            <option value="manufacturing" ${unit.unit_type === 'manufacturing' ? 'selected' : ''}>Manufacturing</option>
+                                            <option value="processing" ${unit.unit_type === 'processing' ? 'selected' : ''}>Processing</option>
+                                            <option value="warehouse" ${unit.unit_type === 'warehouse' ? 'selected' : ''}>Warehouse</option>
+                                            <option value="distribution" ${unit.unit_type === 'distribution' ? 'selected' : ''}>Distribution Center</option>
+                                            <option value="office" ${unit.unit_type === 'office' ? 'selected' : ''}>Office</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Location (City, State) <span class="required">*</span></label>
+                                        <input type="text" name="unitLocation[]" value="${unit.location || ''}" placeholder="e.g., Mumbai, Maharashtra" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" name="unitAddress[]" value="${unit.address_line1 || ''}" placeholder="Plot/Building, Street">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Manager Name</label>
+                                        <input type="text" name="unitManager[]" value="${unit.manager_name || ''}" placeholder="Unit manager name (optional)">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Manager Email</label>
+                                        <input type="email" name="unitManagerEmail[]" value="${unit.manager_email || ''}" placeholder="manager@company.com">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Manager Phone</label>
+                                        <input type="tel" name="unitManagerPhone[]" value="${unit.manager_phone || ''}" placeholder="10-digit phone" pattern="[0-9]{10}" maxlength="10">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Production Capacity (Optional)</label>
+                                        <input type="number" name="unitCapacity[]" value="${unit.production_capacity || ''}" placeholder="Units per day/month">
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('unitsContainer').insertAdjacentHTML('beforeend', unitHTML);
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading units for edit:', err);
+            }
+        }
+
+        // Form submission
+        document.getElementById('addCompanyForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = {
+                companyName: document.getElementById('companyName').value,
+                companyCode: document.getElementById('companyCode').value,
+                companyType: document.getElementById('companyType').value,
+                registrationDate: document.getElementById('registrationDate').value,
+                ownerName: document.getElementById('ownerName').value,
+                ownerEmail: document.getElementById('ownerEmail').value,
+                ownerPhone: document.getElementById('ownerPhone').value,
+                alternatePhone: document.getElementById('alternatePhone').value,
+                addressLine1: document.getElementById('addressLine1').value,
+                addressLine2: document.getElementById('addressLine2').value,
+                city: document.getElementById('city').options[document.getElementById('city').selectedIndex]?.getAttribute('data-name') || document.getElementById('city').value,
+                state: document.getElementById('state').options[document.getElementById('state').selectedIndex]?.getAttribute('data-name') || document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value,
+                gstNumber: document.getElementById('gstNumber').value,
+                panNumber: document.getElementById('panNumber').value,
+                tanNumber: document.getElementById('tanNumber').value,
+                cinNumber: document.getElementById('cinNumber').value,
+                status: document.getElementById('status').value,  // Fixed: was 'companyStatus', should be 'status'
+                notes: document.getElementById('notes').value
+            };
+
+            // Collect units data if multiple units checkbox is checked
+            const hasMultipleUnits = document.getElementById('hasMultipleUnits').checked;
+            if (hasMultipleUnits) {
+                const units = [];
+                const unitNames = document.getElementsByName('unitName[]');
+                const unitTypes = document.getElementsByName('unitType[]');
+                const unitLocations = document.getElementsByName('unitLocation[]');
+                const unitAddresses = document.getElementsByName('unitAddress[]');
+                const unitManagers = document.getElementsByName('unitManager[]');
+                const unitManagerEmails = document.getElementsByName('unitManagerEmail[]');
+                const unitManagerPhones = document.getElementsByName('unitManagerPhone[]');
+                const unitCapacities = document.getElementsByName('unitCapacity[]');
+
+                for (let i = 0; i < unitNames.length; i++) {
+                    units.push({
+                        unitName: unitNames[i].value,
+                        unitType: unitTypes[i].value,
+                        location: unitLocations[i].value,
+                        address: unitAddresses[i].value,
+                        managerName: unitManagers[i].value,
+                        managerEmail: unitManagerEmails[i].value,
+                        managerPhone: unitManagerPhones[i].value,
+                        productionCapacity: unitCapacities[i].value
+                    });
+                }
+                formData.units = units;
+            }
+
+
+            try {
+                let res;
+                if (editingCompanyId) {
+                    // Update existing company
+                    res = await fetch(`/api/company/${editingCompanyId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Create new company
+                    res = await fetch('/api/company/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(formData)
+                    });
+                }
+
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('alert-success').textContent = editingCompanyId
+                        ? '✅ Company updated successfully!'
+                        : '✅ Company created successfully!';
+                    document.getElementById('alert-success').style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'companies.html';
+                    }, 2000);
+                } else {
+                    alert('Error: ' + (result.message || 'Failed to save company'));
+                }
+            } catch (err) {
+                console.error('Submit error:', err);
+                alert('Error saving company: ' + err.message);
+            }
+        });
+
+        // Phone number validation (allow only numbers)
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function (e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        // Pincode validation (allow only numbers, max 6 digits)
+        document.getElementById('pincode').addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+        });
+
+        // Load states from API
+        async function loadStates() {
+            try {
+                const res = await fetch('/api/location/states', { credentials: 'include' });
+                const data = await res.json();
+                const stateSelect = document.getElementById('state');
+                stateSelect.innerHTML = '<option value="">-- Select State --</option>';
+                if (data.success && data.data) {
+                    data.data.forEach(state => {
+                        stateSelect.innerHTML += `<option value="${state.id}" data-name="${state.name}">${state.name}</option>`;
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading states:', err);
+            }
+        }
+
+        // Load cities by state from API
+        async function loadCitiesByState(stateId) {
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">Loading...</option>';
+
+            if (!stateId) {
+                citySelect.innerHTML = '<option value="">-- Select City --</option>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/location/cities?state_id=${stateId}`, { credentials: 'include' });
+                const data = await res.json();
+                citySelect.innerHTML = '<option value="">-- Select City --</option>';
+                if (data.success && data.data) {
+                    data.data.forEach(city => {
+                        citySelect.innerHTML += `<option value="${city.id}" data-name="${city.city}">${city.city}</option>`;
+                    });
+                }
+                if (data.data && data.data.length === 0) {
+                    citySelect.innerHTML = '<option value="">No cities found</option>';
+                }
+            } catch (err) {
+                console.error('Error loading cities:', err);
+                citySelect.innerHTML = '<option value="">Error loading cities</option>';
+            }
+        }
+
+        // Load states on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadStates();
+            loadUserInfo();
+        });
+
+        // Load user info for sidebar
+        async function loadUserInfo() {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                console.warn('No auth token found');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/check-session', {
+                    credentials: 'include',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await res.json();
+
+                if (data.success && data.user) {
+                    const userName = data.user.fullName || data.user.userName || data.user.user_name || 'User';
+                    const userRole = data.user.role || 'user';
+                    const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
+                    // Update sidebar user info
+                    const userNameEl = document.getElementById('userName');
+                    const userRoleEl = document.getElementById('userRole');
+                    const userAvatarEl = document.getElementById('userAvatar');
+
+                    if (userNameEl) userNameEl.textContent = userName;
+                    if (userRoleEl) userRoleEl.textContent = userRole.toUpperCase();
+                    if (userAvatarEl) userAvatarEl.textContent = initials;
+
+                    // Show admin menu if applicable
+                    if (userRole === 'admin' || userRole === 'super_admin') {
+                        const adminMenu = document.getElementById('adminMenu');
+                        if (adminMenu) adminMenu.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading user info:', err);
+            }
+        }
+    </script>
+
+    <!-- Load shared sidebar JavaScript with logout confirmation -->
+    <script src="js/sidebar.js"></script>
+</body>
+
+</html>

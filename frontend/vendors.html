@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendors - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-brown: #5D4037;
+            --dark-brown: #3E2723;
+            --light-brown: #8D6E63;
+            --bg-cream: #EFEBE9;
+            --bg-white: #FAFAFA;
+            --accent: #795548;
+            --success: #4CAF50;
+            --danger: #F44336;
+            --warning: #FF9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .search-btn {
+            background: var(--primary-brown);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--dark-brown);
+        }
+
+        .filter-badge {
+            background: var(--bg-cream);
+            color: var(--primary-brown);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Data Table */
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #FFF8E1;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-inactive {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #FAFAFA;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary-brown);
+            color: white;
+            border-color: var(--primary-brown);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-brown);
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: #FAFAFA;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-brown);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            animation: toastSlide 0.3s ease;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        @keyframes toastSlide {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid var(--primary-brown);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 10px;
+            }
+
+            .action-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item active"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+                <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+                <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+                <a href="#" class="menu-item"><span class="icon">📦</span>Sort Master</a>
+            </div>
+            <div class="menu-section">
+                <div class="menu-section-title">Reports</div>
+                <a href="#" class="menu-item"><span class="icon">📈</span>Analytics</a>
+                <a href="#" class="menu-item"><span class="icon">📋</span>Order Reports</a>
+                <a href="#" class="menu-item"><span class="icon">💰</span>Financial</a>
+            </div>
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+                <a href="#" class="menu-item"><span class="icon">📜</span>Audit Logs</a>
+                <a href="#" class="menu-item"><span class="icon">⚙️</span>Settings</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <div>
+                    <h1 class="page-title">🏭 Vendor Master</h1>
+                    <p class="page-subtitle">Manage suppliers and vendors</p>
+                </div>
+            </div>
+            <button class="add-btn" onclick="openModal()" aria-label="Add new vendor">
+                <span aria-hidden="true">+</span> Add New Vendor
+            </button>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-bar" role="search">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by vendor name or code..."
+                    aria-label="Search vendors">
+                <button class="search-btn" onclick="loadVendors()" aria-label="Search">
+                    <span aria-hidden="true">🔍</span> Search
+                </button>
+                <button class="search-btn" onclick="clearSearch()" style="background: #757575;"
+                    aria-label="Clear search">
+                    <span aria-hidden="true">✕</span> Clear
+                </button>
+                <div class="filter-badge" id="totalCount">
+                    📊 Total: 0
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <table class="data-table" role="grid" aria-label="Vendors list">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Vendor Name</th>
+                            <th>Type</th>
+                            <th>Group</th>
+                            <th>Contact</th>
+                            <th>City</th>
+                            <th>GSTN</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendorsTable">
+                        <tr>
+                            <td colspan="9" class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading vendors...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <div class="pagination-info" id="paginationInfo">Showing 0 of 0</div>
+                    <div class="pagination-btns" id="paginationBtns"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Add New Vendor</h2>
+                    <button class="modal-close" onclick="closeModal()" aria-label="Close modal">×</button>
+                </div>
+                <form id="vendorForm" onsubmit="saveVendor(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="vendorId">
+
+                        <!-- Row 1: Name / Code -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Vendor Name *</label>
+                                <input type="text" class="form-input" id="name" required
+                                    placeholder="Enter vendor name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Vendor Code</label>
+                                <input type="text" class="form-input" id="code" placeholder="Auto-generated if empty">
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Group / Vendor Type -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Vendor Group *</label>
+                                <select class="form-input" id="vendor_group_id" required>
+                                    <option value="">Loading groups...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Vendor Type</label>
+                                <select class="form-input" id="vendor_type">
+                                    <option value="">Select Type</option>
+                                    <option value="MANUFACTURER">Manufacturer</option>
+                                    <option value="TRADER">Trader</option>
+                                    <option value="JOBWORKER">Job Worker</option>
+                                    <option value="SUPPLIER">Supplier</option>
+                                    <option value="TRANSPORTER">Transporter</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Contact Person / Contact No -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Contact Person Name</label>
+                                <input type="text" class="form-input" id="contact_person"
+                                    placeholder="Primary contact name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact No</label>
+                                <input type="text" class="form-input" id="contact_no" placeholder="Mobile number">
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Landline / FAX -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Landline Number</label>
+                                <input type="text" class="form-input" id="landline" placeholder="Office landline">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">FAX</label>
+                                <input type="text" class="form-input" id="fax" placeholder="Fax number">
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Email / GSTN -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="email" placeholder="vendor@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">GSTN</label>
+                                <input type="text" class="form-input" id="gstn" placeholder="GST Number (15 chars)">
+                            </div>
+                        </div>
+
+                        <!-- Row 6: Address -->
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-input" id="address" placeholder="Street address">
+                        </div>
+
+                        <!-- Row 7: City / State / Pincode -->
+                        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-input" id="city" placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-input" id="state" placeholder="State">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Pincode</label>
+                                <input type="text" class="form-input" id="pincode" placeholder="PIN">
+                            </div>
+                        </div>
+
+                        <!-- Row 8: Vendor Rating / Vendor Preference -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Vendor Rating</label>
+                                <select class="form-input" id="vendor_rating">
+                                    <option value="">Select Rating</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ Excellent (5)</option>
+                                    <option value="4">⭐⭐⭐⭐ Good (4)</option>
+                                    <option value="3">⭐⭐⭐ Average (3)</option>
+                                    <option value="2">⭐⭐ Below Average (2)</option>
+                                    <option value="1">⭐ Poor (1)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Vendor Preference</label>
+                                <select class="form-input" id="vendor_preference">
+                                    <option value="">Select Preference</option>
+                                    <option value="PREFERRED">Preferred</option>
+                                    <option value="STANDARD">Standard</option>
+                                    <option value="AVOID">Avoid</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 9: Is Active -->
+                        <div class="form-group">
+                            <div style="padding: 12px 0;">
+                                <input type="checkbox" id="is_active" checked
+                                    style="width: 20px; height: 20px; cursor: pointer; vertical-align: middle;">
+                                <label for="is_active"
+                                    style="margin-left: 8px; font-weight: normal; cursor: pointer; vertical-align: middle;">Active
+                                    Vendor</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn-save">SAVE</button>
+                        <button type="button" class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span id="toastMessage">Success!</span>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const limit = 20;
+            let allVendors = [];
+            let allGroups = [];
+
+            function checkSession() {
+                // Placeholder for session check
+                document.getElementById('sidebarUserName').textContent = 'Admin User';
+                document.getElementById('sidebarUserRole').textContent = 'Administrator';
+            }
+
+            async function loadVendors() {
+                const tbody = document.getElementById('vendorsTable');
+                const searchInput = document.getElementById('searchInput').value;
+
+                try {
+                    tbody.innerHTML = `<tr><td colspan="7" class="loading"><div class="loading-spinner"></div>Loading vendors...</td></tr>`;
+
+                    let url = '/api/master/vendors';
+                    if (searchInput) {
+                        url += `?search=${encodeURIComponent(searchInput)}`;
+                    }
+
+                    const response = await fetch(url);
+                    const result = await response.json();
+
+                    if (!result.success) throw new Error(result.message);
+
+                    allVendors = result.data;
+                    renderTable(allVendors);
+                    document.getElementById('totalCount').textContent = `📊 Total: ${allVendors.length}`;
+
+                } catch (error) {
+                    console.error('Error loading vendors:', error);
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">${error.message}</td></tr>`;
+                    showToast('Failed to load vendors', 'error');
+                }
+            }
+
+            function renderTable(data) {
+                const tbody = document.getElementById('vendorsTable');
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No vendors found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(vendor => `
+                    <tr>
+                        <td style="font-family:monospace; font-weight:600;">${vendor.code || '-'}</td>
+                        <td style="font-weight:600;">${vendor.name}</td>
+                        <td>${vendor.vendor_type || '-'}</td>
+                        <td>${vendor.group_name || '-'}</td>
+                        <td>${vendor.phone || vendor.contact_person || '-'}</td>
+                        <td>${vendor.city || '-'}</td>
+                        <td>${vendor.gstn || '-'}</td>
+                        <td>
+                            <span class="status-badge ${vendor.is_active ? 'status-active' : 'status-inactive'}">
+                                ${vendor.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td class="action-btns">
+                            <button class="action-btn btn-edit" onclick="editVendor(${vendor.id})">Edit</button>
+                            <button class="action-btn btn-delete" onclick="deleteVendor(${vendor.id})">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            async function loadGroups() {
+                const select = document.getElementById('vendor_group_id');
+                try {
+                    const response = await fetch('/api/master/vendor-groups');
+                    const result = await response.json();
+
+                    if (result.success) {
+                        allGroups = result.data;
+                        select.innerHTML = '<option value="">Select Group</option>' +
+                            allGroups.map(g => `<option value="${g.group_name}">${g.group_name}</option>`).join('');
+                    }
+                } catch (error) {
+                    console.error('Error loading groups:', error);
+                    showToast('Failed to load vendor groups', 'error');
+                }
+            }
+
+            function openModal() {
+                document.getElementById('modalOverlay').classList.add('active');
+                document.getElementById('modalTitle').textContent = 'Add New Vendor';
+                document.getElementById('vendorForm').reset();
+                document.getElementById('vendorId').value = '';
+                document.getElementById('is_active').checked = true;
+            }
+
+            function closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+
+            async function saveVendor(event) {
+                event.preventDefault();
+                const id = document.getElementById('vendorId').value;
+                const isEdit = !!id;
+
+                const payload = {
+                    name: document.getElementById('name').value.toUpperCase(),
+                    code: document.getElementById('code').value.toUpperCase(),
+                    group_name: document.getElementById('vendor_group_id').value || null,
+                    contact_person: document.getElementById('contact_person').value,
+                    phone: document.getElementById('contact_no').value,
+                    email: document.getElementById('email').value,
+                    gstn: document.getElementById('gstn').value.toUpperCase(),
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    pincode: document.getElementById('pincode').value,
+                    is_active: document.getElementById('is_active').checked
+                };
+
+                try {
+                    const url = isEdit ? `/api/master/vendors/${id}` : '/api/master/vendors';
+                    const method = isEdit ? 'PUT' : 'POST';
+
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (!result.success) throw new Error(result.message);
+
+                    showToast(result.message, 'success');
+                    closeModal();
+                    loadVendors();
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            }
+
+            function editVendor(id) {
+                const vendor = allVendors.find(v => v.id === id);
+                if (!vendor) return;
+
+                openModal();
+                document.getElementById('modalTitle').textContent = 'Edit Vendor';
+                document.getElementById('vendorId').value = vendor.id;
+                document.getElementById('name').value = vendor.name || '';
+                document.getElementById('code').value = vendor.code || '';
+                document.getElementById('vendor_group_id').value = vendor.group_name || '';
+                document.getElementById('contact_person').value = vendor.contact_person || '';
+                document.getElementById('contact_no').value = vendor.phone || '';
+                document.getElementById('email').value = vendor.email || '';
+                document.getElementById('gstn').value = vendor.gstn || '';
+                document.getElementById('address').value = vendor.address || '';
+                document.getElementById('city').value = vendor.city || '';
+                document.getElementById('state').value = vendor.state || '';
+                document.getElementById('pincode').value = vendor.pincode || '';
+                document.getElementById('is_active').checked = vendor.is_active !== false;
+            }
+
+            async function deleteVendor(id) {
+                if (!confirm('Are you sure you want to delete this vendor?')) return;
+                try {
+                    const response = await fetch(`/api/master/vendors/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (result.success) {
+                        showToast('Vendor deleted', 'success');
+                        loadVendors();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (e) {
+                    showToast(e.message, 'error');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                checkSession();
+                loadVendors();
+                loadGroups();
+            });
+        </script>
+        <!-- Shared Scripts -->
+        <script src="js/toast.js"></script>
+        <script src="js/sidebar.js"></script>
+    </main>
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+</body>
+
+</html>

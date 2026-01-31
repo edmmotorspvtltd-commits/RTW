@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - RTWE ERP System</title>
+  <link rel="stylesheet" href="css/sidebar.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      font-size: 14px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .navbar {
+      background: white;
+      padding: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar a {
+      display: block;
+      padding: 15px 20px;
+      color: #5D4037;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .navbar a.active {
+      background: #D7CCC8;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .page-header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-header h2 {
+      color: #5D4037;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #5D4037;
+      color: white;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    tbody tr:hover {
+      background: #F5F5F5;
+    }
+
+    td {
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-admin {
+      background: #E3F2FD;
+      color: #1976D2;
+    }
+
+    .badge-manager {
+      background: #F3E5F5;
+      color: #7B1FA2;
+    }
+
+    .badge-user {
+      background: #E8F5E9;
+      color: #388E3C;
+    }
+
+    .badge-active {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .badge-inactive {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    .btn-edit {
+      background: #FF9800;
+      color: white;
+    }
+
+    .btn-toggle {
+      background: #2196F3;
+      color: white;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: #5D4037;
+      margin: 0;
+    }
+
+    .close {
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #D7CCC8;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-cancel {
+      background: #757575;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Modern Confirm Modal */
+    .confirm-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .confirm-modal-overlay.show {
+      display: flex;
+    }
+
+    .confirm-modal {
+      background: #FAFAFA;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      max-width: 420px;
+      width: 90%;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+
+    .confirm-modal-header {
+      background: #5D4037;
+      color: white;
+      padding: 16px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .confirm-modal-header .icon {
+      font-size: 20px;
+    }
+
+    .confirm-modal-body {
+      padding: 25px 20px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+      background: white;
+    }
+
+    .confirm-modal-body .warning-text {
+      margin-top: 12px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .confirm-modal-footer {
+      padding: 16px 20px;
+      background: #F5F5F5;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    .modal-btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-btn-confirm {
+      background: #D32F2F;
+      color: white;
+    }
+
+    .modal-btn-confirm:hover {
+      background: #B71C1C;
+    }
+
+    .modal-btn-confirm.activate {
+      background: #4CAF50;
+    }
+
+    .modal-btn-confirm.activate:hover {
+      background: #388E3C;
+    }
+
+    .modal-btn-cancel {
+      background: #E0E0E0;
+      color: #333;
+    }
+
+    .modal-btn-cancel:hover {
+      background: #BDBDBD;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* ============ MOBILE RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .btn-logout {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .navbar a {
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .page-header h2 {
+        font-size: 18px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 600px;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+      }
+
+      .btn-action {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 10px;
+        padding: 20px;
+      }
+
+      .modal-content h2 {
+        font-size: 18px;
+      }
+
+      .form-group label {
+        font-size: 13px;
+      }
+
+      .form-group input,
+      .form-group select {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .modal-buttons button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar-left h1 {
+        font-size: 14px;
+      }
+
+      .navbar ul {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .navbar a {
+        padding: 10px;
+        border-bottom: 1px solid #E0E0E0;
+      }
+
+      table {
+        font-size: 12px;
+        min-width: 500px;
+      }
+
+      th,
+      td {
+        padding: 8px 5px;
+      }
+
+      .modal-content {
+        padding: 15px;
+      }
+    }
+
+    /* Modern Toast Notifications */
+    .modern-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      min-width: 320px;
+      max-width: 420px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      gap: 15px;
+      z-index: 100000;
+      transform: translateX(450px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      border-left: 5px solid #5D4037;
+    }
+
+    .modern-toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .modern-toast.success {
+      border-left-color: #4CAF50;
+    }
+
+    .modern-toast.success .toast-icon {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+    }
+
+    .modern-toast.error {
+      border-left-color: #f44336;
+    }
+
+    .modern-toast.error .toast-icon {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+    }
+
+    .modern-toast.info {
+      border-left-color: #5D4037;
+    }
+
+    .modern-toast.info .toast-icon {
+      background: linear-gradient(135deg, #5D4037, #3d2314);
+    }
+
+    .toast-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 3px;
+    }
+
+    .toast-message {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #999;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .toast-close:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Mobile Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">🏭</span>
+      <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-section">
+        <div class="menu-section-title">Main Menu</div>
+        <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+        <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+          <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+          <span class="category-arrow">▶</span>
+        </div>
+        <div class="submenu" id="masterSubmenu">
+          <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+          <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+          <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+          <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+          <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+          <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+          <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+          <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+          <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+          <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+          <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+          <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+          <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+          <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+          <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+          <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+          <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+        </div>
+        <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+        <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+      </div>
+      <div class="menu-section" id="adminMenu" style="display: none;">
+        <div class="menu-section-title">Administration</div>
+        <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sidebarUserAvatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarUserName">Loading...</div>
+          <div class="user-role" id="sidebarUserRole">-</div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+        <h1>📊 RTWE ERP System</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="user-info">
+          👤 <strong>
+            <?= user.userName ?>
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="page-header">
+        <h2>👥 User Management</h2>
+        <button class="btn-primary" onclick="openCreateModal()">➕ Create User</button>
+      </div>
+
+      <div class="table-container">
+        <div id="loadingArea" class="loading">
+          <div class="spinner"></div>
+          <div>Loading users...</div>
+        </div>
+
+        <div id="tableArea" style="display: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create/Edit User Modal -->
+    <div id="userModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Create User</h3>
+          <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="userForm">
+          <input type="hidden" id="userId">
+
+          <div class="form-group">
+            <label>Username *</label>
+            <input type="text" id="username" required>
+          </div>
+
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="fullName" required>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="email" required>
+          </div>
+
+          <div class="form-group" id="passwordGroup">
+            <label>Password *</label>
+            <input type="password" id="password">
+          </div>
+
+          <div class="form-group">
+            <label>Role *</label>
+            <select id="role" required>
+              <option value="">Select Role</option>
+              <option value="ADMIN">Admin</option>
+              <option value="MANAGER">Manager</option>
+              <option value="USER">User</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Save User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let currentMode = 'create';
+      let currentUserName = localStorage.getItem('userName') || 'User';
+
+      console.log('=== USER MANAGEMENT INITIALIZED ===');
+
+      // Check session on load
+      window.onload = async function () {
+        // Update user display
+        document.querySelector('.user-info strong').textContent = currentUserName;
+
+        await checkSession();
+        loadUsers();
+      };
+
+      async function checkSession() {
+        try {
+          const response = await fetch('/api/auth/check-session');
+          const data = await response.json();
+          if (!data.success) {
+            window.location.href = '/Login.html';
+          }
+        } catch (error) {
+          console.error('Session check failed:', error);
+          window.location.href = '/Login.html';
+        }
+      }
+
+      async function loadUsers() {
+        console.log('Loading users...');
+
+        document.getElementById('loadingArea').style.display = 'block';
+        document.getElementById('tableArea').style.display = 'none';
+
+        try {
+          const response = await fetch('/api/users');
+          const data = await response.json();
+
+          document.getElementById('loadingArea').style.display = 'none';
+
+          if (data && data.success) {
+            console.log('Users count:', data.users ? data.users.length : 0);
+            if (data.users && data.users.length > 0) {
+              displayUsers(data.users);
+              document.getElementById('tableArea').style.display = 'block';
+            } else {
+              document.getElementById('tableArea').innerHTML = '<p style="padding:20px;text-align:center;">No users found</p>';
+              document.getElementById('tableArea').style.display = 'block';
+            }
+          } else {
+            console.error('Error in response:', data ? data.message : 'Unknown error');
+            showErrorToast('Error: ' + (data && data.message ? data.message : 'Unknown error loading users'));
+          }
+        } catch (error) {
+          console.error('Load users error:', error);
+          document.getElementById('loadingArea').style.display = 'none';
+          showErrorToast('Failed to load users: ' + error.message);
+        }
+      }
+
+      function onUsersSuccess(data) {
+        console.log('========================================');
+        console.log('onUsersSuccess called');
+        console.log('Full data received:', JSON.stringify(data));
+        console.log('========================================');
+
+        document.getElementById('loadingArea').style.display = 'none';
+
+        if (data && data.success) {
+          console.log('Users count:', data.users ? data.users.length : 0);
+          if (data.users && data.users.length > 0) {
+            displayUsers(data.users);
+            document.getElementById('tableArea').style.display = 'block';
+          } else {
+            document.getElementById('tableArea').innerHTML = '<p style="padding:20px;text-align:center;">No users found</p>';
+            document.getElementById('tableArea').style.display = 'block';
+          }
+        } else {
+          console.error('Error in response:', data ? data.message : 'Unknown error');
+          showErrorToast('Error: ' + (data && data.message ? data.message : 'Unknown error loading users'));
+        }
+      }
+
+      function onUsersFailure(error) {
+        console.error('========================================');
+        console.error('onUsersFailure called');
+        console.error('Error:', error);
+        console.error('========================================');
+        document.getElementById('loadingArea').style.display = 'none';
+        showErrorToast('Failed to load users: ' + (error && error.message ? error.message : String(error)));
+      }
+
+      function displayUsers(users) {
+        const tbody = document.getElementById('usersBody');
+        tbody.innerHTML = '';
+
+        users.forEach(user => {
+          const tr = document.createElement('tr');
+
+          const roleClass = 'badge-' + user.role.toLowerCase();
+          const statusClass = user.isActive ? 'badge-active' : 'badge-inactive';
+          const statusText = user.isActive ? 'Active' : 'Inactive';
+          const toggleText = user.isActive ? 'Deactivate' : 'Activate';
+
+          const createdDate = user.createdDate ? new Date(user.createdDate).toLocaleDateString() : '';
+
+          tr.innerHTML = `
+          <td><strong>${escapeHtml(user.userName)}</strong></td>
+          <td>${escapeHtml(user.fullName)}</td>
+          <td>${escapeHtml(user.email)}</td>
+          <td><span class="badge ${roleClass}">${user.role}</span></td>
+          <td><span class="badge ${statusClass}">${statusText}</span></td>
+          <td>${createdDate}</td>
+          <td>
+            <button class="btn-action btn-edit" onclick="editUser('${user.userId}')">
+              ✏️ Edit
+            </button>
+            <button class="btn-action btn-toggle" onclick="toggleUser('${user.userId}', ${user.isActive})">
+              ${toggleText}
+            </button>
+          </td>
+        `;
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      function openCreateModal() {
+        currentMode = 'create';
+        document.getElementById('modalTitle').textContent = 'Create User';
+        document.getElementById('userForm').reset();
+        document.getElementById('userId').value = '';
+        document.getElementById('passwordGroup').style.display = 'block';
+        document.getElementById('password').required = true;
+        document.getElementById('userModal').style.display = 'block';
+      }
+
+      async function editUser(userId) {
+        currentMode = 'edit';
+        document.getElementById('modalTitle').textContent = 'Edit User';
+        document.getElementById('userId').value = userId;
+        document.getElementById('passwordGroup').style.display = 'none';
+        document.getElementById('password').required = false;
+
+        try {
+          // Fetch user data from API
+          const response = await fetch(`/api/users/${userId}`);
+          const data = await response.json();
+
+          if (data.success && data.user) {
+            const user = data.user;
+            // Populate form fields
+            document.getElementById('username').value = user.userName || '';
+            document.getElementById('fullName').value = user.userName || ''; // fullName maps to userName
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('role').value = (user.role || '').toUpperCase();
+
+            // Open modal after populating data
+            document.getElementById('userModal').style.display = 'block';
+          } else {
+            showErrorToast('Error loading user data: ' + (data.message || 'Unknown error'));
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          showErrorToast('Failed to load user data: ' + error.message);
+        }
+      }
+
+      function toggleUser(userId, currentStatus) {
+        const action = currentStatus ? 'deactivate' : 'activate';
+        const isDeactivate = currentStatus;
+
+        showUserConfirmModal(
+          isDeactivate ? 'Deactivate User' : 'Activate User',
+          `Are you sure you want to ${action} this user?`,
+          isDeactivate ? 'This user will no longer be able to log in.' : 'This user will be able to log in again.',
+          action.charAt(0).toUpperCase() + action.slice(1),
+          isDeactivate,
+          async function () {
+            console.log('Toggling user:', userId);
+            try {
+              const response = await fetch(`/api/users/${userId}/toggle`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' }
+              });
+              const data = await response.json();
+              if (data.success) {
+                showSuccessToast('User status updated successfully');
+                loadUsers();
+              } else {
+                showErrorToast('Error: ' + data.message);
+              }
+            } catch (error) {
+              showErrorToast('Error: ' + (error.message || 'Unknown error'));
+            }
+          }
+        );
+      }
+
+      // Show user confirm modal
+      function showUserConfirmModal(title, message, warningText, confirmText, isDeactivate, onConfirm) {
+        document.getElementById('confirmModalTitle').textContent = title;
+        document.getElementById('confirmModalMessage').textContent = message;
+        document.getElementById('confirmModalWarning').textContent = warningText;
+
+        const confirmBtn = document.getElementById('confirmModalBtn');
+        confirmBtn.textContent = confirmText;
+        confirmBtn.className = 'modal-btn modal-btn-confirm' + (isDeactivate ? '' : ' activate');
+
+        document.getElementById('confirmModalOverlay').classList.add('show');
+
+        // Clone to remove old listeners
+        const newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+        newBtn.addEventListener('click', function () {
+          hideUserConfirmModal();
+          if (onConfirm) onConfirm();
+        });
+      }
+
+      // Hide user confirm modal
+      function hideUserConfirmModal() {
+        document.getElementById('confirmModalOverlay').classList.remove('show');
+      }
+
+      // Show toast notification (modern styled)
+      function showToast(message, type = 'success') {
+        // Remove existing toast if any
+        const existingToast = document.getElementById('modernToast');
+        if (existingToast) existingToast.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'modernToast';
+        toast.className = 'modern-toast ' + type;
+
+        const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+        toast.innerHTML = `
+          <div class="toast-icon">${icon}</div>
+          <div class="toast-content">
+            <div class="toast-title">${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Info'}</div>
+            <div class="toast-message">${message}</div>
+          </div>
+          <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      function showSuccessToast(message) {
+        showToast(message, 'success');
+      }
+
+      function showErrorToast(message) {
+        showToast(message, 'error');
+      }
+
+      function closeModal() {
+        document.getElementById('userModal').style.display = 'none';
+      }
+
+      document.getElementById('userForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const userData = {
+          userName: document.getElementById('username').value,
+          customUserId: document.getElementById('username').value.toLowerCase().replace(/\s+/g, '_'),
+          email: document.getElementById('email').value,
+          role: document.getElementById('role').value.toLowerCase(),
+          password: document.getElementById('password').value
+        };
+
+        console.log('Saving user:', userData);
+
+        try {
+          let response;
+          if (currentMode === 'create') {
+            response = await fetch('/api/users', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(userData)
+            });
+          } else {
+            const userId = document.getElementById('userId').value;
+            response = await fetch(`/api/users/${userId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(userData)
+            });
+          }
+
+          const data = await response.json();
+          if (data.success) {
+            showSuccessToast('User saved successfully!');
+            closeModal();
+            loadUsers();
+          } else {
+            showErrorToast('Error: ' + data.message);
+          }
+        } catch (error) {
+          showErrorToast('Error: ' + error.message);
+        }
+      });
+
+      // handleLogout() is provided by sidebar.js with confirmation popup
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function showLoading(pageName) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+        overlay.innerHTML = '<div style="background:white;padding:40px 60px;border-radius:12px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Loading ' + pageName + '</h3><p style="color:#666;margin-top:10px">Please wait...</p></div>';
+        document.body.appendChild(overlay);
+      }
+    </script>
+    <style>
+      @keyframes spin {
+        from {
+          transform: rotate(0)
+        }
+
+        to {
+          transform: rotate(360deg)
+        }
+      }
+    </style>
+
+    <!-- Custom Confirm Modal -->
+    <div class="confirm-modal-overlay" id="confirmModalOverlay">
+      <div class="confirm-modal">
+        <div class="confirm-modal-header">
+          <span class="icon">⚠️</span>
+          <span id="confirmModalTitle">Confirm Action</span>
+        </div>
+        <div class="confirm-modal-body">
+          <p id="confirmModalMessage">Are you sure you want to proceed?</p>
+          <p class="warning-text" id="confirmModalWarning">This action cannot be undone.</p>
+        </div>
+        <div class="confirm-modal-footer">
+          <button class="modal-btn modal-btn-cancel" onclick="hideUserConfirmModal()">Cancel</button>
+          <button class="modal-btn modal-btn-confirm" id="confirmModalBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <script src="js/sidebar.js"></script>
+  </main>
+  <!-- Logout Overlay -->
+  <div class="logout-overlay" id="logoutOverlay">
+    <div class="logout-modal">
+      <p>Logging out...</p>
+    </div>
+  </div>
+</body>
+
+</html>

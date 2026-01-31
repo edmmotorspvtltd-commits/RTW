@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costing Management - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-brown: #5D4037;
+            --dark-brown: #3E2723;
+            --light-brown: #8D6E63;
+            --bg-cream: #EFEBE9;
+            --bg-white: #FAFAFA;
+            --accent: #795548;
+            --success: #4CAF50;
+            --danger: #F44336;
+            --warning: #FF9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+
+        .search-btn {
+            background: var(--primary-brown);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--dark-brown);
+        }
+
+        .filter-badge {
+            background: var(--bg-cream);
+            color: var(--primary-brown);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Data Table */
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table th input[type="checkbox"],
+        .data-table td input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-brown);
+        }
+
+        .data-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #FFF8E1;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-draft {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-completed {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        .btn-pdf {
+            background: #d32f2f;
+            color: white;
+            padding: 6px 10px;
+            font-size: 16px;
+        }
+
+        .btn-pdf:hover {
+            background: #b71c1c;
+        }
+
+        .btn-excel {
+            background: #388e3c;
+            color: white;
+            padding: 6px 10px;
+            font-size: 16px;
+        }
+
+        .btn-excel:hover {
+            background: #2e7d32;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #FAFAFA;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary-brown);
+            color: white;
+            border-color: var(--primary-brown);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid var(--primary-brown);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: #FAFAFA;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Container -->
+    <div id="sidebarContainer"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <div>
+                    <h1 class="page-title">📊 Costing Management</h1>
+                    <p class="page-subtitle">Manage all costing sheets</p>
+                </div>
+            </div>
+            <button class="add-btn" onclick="createNewCosting()">
+                <span>+</span> New Costing
+            </button>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput"
+                    placeholder="Search by order number, party name, quality...">
+                <button class="search-btn" onclick="applyFilters()">
+                    <span>🔍</span> Search
+                </button>
+                <button class="search-btn" onclick="clearFilters()" style="background: #757575;">
+                    <span>✕</span> Clear
+                </button>
+                <button class="search-btn" id="exportSelectedPDFBtn" onclick="exportSelectedPDF()"
+                    style="background: #d32f2f; display: none;">
+                    <span>📄</span> Export Selected PDF (<span id="selectedCountPDF">0</span>)
+                </button>
+                <button class="search-btn" id="exportSelectedExcelBtn" onclick="exportSelectedExcel()"
+                    style="background: #388e3c; display: none;">
+                    <span>📊</span> Export Selected Excel (<span id="selectedCountExcel">0</span>)
+                </button>
+                <div class="filter-badge" id="totalCount">
+                    📊 Total: 0
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                            <th>#</th>
+                            <th>Order Number</th>
+                            <th>Party Name</th>
+                            <th>Quality Type</th>
+                            <th>Order Length</th>
+                            <th>Selling Price</th>
+                            <th>Profit %</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="costingsTable">
+                        <tr>
+                            <td colspan="9" class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading costings...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <div class="pagination-info" id="paginationInfo">Showing 0 of 0</div>
+                    <div class="pagination-btns" id="paginationBtns"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div class="modal-overlay" id="deleteModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title">Delete Costing</h2>
+                    <button class="modal-close" onclick="closeDeleteModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this costing? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                    <button class="btn-confirm" onclick="confirmDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span id="toastMessage"></span>
+        </div>
+
+        <script>
+            let allCostings = [];
+            let filteredCostings = [];
+            let currentPage = 1;
+            const limit = 20;
+            let deleteTargetId = null;
+
+            // Check session on load
+            document.addEventListener('DOMContentLoaded', function () {
+                // checkSession(); // Removed - auth handled by sidebar.js
+                loadCostings();
+
+                // Search on Enter
+                document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') applyFilters();
+                });
+            });
+
+            // Check session
+            async function checkSession() {
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    if (!authToken) {
+                        window.location.href = '/Login.html?message=Please log in';
+                        return;
+                    }
+
+                    const response = await fetch('/api/auth/check-session', {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) {
+                        window.location.href = '/Login.html?message=Session expired';
+                    }
+                } catch (error) {
+                    console.error('Session check error:', error);
+                }
+            }
+
+            // Load costings
+            async function loadCostings() {
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const response = await fetch('/api/costing', {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to load costings');
+
+                    const result = await response.json();
+                    allCostings = result.data || [];
+                    filteredCostings = [...allCostings];
+
+                    updateStats();
+                    renderTable();
+                } catch (error) {
+                    console.error('Error loading costings:', error);
+                    document.getElementById('costingsTable').innerHTML = `
+                        <tr><td colspan="9" class="empty-state">
+                            <div class="empty-state-icon">⚠️</div>
+                            <div>Failed to load costings. Please try again.</div>
+                        </td></tr>
+                    `;
+                }
+            }
+
+            // Update stats
+            function updateStats() {
+                document.getElementById('totalCount').innerHTML = `📊 Total: ${allCostings.length}`;
+            }
+
+            // Render table
+            function renderTable() {
+                const tbody = document.getElementById('costingsTable');
+
+                if (filteredCostings.length === 0) {
+                    tbody.innerHTML = `
+                        <tr><td colspan="9" class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <div>No costings found</div>
+                        </td></tr>
+                    `;
+                    document.getElementById('paginationInfo').textContent = 'Showing 0 of 0';
+                    document.getElementById('paginationBtns').innerHTML = '';
+                    return;
+                }
+
+                const startIndex = (currentPage - 1) * limit;
+                const endIndex = startIndex + limit;
+                const pageItems = filteredCostings.slice(startIndex, endIndex);
+
+                tbody.innerHTML = pageItems.map((costing, index) => `
+                    <tr>
+                        <td><input type="checkbox" class="row-checkbox" data-costing-id="${costing.id}" onchange="updateSelectedCount()"></td>
+                        <td>${startIndex + index + 1}</td>
+                        <td><strong>${costing.orderNumber || 'N/A'}</strong></td>
+                        <td>${costing.partyName || 'N/A'}</td>
+                        <td>${costing.qualityType || 'N/A'}</td>
+                        <td>${costing.orderLength ? costing.orderLength + ' mtrs' : 'N/A'}</td>
+                        <td>₹${costing.sellingPrice ? parseFloat(costing.sellingPrice).toFixed(2) : '0.00'}</td>
+                        <td>${costing.profitPercentage ? parseFloat(costing.profitPercentage).toFixed(2) + '%' : 'N/A'}</td>
+                        <td><span class="status-badge status-${costing.status || 'draft'}">${costing.status || 'draft'}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn btn-edit" onclick="editCosting(${costing.id})">Edit</button>
+                                <button class="action-btn btn-delete" onclick="showDeleteModal(${costing.id})">Delete</button>
+                                <button class="action-btn btn-pdf" onclick="exportCostingPDF(${costing.id})" title="Export PDF">📄</button>
+                                <button class="action-btn btn-excel" onclick="exportCostingExcel(${costing.id})" title="Export Excel">📊</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+                updatePagination();
+            }
+
+            // Update pagination
+            function updatePagination() {
+                const totalPages = Math.ceil(filteredCostings.length / limit);
+                const startIndex = (currentPage - 1) * limit + 1;
+                const endIndex = Math.min(startIndex + limit - 1, filteredCostings.length);
+
+                document.getElementById('paginationInfo').textContent = `Showing ${startIndex}-${endIndex} of ${filteredCostings.length}`;
+
+                if (totalPages <= 1) {
+                    document.getElementById('paginationBtns').innerHTML = '';
+                    return;
+                }
+
+                let btnsHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    btnsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+
+                document.getElementById('paginationBtns').innerHTML = btnsHTML;
+            }
+
+            // Change page
+            function changePage(page) {
+                currentPage = page;
+                renderTable();
+            }
+
+            // Apply filters
+            function applyFilters() {
+                const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+                filteredCostings = allCostings.filter(costing => {
+                    return !searchQuery ||
+                        (costing.orderNumber && costing.orderNumber.toLowerCase().includes(searchQuery)) ||
+                        (costing.partyName && costing.partyName.toLowerCase().includes(searchQuery)) ||
+                        (costing.qualityType && costing.qualityType.toLowerCase().includes(searchQuery));
+                });
+
+                currentPage = 1;
+                renderTable();
+            }
+
+            // Clear filters
+            function clearFilters() {
+                document.getElementById('searchInput').value = '';
+                filteredCostings = [...allCostings];
+                currentPage = 1;
+                renderTable();
+            }
+
+            // Navigate to edit costing page
+            function editCosting(costingId) {
+                window.location.href = `/rapier-costing.html?id=${costingId}`;
+            }
+
+            // Navigate to create new costing page
+            function createNewCosting() {
+                window.location.href = '/rapier-costing.html';
+            }
+
+            // Show delete modal
+            function showDeleteModal(id) {
+                deleteTargetId = id;
+                document.getElementById('deleteModal').classList.add('active');
+            }
+
+            // Close delete modal
+            function closeDeleteModal() {
+                deleteTargetId = null;
+                document.getElementById('deleteModal').classList.remove('active');
+            }
+
+            // Confirm delete
+            async function confirmDelete() {
+                if (!deleteTargetId) return;
+
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const response = await fetch(`/api/costing/${deleteTargetId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) throw new Error('Delete failed');
+
+                    showToast('Costing deleted successfully', 'success');
+                    closeDeleteModal();
+                    await loadCostings();
+                } catch (error) {
+                    console.error('Error deleting costing:', error);
+                    showToast('Failed to delete costing', 'error');
+                }
+            }
+
+            // Export individual costing as PDF
+            async function exportCostingPDF(costingId) {
+                try {
+                    showToast('Generating PDF...', 'info');
+
+                    const authToken = localStorage.getItem('authToken');
+
+                    // Call the backend PDF export endpoint
+                    const response = await fetch(`/api/costing/${costingId}/export/pdf`, {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to generate PDF');
+
+                    // Get the PDF blob
+                    const blob = await response.blob();
+
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `costing-${costingId}-${new Date().toISOString().split('T')[0]}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                    showToast('PDF downloaded successfully', 'success');
+                } catch (error) {
+                    console.error('Error exporting PDF:', error);
+                    showToast('Failed to export PDF', 'error');
+                }
+            }
+
+            // Export individual costing as Excel
+            async function exportCostingExcel(costingId) {
+                try {
+                    showToast('Generating Excel...', 'info');
+
+                    const authToken = localStorage.getItem('authToken');
+
+                    // Call the backend Excel export endpoint
+                    const response = await fetch(`/api/costing/${costingId}/export/excel`, {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to generate Excel');
+
+                    // Get the Excel blob
+                    const blob = await response.blob();
+
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `costing-${costingId}-${new Date().toISOString().split('T')[0]}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                    showToast('Excel downloaded successfully', 'success');
+                } catch (error) {
+                    console.error('Error exporting Excel:', error);
+                    showToast('Failed to export Excel', 'error');
+                }
+            }
+
+            // Toggle select all checkboxes
+            function toggleSelectAll() {
+                const selectAllCheckbox = document.getElementById('selectAll');
+                const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+
+                rowCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+
+                updateSelectedCount();
+            }
+
+            // Update selected count and show/hide export buttons
+            function updateSelectedCount() {
+                const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+                const count = selectedCheckboxes.length;
+
+                // Update count displays
+                document.getElementById('selectedCountPDF').textContent = count;
+                document.getElementById('selectedCountExcel').textContent = count;
+
+                // Show/hide export buttons
+                const pdfBtn = document.getElementById('exportSelectedPDFBtn');
+                const excelBtn = document.getElementById('exportSelectedExcelBtn');
+
+                if (count > 0) {
+                    pdfBtn.style.display = 'inline-block';
+                    excelBtn.style.display = 'inline-block';
+                } else {
+                    pdfBtn.style.display = 'none';
+                    excelBtn.style.display = 'none';
+                }
+
+                // Update "Select All" checkbox state
+                const allCheckboxes = document.querySelectorAll('.row-checkbox');
+                const selectAllCheckbox = document.getElementById('selectAll');
+                selectAllCheckbox.checked = allCheckboxes.length > 0 && count === allCheckboxes.length;
+            }
+
+            // Export selected costings as PDF
+            async function exportSelectedPDF() {
+                try {
+                    const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+                    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.costingId);
+
+                    if (selectedIds.length === 0) {
+                        showToast('Please select at least one costing', 'warning');
+                        return;
+                    }
+
+                    showToast(`Generating PDF for ${selectedIds.length} costing(s)...`, 'info');
+
+                    const authToken = localStorage.getItem('authToken');
+
+                    // For multiple costings, we'll download them individually
+                    // In a production app, you might want to combine them into one PDF
+                    for (let i = 0; i < selectedIds.length; i++) {
+                        const costingId = selectedIds[i];
+
+                        const response = await fetch(`/api/costing/${costingId}/export/pdf`, {
+                            headers: { 'Authorization': `Bearer ${authToken}` }
+                        });
+
+                        if (!response.ok) {
+                            console.error(`Failed to export costing ${costingId}`);
+                            continue;
+                        }
+
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `costing-${costingId}-${new Date().toISOString().split('T')[0]}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+
+                        // Small delay between downloads to avoid browser blocking
+                        if (i < selectedIds.length - 1) {
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                        }
+                    }
+
+                    showToast(`${selectedIds.length} PDF(s) downloaded successfully`, 'success');
+
+                    // Clear selections
+                    document.querySelectorAll('.row-checkbox:checked').forEach(cb => cb.checked = false);
+                    document.getElementById('selectAll').checked = false;
+                    updateSelectedCount();
+                } catch (error) {
+                    console.error('Error exporting selected PDFs:', error);
+                    showToast('Failed to export PDFs', 'error');
+                }
+            }
+
+            // Export selected costings as Excel
+            async function exportSelectedExcel() {
+                try {
+                    const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+                    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.costingId);
+
+                    if (selectedIds.length === 0) {
+                        showToast('Please select at least one costing', 'warning');
+                        return;
+                    }
+
+                    showToast(`Generating Excel for ${selectedIds.length} costing(s)...`, 'info');
+
+                    const authToken = localStorage.getItem('authToken');
+
+                    // For multiple costings, we'll download them individually
+                    for (let i = 0; i < selectedIds.length; i++) {
+                        const costingId = selectedIds[i];
+
+                        const response = await fetch(`/api/costing/${costingId}/export/excel`, {
+                            headers: { 'Authorization': `Bearer ${authToken}` }
+                        });
+
+                        if (!response.ok) {
+                            console.error(`Failed to export costing ${costingId}`);
+                            continue;
+                        }
+
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `costing-${costingId}-${new Date().toISOString().split('T')[0]}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+
+                        // Small delay between downloads
+                        if (i < selectedIds.length - 1) {
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                        }
+                    }
+
+                    showToast(`${selectedIds.length} Excel file(s) downloaded successfully`, 'success');
+
+                    // Clear selections
+                    document.querySelectorAll('.row-checkbox:checked').forEach(cb => cb.checked = false);
+                    document.getElementById('selectAll').checked = false;
+                    updateSelectedCount();
+                } catch (error) {
+                    console.error('Error exporting selected Excel files:', error);
+                    showToast('Failed to export Excel files', 'error');
+                }
+            }
+
+            // Export all costings as PDF
+            async function exportAllPDF() {
+                try {
+                    showToast('Generating PDF...', 'info');
+
+                    const authToken = localStorage.getItem('authToken');
+
+                    // Get all costings
+                    const response = await fetch('/api/costing', {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to fetch costings');
+
+                    const result = await response.json();
+                    const costings = result.data || [];
+
+                    if (costings.length === 0) {
+                        showToast('No costings to export', 'warning');
+                        return;
+                    }
+
+                    // Create a simple PDF export (you can enhance this)
+                    // For now, we'll export the first costing or create a summary
+                    // In a real scenario, you might want to generate a combined PDF
+
+                    // Option 1: Export summary as text file (simple approach)
+                    const summaryText = costings.map((c, i) =>
+                        `${i + 1}. Order: ${c.orderNumber || 'N/A'} | Party: ${c.partyName || 'N/A'} | Price: ${c.sellingPrice || 'N/A'}`
+                    ).join('\n');
+
+                    const blob = new Blob([`Costing Summary Report\n\nTotal Costings: ${costings.length}\n\n${summaryText}`],
+                        { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `costings-summary-${new Date().toISOString().split('T')[0]}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                    showToast('Summary exported successfully', 'success');
+                } catch (error) {
+                    console.error('Error exporting PDF:', error);
+                    showToast('Failed to export PDF', 'error');
+                }
+            }
+
+            // Export all costings as Excel
+            async function exportAllExcel() {
+                try {
+                    showToast('Generating Excel...', 'info');
+
+                    const authToken = localStorage.getItem('authToken');
+
+                    // Get all costings
+                    const response = await fetch('/api/costing', {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to fetch costings');
+
+                    const result = await response.json();
+                    const costings = result.data || [];
+
+                    if (costings.length === 0) {
+                        showToast('No costings to export', 'warning');
+                        return;
+                    }
+
+                    // Create CSV (Excel-compatible)
+                    const headers = ['Order Number', 'Party Name', 'Broker Name', 'Quality Type', 'Order Length', 'Selling Price', 'Profit %', 'Status', 'Created At'];
+                    const csvRows = [headers.join(',')];
+
+                    costings.forEach(c => {
+                        const row = [
+                            c.orderNumber || '',
+                            c.partyName || '',
+                            c.brokerName || '',
+                            c.qualityType || '',
+                            c.orderLength || '',
+                            c.sellingPrice || '',
+                            c.profitPercentage || '',
+                            c.status || 'draft',
+                            c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ''
+                        ];
+                        csvRows.push(row.map(field => `"${field}"`).join(','));
+                    });
+
+                    const csvContent = csvRows.join('\n');
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `costings-export-${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                    showToast('Excel exported successfully', 'success');
+                } catch (error) {
+                    console.error('Error exporting Excel:', error);
+                    showToast('Failed to export Excel', 'error');
+                }
+            }
+
+            // Show toast
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+
+                toastMessage.textContent = message;
+                toast.className = `toast ${type} show`;
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        </script>
+
+    </main>
+
+    <!-- Load Sidebar -->
+    <script src="js/sidebar.js"></script>
+    <script>
+        // Initialize sidebar after it loads
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof initSidebar === 'function') {
+                initSidebar('costing-management.html');
+            }
+        });
+    </script>
+</body>
+
+</html>

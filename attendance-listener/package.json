@@ -1,0 +1,28 @@
+{
+    "name": "rtwe-attendance-listener",
+    "version": "1.0.0",
+    "description": "RTWE ERP Attendance Listener - Standalone for Toyota PC",
+    "main": "device-listener-bidirectional.js",
+    "bin": "device-listener-bidirectional.js",
+    "scripts": {
+        "start": "node device-listener-bidirectional.js",
+        "build": "pkg . --target node18-win-x64 --output dist/attendance-listener.exe"
+    },
+    "pkg": {
+        "assets": [
+            "config.json",
+            "node_modules/axios/**/*",
+            "node_modules/zkteco-js/**/*"
+        ],
+        "targets": [
+            "node18-win-x64"
+        ],
+        "outputPath": "dist"
+    },
+    "dependencies": {
+        "axios": "^1.6.0",
+        "zkteco-js": "^1.7.1"
+    },
+    "author": "RTWE Team",
+    "license": "ISC"
+}

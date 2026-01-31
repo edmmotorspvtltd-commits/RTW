@@ -1,0 +1,16 @@
+{
+    "name": "frontend",
+    "version": "1.0.0",
+    "description": "RTWE ERP Frontend - Static HTML/CSS/JS",
+    "scripts": {
+        "dev": "echo 'Frontend is static - serve via backend'",
+        "build": "echo 'No build step required for static frontend'",
+        "start": "echo 'Frontend is served by backend'"
+    },
+    "keywords": [
+        "erp",
+        "frontend"
+    ],
+    "author": "RTWE Team",
+    "license": "ISC"
+}

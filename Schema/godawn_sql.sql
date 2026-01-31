@@ -1,0 +1,11 @@
+-- Add all missing columns to godown_locations
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS name VARCHAR(200);
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS location VARCHAR(100);
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS location_code VARCHAR(50);
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS vendor_group VARCHAR(100);
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS location_type VARCHAR(50);
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS is_default BOOLEAN DEFAULT false;
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE godown_locations ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

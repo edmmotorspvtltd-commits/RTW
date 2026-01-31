@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - RTWE ERP System</title>
+    <style>
+        /* ========================================
+           CSS VARIABLES - Brown/Black/White Theme
+        ======================================== */
+        :root {
+            --primary-dark: #3E2723;
+            --primary: #5D4037;
+            --primary-light: #8D6E63;
+            --accent: #A1887F;
+            --sidebar-bg: #2C1810;
+            --sidebar-hover: #3E2723;
+            --sidebar-active: #5D4037;
+            --bg-main: #F5F5F5;
+            --bg-card: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --text-light: #FFFFFF;
+            --border: #E0E0E0;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --info: #2196F3;
+        }
+
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           SIDEBAR
+        ======================================== */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand small {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section-title {
+            padding: 10px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-light);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: var(--sidebar-active);
+            color: var(--text-light);
+            border-left-color: var(--text-light);
+        }
+
+        .menu-item .icon {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .menu-item .badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Collapsible Menu Styles */
+        .menu-category {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-category:hover {
+            background: var(--sidebar-hover);
+            border-left-color: var(--accent);
+        }
+
+        .menu-category .category-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-category .category-icon {
+            font-size: 18px;
+        }
+
+        .menu-category .category-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-category.expanded .category-arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu.expanded {
+            max-height: 1000px;
+        }
+
+        .submenu .menu-item {
+            padding-left: 50px;
+            font-size: 13px;
+        }
+
+        .submenu .menu-item .icon {
+            font-size: 14px;
+        }
+
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: var(--bg-card);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-main);
+            border-radius: 8px;
+            padding: 8px 15px;
+            width: 280px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 0 10px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-display {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            border-radius: 16px;
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .welcome-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: 20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-greeting {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-greeting .greeting-icon {
+            font-size: 20px;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .welcome-time {
+            position: absolute;
+            right: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: right;
+            z-index: 1;
+        }
+
+        .welcome-time .time {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .welcome-time .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 25px 30px;
+            flex: 1;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue {
+            background: #E3F2FD;
+        }
+
+        .stat-icon.green {
+            background: #E8F5E9;
+        }
+
+        .stat-icon.orange {
+            background: #FFF3E0;
+        }
+
+        .stat-icon.brown {
+            background: #EFEBE9;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .stat-trend.up {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .stat-trend.down {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 20px 22px;
+        }
+
+        /* Recent Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .orders-table th {
+            background: var(--bg-main);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .orders-table tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .orders-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .orders-table tr:hover {
+            background: #FAFAFA;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-badge.completed {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-badge.processing {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .status-badge.cancelled {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            gap: 12px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .action-btn .icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .action-btn:hover .icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn .text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.login {
+            background: #E3F2FD;
+        }
+
+        .activity-icon.order {
+            background: #E8F5E9;
+        }
+
+        .activity-icon.user {
+            background: #FFF3E0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Logout Overlay */
+        .logout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .logout-overlay.show {
+            display: flex;
+        }
+
+        .logout-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        /* ========================================
+           MOBILE RESPONSIVE DESIGN
+        ======================================== */
+
+        /* Mobile Menu Toggle Button */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            color: var(--primary-dark);
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Tablet Styles */
+        @media (max-width: 1200px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-section {
+                padding: 25px;
+            }
+
+            .welcome-title {
+                font-size: 24px;
+            }
+
+            .welcome-time .time {
+                font-size: 28px;
+            }
+
+            .search-box {
+                width: 200px;
+            }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+
+            /* Show mobile menu button */
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            /* Sidebar - Hidden by default on mobile */
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                z-index: 1001;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            /* Main content takes full width */
+            .main-content {
+                margin-left: 0;
+            }
+
+            /* Top Header Mobile */
+            .top-header {
+                padding: 12px 15px;
+            }
+
+            .page-title {
+                font-size: 18px;
+            }
+
+            .header-actions {
+                gap: 10px;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .date-display {
+                display: none;
+            }
+
+            /* Content Area */
+            .content-area {
+                padding: 15px;
+            }
+
+            /* Welcome Section Mobile */
+            .welcome-section {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .welcome-greeting {
+                font-size: 12px;
+            }
+
+            .welcome-title {
+                font-size: 20px;
+            }
+
+            .welcome-subtitle {
+                font-size: 12px;
+            }
+
+            .welcome-time {
+                position: static;
+                transform: none;
+                margin-top: 15px;
+                text-align: left;
+            }
+
+            .welcome-time .time {
+                font-size: 24px;
+            }
+
+            .welcome-time .date {
+                font-size: 12px;
+            }
+
+            /* Stats Row Mobile */
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .stat-trend {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+
+            /* Cards Mobile */
+            .card-header {
+                padding: 15px;
+            }
+
+            .card-title {
+                font-size: 14px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            /* Orders Table Mobile */
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 10px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            /* Quick Actions Mobile */
+            .action-btn {
+                padding: 12px;
+            }
+
+            .action-btn .icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .action-btn .text {
+                font-size: 13px;
+            }
+
+            /* Activity Items Mobile */
+            .activity-item {
+                padding: 10px 0;
+            }
+
+            .activity-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .activity-text {
+                font-size: 12px;
+            }
+
+            .activity-time {
+                font-size: 10px;
+            }
+        }
+
+        /* Small Mobile Styles */
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 12px 15px;
+            }
+
+            .stat-header {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .stat-trend {
+                display: none;
+            }
+
+            .stat-info {
+                flex: 1;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                margin-bottom: 2px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .welcome-title {
+                font-size: 18px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            /* Hide some table columns on very small screens */
+            .orders-table th:nth-child(3),
+            .orders-table td:nth-child(3) {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 16px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .menu-item {
+                padding: 14px 20px;
+            }
+
+            .action-btn {
+                padding: 16px;
+            }
+
+            .btn-logout {
+                padding: 10px 16px;
+            }
+        }
+    </style>
+
+    <!-- Session Guard - Prevent unauthorized access -->
+    <script src="js/session-guard.js"></script>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">
+                RTWE ERP
+                <small>Textile Management</small>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="#" class="menu-item active">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+
+                <!-- Master Data - Collapsible (right after Dashboard) -->
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left">
+                        <span class="category-icon">📦</span>
+                        <span>Master Data</span>
+                    </div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <!-- ⭐ PINNED AT TOP - NEW ADD-ON SYSTEMS ⭐ -->
+                    <a href="companies.html" class="menu-item"><span class="icon">🏢</span>Companies</a>
+                    <a href="user-management-enhanced.html" class="menu-item"><span class="icon">👥</span>User
+                        Management</a>
+                    <a href="costing-management.html" class="menu-item"><span class="icon">📊</span>Costing
+                        Management</a>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;"></div>
+                    <!-- Existing master data items -->
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sourcing-by.html" class="menu-item"><span class="icon">🔍</span>Sourcing By</a>
+                    <a href="stock-types.html" class="menu-item"><span class="icon">📦</span>Stock Type</a>
+                    <a href="terms-conditions.html" class="menu-item"><span class="icon">📜</span>Terms & Condition</a>
+                    <a href="transportation.html" class="menu-item"><span class="icon">🚚</span>Transportation</a>
+                    <a href="vendors.html" class="menu-item"><span class="icon">🏭</span>Vendor</a>
+                    <a href="vendor-groups.html" class="menu-item"><span class="icon">📁</span>Vendor Group</a>
+                    <a href="vendor-prefix.html" class="menu-item"><span class="icon">🏷️</span>Vendor Prefix</a>
+                    <a href="yarn-adjust.html" class="menu-item"><span class="icon">🧶</span>Yarn Adjust Entry</a>
+                </div>
+
+                <a href="#" class="menu-item">
+                    <span class="icon">📝</span>
+                    Enquiries
+                    <span class="badge">5</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🛒</span>
+                    Sale Orders
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📦</span>
+                    Sort Master
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Attendance & HR</div>
+                <a href="attendance-dashboard.html" class="menu-item">
+                    <span class="icon">🕒</span>
+                    Attendance Dashboard
+                </a>
+                <a href="attendance-employees.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    Employees
+                </a>
+                <a href="attendance-shifts.html" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Shift Management
+                </a>
+                <a href="attendance-leaves.html" class="menu-item">
+                    <span class="icon">🏖️</span>
+                    Leave Management
+                </a>
+                <a href="salary-management.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    Salary & Payroll
+                </a>
+            </div>
+
+
+            <div class="menu-section">
+                <div class="menu-section-title">Reports</div>
+                <a href="#" class="menu-item">
+                    <span class="icon">📈</span>
+                    Analytics
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📋</span>
+                    Order Reports
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">💰</span>
+                    Financial
+                </a>
+            </div>
+
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="/Usermanagement.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    User Management
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📜</span>
+                    Audit Logs
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">SJ</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <h1 class="page-title">Dashboard Overview</h1>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input type="text" placeholder="Search orders, enquiries...">
+                </div>
+                <button class="notification-btn">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="date-display" id="dateDisplay">Loading...</div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-content">
+                    <div class="welcome-greeting">
+                        <span class="greeting-icon" id="greetingIcon">☀️</span>
+                        <span id="greetingText">Good Morning</span>
+                    </div>
+                    <h2 class="welcome-title">Welcome back, <span id="welcomeName">User</span>! 👋</h2>
+                    <p class="welcome-subtitle">Here's what's happening with your business today</p>
+                </div>
+                <div class="welcome-time">
+                    <div class="time" id="currentTime">--:--</div>
+                    <div class="date" id="currentDate">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">📝</div>
+                        <span class="stat-trend up">↑ 12%</span>
+                    </div>
+                    <div class="stat-value" id="statEnquiries">0</div>
+                    <div class="stat-label">Pending Enquiries</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">🛒</div>
+                        <span class="stat-trend up">↑ 8%</span>
+                    </div>
+                    <div class="stat-value" id="statOrders">0</div>
+                    <div class="stat-label">Active Orders</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange">✅</div>
+                        <span class="stat-trend up">↑ 24%</span>
+                    </div>
+                    <div class="stat-value" id="statCompleted">0</div>
+                    <div class="stat-label">Completed This Month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon brown">💰</div>
+                        <span class="stat-trend up">↑ 15%</span>
+                    </div>
+                    <div class="stat-value" id="statRevenue">₹0</div>
+                    <div class="stat-label">Monthly Revenue</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📋 Recent Orders</h2>
+                        <a href="#" style="font-size: 13px; color: var(--primary);">View All →</a>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <tr>
+                                    <td class="order-id">ORD-2026-001</td>
+                                    <td>ABC Textiles</td>
+                                    <td>Grey Fabric 40s</td>
+                                    <td>₹1,25,000</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="order-id">ORD-2026-002</td>
+                                    <td>XYZ Mills</td>
+                                    <td>Cotton 60s</td>
+                                    <td>₹2,50,000</td>
+                                    <td><span class="status-badge processing">Processing</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="order-id">ORD-2026-003</td>
+                                    <td>Sunrise Fabrics</td>
+                                    <td>Polyester Blend</td>
+                                    <td>₹85,000</td>
+                                    <td><span class="status-badge completed">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="order-id">ORD-2026-004</td>
+                                    <td>Metro Garments</td>
+                                    <td>Grey Fabric 30s</td>
+                                    <td>₹1,75,000</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div style="display: flex; flex-direction: column; gap: 25px;">
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">⚡ Quick Actions</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-actions">
+                                <a href="#" class="action-btn">
+                                    <span class="icon">➕</span>
+                                    <span class="text">New Enquiry</span>
+                                </a>
+                                <a href="#" class="action-btn">
+                                    <span class="icon">🛒</span>
+                                    <span class="text">Create Sale Order</span>
+                                </a>
+                                <a href="#" class="action-btn">
+                                    <span class="icon">📦</span>
+                                    <span class="text">Add Sort Master</span>
+                                </a>
+                                <a href="#" class="action-btn">
+                                    <span class="icon">📊</span>
+                                    <span class="text">View Reports</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">🕐 Recent Activity</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-item">
+                                <div class="activity-icon login">🔐</div>
+                                <div class="activity-content">
+                                    <div class="activity-text">You logged in successfully</div>
+                                    <div class="activity-time">Just now</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon order">📦</div>
+                                <div class="activity-content">
+                                    <div class="activity-text">Order ORD-2026-003 completed</div>
+                                    <div class="activity-time">2 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon user">👤</div>
+                                <div class="activity-content">
+                                    <div class="activity-text">New user registered: John Doe</div>
+                                    <div class="activity-time">5 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <div class="spinner"></div>
+            <h3 style="margin-top: 20px; color: var(--primary-dark);">Logging Out...</h3>
+            <p style="color: var(--text-secondary); margin-top: 8px;">Please wait</p>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION
+        // ========================================
+        const API_BASE = '/api';
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        window.onload = async function () {
+            await initializeDashboard();
+        };
+
+        async function initializeDashboard() {
+            try {
+                // Check login status
+                const userId = localStorage.getItem('userId');
+                const userName = localStorage.getItem('userName');
+                const userRole = localStorage.getItem('userRole');
+
+                if (!userId) {
+                    window.location.href = '/Login.html';
+                    return;
+                }
+
+                // Verify session with JWT token
+                const authToken = localStorage.getItem('authToken');
+                const response = await fetch(`${API_BASE}/auth/check-session`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    clearSession();
+                    window.location.href = '/Login.html?message=' + encodeURIComponent('Session expired');
+                    return;
+                }
+
+                // Update UI
+                updateUserDisplay(result.user || { userName, role: userRole });
+                updateDateTime();
+                loadStats();
+
+                // Show admin menu if admin
+                if (userRole === 'admin' || (result.user && result.user.role === 'admin')) {
+                    document.getElementById('adminMenu').style.display = 'block';
+                }
+
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                document.getElementById('loadingOverlay').innerHTML = `
+                    <div style="text-align: center;">
+                        <p style="color: #C62828; font-size: 18px;">⚠️ Failed to load dashboard</p>
+                        <p style="color: #666; margin-top: 10px;">${error.message}</p>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 25px; cursor: pointer; background: var(--primary); color: white; border: none; border-radius: 6px;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ========================================
+        // UPDATE USER DISPLAY
+        // ========================================
+        function updateUserDisplay(user) {
+            const name = user.fullName || user.userName || user.name || localStorage.getItem('userName') || 'User';
+            const role = user.role || localStorage.getItem('userRole') || 'user';
+
+            document.getElementById('userName').textContent = name;
+            document.getElementById('userRole').textContent = role.toUpperCase();
+
+            // Generate avatar initials
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('userAvatar').textContent = initials;
+
+            // Update welcome name (first name only)
+            const firstName = name.split(' ')[0];
+            document.getElementById('welcomeName').textContent = firstName;
+        }
+
+        // ========================================
+        // UPDATE DATE/TIME & GREETING
+        // ========================================
+        function updateDateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+
+            // Set greeting based on time
+            let greeting, icon;
+            if (hours >= 5 && hours < 12) {
+                greeting = 'Good Morning';
+                icon = '☀️';
+            } else if (hours >= 12 && hours < 17) {
+                greeting = 'Good Afternoon';
+                icon = '🌤️';
+            } else if (hours >= 17 && hours < 21) {
+                greeting = 'Good Evening';
+                icon = '🌅';
+            } else {
+                greeting = 'Good Night';
+                icon = '🌙';
+            }
+
+            // Update greeting elements
+            document.getElementById('greetingText').textContent = greeting;
+            document.getElementById('greetingIcon').textContent = icon;
+
+            // Update time display
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-IN', timeOptions);
+
+            // Update date displays
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-IN', dateOptions);
+
+            const headerDateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('en-IN', headerDateOptions);
+
+            // Update time every minute
+            setTimeout(updateDateTime, 60000);
+        }
+
+
+        // ========================================
+        // LOAD STATS
+        // ========================================
+        function loadStats() {
+            // Placeholder stats - will be fetched from API later
+            document.getElementById('statEnquiries').textContent = '12';
+            document.getElementById('statOrders').textContent = '8';
+            document.getElementById('statCompleted').textContent = '45';
+            document.getElementById('statRevenue').textContent = '₹12.5L';
+        }
+
+        // ========================================
+        // LOGOUT - Uses handleLogout() from sidebar.js
+        // ========================================
+
+        // ========================================
+        // UTILITY
+        // ========================================
+        function clearSession() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('sessionId');
+        }
+
+        // ========================================
+        // COLLAPSIBLE SUBMENU TOGGLE
+        // ========================================
+        function toggleSubmenu(submenuId, categoryElement) {
+            const submenu = document.getElementById(submenuId);
+
+            // Toggle expanded class on submenu
+            submenu.classList.toggle('expanded');
+
+            // Toggle expanded class on category (for arrow rotation)
+            categoryElement.classList.toggle('expanded');
+        }
+
+        // ========================================
+        // MOBILE SIDEBAR TOGGLE
+        // ========================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+
+            // Prevent body scroll when sidebar is open
+            if (sidebar.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close sidebar when clicking menu items on mobile
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Close sidebar on window resize if open
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+
+    <!-- Load external scripts first -->
+    <script src="js/auth-utils.js"></script>
+    <script src="js/sidebar.js"></script>
+
+    <!-- Then run page initialization -->
+    <script>
+        // ========================================
+        // SESSION CHECK ON PAGE LOAD
+        // ========================================
+        window.addEventListener('DOMContentLoaded', async function () {
+            // Check authentication
+            const user = await checkAuth(true);
+
+            if (user) {
+                // Update user display from session
+                updateUserDisplay(user);
+
+                // Initialize page
+                updateDateTime();
+                loadStats();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selvedge Master - RTWE ERP</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-brown: #5D4037;
+            --dark-brown: #3E2723;
+            --light-brown: #8D6E63;
+            --bg-cream: #EFEBE9;
+            --bg-white: #FAFAFA;
+            --accent: #795548;
+            --success: #4CAF50;
+            --danger: #F44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-brown) 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Search */
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-brown);
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #444;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 2px solid #eee;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-inactive {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: var(--bg-cream);
+            color: var(--dark-brown);
+        }
+
+        .action-btn:hover {
+            background: #D7CCC8;
+        }
+
+        /* Side Panel */
+        .side-panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 450px;
+            height: 100vh;
+            background: white;
+            z-index: 1001;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+        .side-panel-header {
+            padding: 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .side-panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark-brown);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .side-panel-content {
+            padding: 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-brown);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .side-panel-footer {
+            padding: 25px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-brown);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-brown);
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🏭</span>
+            <div class="sidebar-brand">RTWE ERP<small>Textile Management</small></div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="dashboard.html" class="menu-item"><span class="icon">📊</span>Dashboard</a>
+                <div class="menu-category" onclick="toggleSubmenu('masterSubmenu', this)" style="margin: 5px 0;">
+                    <div class="category-left"><span class="category-icon">📦</span><span>Master Data</span></div>
+                    <span class="category-arrow">▶</span>
+                </div>
+                <div class="submenu" id="masterSubmenu">
+                    <a href="agents.html" class="menu-item"><span class="icon">👤</span>Agent</a>
+                    <a href="consignees.html" class="menu-item"><span class="icon">🏢</span>Consignee</a>
+                    <a href="domestic-buyers.html" class="menu-item"><span class="icon">🛍️</span>Domestic Buyer</a>
+                    <a href="godown.html" class="menu-item"><span class="icon">📍</span>Godown Location</a>
+                    <a href="insurance.html" class="menu-item"><span class="icon">🛡️</span>Insurance</a>
+                    <a href="payment-terms.html" class="menu-item"><span class="icon">💳</span>Payment Terms</a>
+                    <a href="rate-master.html" class="menu-item"><span class="icon">💵</span>Rate Master</a>
+                    <a href="selvedge.html" class="menu-item"><span class="icon">🧵</span>Selvedge Master</a>
+                    <a href="sales-target.html" class="menu-item"><span class="icon">🎯</span>Sale Order Target</a>
+                </div>
+                <a href="#" class="menu-item"><span class="icon">📝</span>Enquiries<span class="badge">5</span></a>
+                <a href="#" class="menu-item"><span class="icon">🛒</span>Sale Orders</a>
+            </div>
+            <div class="menu-section" id="adminMenu" style="display: none;">
+                <div class="menu-section-title">Administration</div>
+                <a href="Usermanagement.html" class="menu-item"><span class="icon">👥</span>User Management</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">-</div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()" title="Logout">🚪</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+                <div>
+                    <h1 class="page-title">Selvedge Master</h1>
+                    <div class="page-subtitle">Manage selvedge types</div>
+                </div>
+            </div>
+            <button class="add-btn" onclick="openPanel()">+ Add New Selvedge</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Search -->
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by selvedge name..."
+                    onkeyup="filterTable()">
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="80">Sl No.</th>
+                            <th>Selvedge Name</th>
+                            <th width="100">Status</th>
+                            <th width="100">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be loaded here -->
+                        <tr>
+                            <td colspan="4" style="text-align:center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Side Panel -->
+        <div class="side-panel-overlay" id="overlay" onclick="closePanel()"></div>
+        <div class="side-panel" id="sidePanel">
+            <div class="side-panel-header">
+                <h2 class="side-panel-title" id="panelTitle">Add Selvedge</h2>
+                <button class="close-btn" onclick="closePanel()">×</button>
+            </div>
+            <div class="side-panel-content">
+                <form id="masterForm">
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label class="form-label">Selvedge Name <span style="color:red">*</span></label>
+                        <input type="text" class="form-input" id="selvedgeName" required
+                            placeholder="Enter selvedge name">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isActive" checked style="width: 18px; height: 18px;">
+                            <label for="isActive">Is Active</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="side-panel-footer">
+                <button class="btn btn-cancel" onclick="closePanel()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveData()">Save Changes</button>
+            </div>
+        </div>
+
+        <script>
+            // API Base URL
+            const API_URL = '/api/master/selvedge';
+            let allData = [];
+
+            // Load Data on Start
+            document.addEventListener('DOMContentLoaded', loadData);
+
+            async function loadData() {
+                try {
+                    console.log('Fetching from:', API_URL);
+                    const res = await fetch(API_URL);
+                    console.log('Response status:', res.status);
+                    const result = await res.json();
+                    console.log('Result:', result);
+                    if (result.success) {
+                        allData = result.data;
+                        renderTable(allData);
+                    } else {
+                        document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:red">Error: ' + result.message + '</td></tr>';
+                    }
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:red">Error loading data: ' + error.message + '</td></tr>';
+                }
+            }
+
+            function renderTable(data) {
+                const tbody = document.getElementById('tableBody');
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No records found</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>
+                        <span class="status-badge ${item.is_active ? 'status-active' : 'status-inactive'}">
+                            ${item.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" onclick="editItem(${item.id})">Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+            }
+
+            function filterTable() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const filtered = allData.filter(item => item.name.toLowerCase().includes(query));
+                renderTable(filtered);
+            }
+
+            // Panel Handling
+            function openPanel() {
+                document.getElementById('editId').value = '';
+                document.getElementById('selvedgeName').value = '';
+                document.getElementById('isActive').checked = true;
+                document.getElementById('panelTitle').innerText = 'Add Selvedge';
+
+                document.getElementById('overlay').style.display = 'block';
+                setTimeout(() => document.getElementById('overlay').style.opacity = '1', 10);
+                document.getElementById('sidePanel').classList.add('open');
+            }
+
+            function editItem(id) {
+                const item = allData.find(d => d.id === id);
+                if (!item) return;
+
+                document.getElementById('editId').value = item.id;
+                document.getElementById('selvedgeName').value = item.name;
+                document.getElementById('isActive').checked = item.is_active;
+                document.getElementById('panelTitle').innerText = 'Edit Selvedge';
+
+                document.getElementById('overlay').style.display = 'block';
+                setTimeout(() => document.getElementById('overlay').style.opacity = '1', 10);
+                document.getElementById('sidePanel').classList.add('open');
+            }
+
+            function closePanel() {
+                document.getElementById('overlay').style.opacity = '0';
+                document.getElementById('sidePanel').classList.remove('open');
+                setTimeout(() => document.getElementById('overlay').style.display = 'none', 300);
+            }
+
+            async function saveData() {
+                const id = document.getElementById('editId').value;
+                const name = document.getElementById('selvedgeName').value;
+                const isActive = document.getElementById('isActive').checked;
+
+                if (!name) {
+                    alert('Please enter selvedge name');
+                    return;
+                }
+
+                const payload = { name, is_active: isActive };
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${API_URL}/${id}` : API_URL;
+
+                try {
+                    const res = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        closePanel();
+                        loadData(); // Reload table
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    alert('Failed to save data');
+                }
+            }
+        </script>
+        <script src="js/sidebar.js"></script>
+    </main>
+    <!-- Logout Overlay -->
+    <div class="logout-overlay" id="logoutOverlay">
+        <div class="logout-modal">
+            <p>Logging out...</p>
+        </div>
+    </div>
+</body>
+
+</html>

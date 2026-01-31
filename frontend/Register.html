@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - RTWE ERP System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('images/textile-bg.jpg') center center;
+      background-size: cover;
+      background-attachment: fixed;
+      padding: 20px;
+    }
+
+    .register-card {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 450px;
+      overflow: hidden;
+    }
+
+    .register-header {
+      background: linear-gradient(135deg, #5D4037 0%, #3E2723 100%);
+      color: white;
+      padding: 28px 30px;
+      text-align: center;
+    }
+
+    .register-header .logo {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .register-header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .register-header p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .register-body {
+      padding: 30px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: #FAFAFA;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #5D4037;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 4px;
+      color: #888;
+      font-size: 11px;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 45px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #8D6E63;
+      font-size: 16px;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #8D6E63 0%, #5D4037 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(93, 64, 55, 0.3);
+    }
+
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(93, 64, 55, 0.4);
+    }
+
+    .btn-register:disabled {
+      background: #BCAAA4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+
+    .message.error {
+      background: #FFEBEE;
+      color: #C62828;
+      border: 1px solid #EF9A9A;
+    }
+
+    .message.success {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border: 1px solid #A5D6A7;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    .links a {
+      color: #5D4037;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 12px;
+      color: #666;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #5D4037;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 8px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+
+      .register-header {
+        padding: 24px 20px;
+      }
+
+      .register-body {
+        padding: 24px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="register-card">
+    <div class="register-header">
+      <div class="logo">🏭</div>
+      <h1>Create Account</h1>
+      <p>Join RTWE ERP System</p>
+    </div>
+
+    <div class="register-body">
+      <div id="messageArea"></div>
+
+      <div id="loadingArea" class="loading">
+        <div class="spinner"></div>
+        <div>Creating account...</div>
+      </div>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="userName">Full Name *</label>
+          <input type="text" id="userName" required placeholder="Enter your full name" aria-label="Full name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" required placeholder="Enter your email" aria-label="Email address">
+        </div>
+
+        <div class="form-group">
+          <label for="customUserId">Username *</label>
+          <input type="text" id="customUserId" required placeholder="Choose a username" aria-label="Username">
+          <small>3-20 characters, letters, numbers, underscore only</small>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" required placeholder="Choose a password" aria-label="Password">
+            <button type="button" class="password-toggle" onclick="togglePassword('password', 'eyeIcon1')"
+              aria-label="Toggle password">
+              <span id="eyeIcon1">👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password *</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" required placeholder="Re-enter password"
+              aria-label="Confirm password">
+            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', 'eyeIcon2')"
+              aria-label="Toggle password">
+              <span id="eyeIcon2">👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telegramChatId">Telegram Chat ID (Optional)</label>
+          <input type="text" id="telegramChatId" placeholder="Enter your Telegram Chat ID">
+          <small>For receiving notifications via Telegram</small>
+        </div>
+
+        <button type="submit" class="btn-register" id="registerBtn">
+          Create Account
+        </button>
+      </form>
+
+      <div class="links">
+        Already have an account? <a href="/Login.html">Login here</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      handleRegister();
+    });
+
+    async function handleRegister() {
+      const userName = document.getElementById('userName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const customUserId = document.getElementById('customUserId').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const telegramChatId = document.getElementById('telegramChatId').value.trim();
+
+      if (!userName || !email || !customUserId || !password) {
+        showMessage('Please fill all required fields', 'error');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage('Passwords do not match', 'error');
+        return;
+      }
+
+      if (customUserId.length < 3 || customUserId.length > 20) {
+        showMessage('Username must be 3-20 characters', 'error');
+        return;
+      }
+
+      if (!/^[a-zA-Z0-9_]+$/.test(customUserId)) {
+        showMessage('Username can only contain letters, numbers, and underscore', 'error');
+        return;
+      }
+
+      document.getElementById('loadingArea').classList.add('show');
+      document.getElementById('registerBtn').disabled = true;
+      clearMessage();
+
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userName, email, customUserId, password, telegramChatId })
+        });
+
+        const data = await response.json();
+
+        document.getElementById('loadingArea').classList.remove('show');
+        document.getElementById('registerBtn').disabled = false;
+
+        if (data.success) {
+          showMessage('Registration successful! Redirecting to login...', 'success');
+          setTimeout(function () {
+            window.location.href = '/Login.html?message=' + encodeURIComponent('Account created successfully. Please login.');
+          }, 2000);
+        } else {
+          showMessage(data.message || 'Registration failed', 'error');
+        }
+      } catch (error) {
+        document.getElementById('loadingArea').classList.remove('show');
+        document.getElementById('registerBtn').disabled = false;
+        showMessage('An error occurred: ' + (error.message || 'Unknown error'), 'error');
+      }
+    }
+
+    function togglePassword(inputId, iconId) {
+      const passwordInput = document.getElementById(inputId);
+      const eyeIcon = document.getElementById(iconId);
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = '👁️';
+      }
+    }
+
+    function showMessage(text, type) {
+      document.getElementById('messageArea').innerHTML = '<div class="message ' + type + '">' + escapeHtml(text) + '</div>';
+    }
+
+    function clearMessage() {
+      document.getElementById('messageArea').innerHTML = '';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    document.getElementById('userName').focus();
+  </script>
+</body>
+
+</html>
