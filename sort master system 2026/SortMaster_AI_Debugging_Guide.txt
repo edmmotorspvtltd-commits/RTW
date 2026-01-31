@@ -1,0 +1,632 @@
+================================================================================
+SORT MASTER SYSTEM - CALCULATION & AUTO-FILL DEBUGGING GUIDE
+For AI Agents to Analyze and Fix Code Issues
+================================================================================
+
+VERSION: 1.0
+DATE: December 27, 2025
+PURPOSE: Reference document for AI assistants to debug Sort Master calculations
+         and material auto-fill functionality
+
+================================================================================
+SECTION 1: AI AGENT INSTRUCTIONS (PROMPT)
+================================================================================
+
+When a user provides Sort Master code for debugging, follow these steps:
+
+STEP 1: CODE ANALYSIS CHECKLIST
+□ Check if using Google Apps Script (requires 'var', not 'const/let')
+□ Verify CALC_CONSTANTS is defined only once
+□ Check parameter naming consistency (wastePerShrink vs shrinkagePercent)
+□ Verify field name mapping between HTML and calculation.gs
+□ Check if material change function exists and is properly called
+□ Verify auto-calculation trigger on input changes
+□ Check debounce timer implementation
+
+STEP 2: CALCULATION VERIFICATION
+□ Verify Final Reed formula: (reed × denting) ÷ 2
+□ Verify Reed Space formula: width + extraWidth (simple mode)
+□ Verify Total Ends formula: Math.ceil(reedSpace × finalReed)
+□ Verify Warp Weight: (ends × 0.0005905) ÷ englishCount
+□ Verify Weft Weight: (reedSpace × picks × 0.0005905) ÷ englishCount
+□ Verify GLM: totalWarpGrms + totalWeftGrms
+□ Verify GSM: GLM ÷ widthInMeters
+
+STEP 3: MATERIAL AUTO-FILL VERIFICATION
+□ Check if itemMasterData is loaded properly
+□ Verify data-count attribute is set in <option> elements
+□ Check if materialChanged() function is called on select change
+□ Verify count input field selector (.warp-count, .weft-count)
+□ Check if triggerAutoCalculate() is called after auto-fill
+
+STEP 4: COMMON ISSUES & FIXES
+If error: "CALC_CONSTANTS has already been declared"
+  → Use: var CALC_CONSTANTS = CALC_CONSTANTS || {...}
+  → Or: Remove duplicate declaration
+
+If error: "Unexpected token const"
+  → Replace all 'const' with 'var'
+  → Replace all 'let' with 'var'
+
+If material change not working:
+  → Check data-count="${i.englishCount || ''}" in HTML
+  → Verify materialChanged(this, 'warp') is in onchange
+  → Add console.log to debug data flow
+
+If calculations not updating:
+  → Check triggerAutoCalculate() on all input fields
+  → Verify oninput="triggerAutoCalculate()" exists
+  → Check debounce timer (should be 0ms for instant)
+
+STEP 5: PROVIDE SOLUTION
+1. Explain what was wrong
+2. Show the specific line/section causing issue
+3. Provide complete fixed code
+4. Explain why the fix works
+5. Suggest testing steps
+
+================================================================================
+SECTION 2: TEXTILE CALCULATION FORMULAS (REFERENCE)
+================================================================================
+
+**CONSTANT VALUES:**
+- WEIGHT_CONVERSION_FACTOR = 0.0005905 (Core textile calculation constant)
+- INCHES_TO_CM = 2.54
+- INCHES_TO_METERS = 1 / 39.37 = 0.0254
+- MM_TO_INCHES = 1 / 25.4
+
+**BASIC CALCULATIONS:**
+
+1. FINAL REED
+   Formula: finalReed = (reed × denting) ÷ 2
+   Example: (136 × 2) ÷ 2 = 136.0
+   Decimals: 2
+
+2. REED SPACE (Simple Mode)
+   Formula: reedSpace = width + extraWidth
+   Example: 63.0 + 3.5 = 66.5
+   Decimals: 3
+
+3. TOTAL ENDS
+   Formula: totalEnds = Math.ceil(reedSpace × finalReed)
+   Example: Math.ceil(66.5 × 136.0) = 9044
+   Decimals: 0 (integer, rounded up)
+
+4. WIDTH CONVERSIONS
+   CM: widthInCm = widthInches × 2.54
+   Example: 63 × 2.54 = 160.02 cm
+   
+   Meters: widthInMeters = widthInches ÷ 39.37
+   Example: 63 ÷ 39.37 = 1.6002 meters
+
+**WARP CALCULATIONS (Per Row):**
+
+5. WARP ENDS DISTRIBUTION
+   Formula: ends = Math.ceil((totalEnds ÷ totalPattern) × pattern)
+   Example: Math.ceil((9044 ÷ 100) × 100) = 9044
+   
+6. WARP BASE WEIGHT (Without Shrinkage)
+   Formula: baseWeight = (ends × 0.0005905) ÷ englishCount
+   Example: (9044 × 0.0005905) ÷ 51 = 0.1047
+   Decimals: 4
+
+7. WARP WEIGHT WITH SHRINKAGE
+   Formula: weightWithShrinkage = baseWeight + (wastePerShrink% × baseWeight)
+   Example: 0.1047 + (7% × 0.1047) = 0.1047 + 0.0073 = 0.1120
+   Decimals: 4
+
+**WEFT CALCULATIONS (Per Row):**
+
+8. WEFT PICKS DISTRIBUTION
+   Formula: picks = Math.ceil((totalPicks ÷ totalPattern) × pattern)
+   Example: Math.ceil((124 ÷ 1) × 1) = 124
+
+9. WEFT BASE WEIGHT (Without Shrinkage)
+   Formula: baseWeight = (reedSpace × picks × 0.0005905) ÷ englishCount
+   Example: (66.5 × 124 × 0.0005905) ÷ 51 = 0.0954
+   Decimals: 4
+
+10. WEFT WEIGHT WITH SHRINKAGE
+    Formula: weightWithShrinkage = baseWeight + (wastePerShrink% × baseWeight)
+    Example: 0.0954 + (5% × 0.0954) = 0.0954 + 0.0048 = 0.1002
+    Decimals: 4
+
+**FINAL CALCULATIONS:**
+
+11. TOTAL WARP GRMS/MTR
+    Formula: Sum of all warp row weights (with shrinkage)
+    Example: 0.1120 = 0.112 (3 decimals)
+
+12. TOTAL WEFT GRMS/MTR
+    Formula: Sum of all weft row weights (with shrinkage)
+    Example: 0.1002 = 0.100 (3 decimals)
+
+13. GLM (Grams per Linear Meter) WITH SHRINKAGE
+    Formula: GLM = totalWarpGrms + totalWeftGrms
+    Example: 0.112 + 0.100 = 0.212
+    Decimals: 3
+
+14. GSM (Grams per Square Meter) WITH SHRINKAGE
+    Formula: GSM = GLM ÷ widthInMeters
+    Example: 0.212 ÷ 1.6002 = 0.132
+    Decimals: 3
+
+15. GLM WITHOUT SHRINKAGE
+    Formula: GLM = totalWarpGrms_NoShrink + totalWeftGrms_NoShrink
+    Example: 0.1047 + 0.0954 = 0.2001 = 0.200
+    Decimals: 3
+
+16. GSM WITHOUT SHRINKAGE
+    Formula: GSM = GLM_NoShrink ÷ widthInMeters
+    Example: 0.200 ÷ 1.6002 = 0.125
+    Decimals: 3
+
+**COMPLETE EXAMPLE:**
+Input:
+  reed = 136, denting = 2, width = 63, extraWidth = 3.5, picks = 124
+  Warp: pattern = 100, englishCount = 51, wastePerShrink = 7%
+  Weft: pattern = 1, englishCount = 51, wastePerShrink = 5%
+
+Output:
+  finalReed = 136.0
+  reedSpace = 66.5
+  totalEnds = 9044
+  warpEnds = 9044
+  warpGrms = 0.1120
+  weftPicks = 124
+  weftGrms = 0.1002
+  GLM = 0.212
+  GSM = 0.132
+
+================================================================================
+SECTION 3: MATERIAL AUTO-FILL FUNCTIONALITY
+================================================================================
+
+**PURPOSE:**
+When user selects a material from dropdown, automatically fill the English Count
+field with the value from Item Master database.
+
+**DATA FLOW:**
+
+1. LOADING ITEM MASTER
+   Location: loadMasterData() function in HTML
+   
+   Code Pattern:
+```javascript
+   google.script.run
+     .withSuccessHandler(function (data) {
+       if (data.success) {
+         itemMasterData = data.items;
+         console.log('✓ Loaded ' + itemMasterData.length + ' items');
+       }
+     })
+     .getItemMaster();
+```
+
+   Expected Data Structure:
+```javascript
+   itemMasterData = [
+     {
+       itemId: "ITEM001",
+       itemName: "Cotton 40s",
+       englishCount: 40.0,
+       yarnCode: "CTN"
+     },
+     {
+       itemId: "ITEM002", 
+       itemName: "Polyester 80D",
+       englishCount: 80.0,
+       yarnCode: "PET"
+     }
+   ]
+```
+
+2. POPULATING DROPDOWN
+   Location: addWarpRow() and addWeftRow() functions
+   
+   Code Pattern:
+```javascript
+   <select class="warp-material" onchange="materialChanged(this, 'warp')">
+     <option value="">Select</option>
+     ${itemMasterData.map(i =>
+       `<option value="${i.itemId}" 
+                data-count="${i.englishCount || ''}">${i.itemName}</option>`
+     ).join('')}
+   </select>
+```
+   
+   CRITICAL POINTS:
+   - Must include data-count attribute
+   - data-count value from i.englishCount
+   - Handle null/undefined with || ''
+   - Call materialChanged(this, 'warp') on change
+
+3. MATERIAL CHANGE HANDLER
+   Location: materialChanged() function
+   
+   Complete Implementation:
+```javascript
+   function materialChanged(select, type) {
+     try {
+       var row = select.closest('tr');
+       if (!row) {
+         console.error('Row not found');
+         return;
+       }
+       
+       var opt = select.options[select.selectedIndex];
+       var countInput = row.querySelector('.' + type + '-count');
+       
+       if (!opt || !opt.value) {
+         // User selected "Select" - clear count
+         if (countInput) {
+           countInput.value = '';
+         }
+         return;
+       }
+       
+       // Get count from data attribute
+       var count = opt.getAttribute('data-count');
+       
+       if (count && count !== 'null' && count !== 'undefined' && 
+           count !== '' && count !== '0') {
+         // Valid count - auto-fill
+         countInput.value = parseFloat(count);
+         
+         // Visual feedback
+         countInput.classList.add('auto-filled');
+         setTimeout(function() {
+           countInput.classList.remove('auto-filled');
+         }, 500);
+         
+         console.log('✓ Auto-filled: ' + opt.text + ' → Count: ' + count);
+         
+         // Trigger calculation
+         triggerAutoCalculate();
+         
+       } else {
+         // No count - user must enter manually
+         countInput.value = '';
+         countInput.placeholder = 'Enter count manually';
+         console.warn('⚠️ No count for: ' + opt.text);
+       }
+       
+     } catch (error) {
+       console.error('Error in materialChanged:', error);
+     }
+   }
+```
+
+4. AUTO-CALCULATION TRIGGER
+   Location: triggerAutoCalculate() function
+   
+   Code Pattern:
+```javascript
+   var autoCalcTimer = null;
+   
+   function triggerAutoCalculate() {
+     if (autoCalcTimer) {
+       clearTimeout(autoCalcTimer);
+     }
+     
+     // Instant calculation (0ms delay)
+     autoCalcTimer = setTimeout(function () {
+       autoCalculate();
+     }, 0);
+   }
+```
+
+5. VISUAL FEEDBACK (CSS)
+```css
+   @keyframes autofill-flash {
+     0% { 
+       background-color: #e8f5e9;
+       transform: scale(1.02);
+     }
+     100% { 
+       background-color: transparent;
+       transform: scale(1);
+     }
+   }
+   
+   .auto-filled {
+     animation: autofill-flash 0.5s ease;
+   }
+   
+   .missing-count {
+     border: 2px solid #ff9800 !important;
+     background: #fff3e0 !important;
+   }
+```
+
+**TESTING MATERIAL AUTO-FILL:**
+
+Test Function:
+```javascript
+function testMaterialChange() {
+  console.log('========================================');
+  console.log('MATERIAL CHANGE TEST');
+  console.log('========================================');
+  
+  if (!itemMasterData || itemMasterData.length === 0) {
+    console.error('❌ No items loaded!');
+    return;
+  }
+  
+  console.log('✓ Items loaded: ' + itemMasterData.length);
+  console.log('Sample item:', itemMasterData[0]);
+  
+  var warpRows = document.querySelectorAll('#warpBody tr').length;
+  var weftRows = document.querySelectorAll('#weftBody tr').length;
+  
+  console.log('Warp rows: ' + warpRows);
+  console.log('Weft rows: ' + weftRows);
+  console.log('========================================');
+}
+```
+
+Browser Console Test:
+1. Open browser DevTools (F12)
+2. Type: testMaterialChange()
+3. Check output for errors
+
+Manual Test:
+1. Add warp/weft row
+2. Select material from dropdown
+3. Verify count auto-fills with green flash
+4. Check console for "✓ Auto-filled" message
+5. Select material without count
+6. Verify orange warning appears
+
+================================================================================
+SECTION 4: PARAMETER NAMING REFERENCE
+================================================================================
+
+**HTML FORM FIELD NAMES:**
+- reed → formData.reed
+- denting → formData.denting
+- width → formData.width
+- extraWidth → formData.extraWidth (NOT threadOrGala)
+- picks → formData.picks
+- pickInsert → formData.pickInsert
+
+**WARP ROW FIELDS:**
+- beamType → warpRow.beamType
+- pattern → warpRow.pattern
+- itemId → warpRow.itemId
+- itemName → warpRow.itemName
+- englishCount → warpRow.englishCount
+- wastePerShrink → warpRow.wastePerShrink (NOT shrinkagePercent)
+
+**WEFT ROW FIELDS:**
+- pattern → weftRow.pattern
+- itemId → weftRow.itemId
+- itemName → weftRow.itemName
+- englishCount → weftRow.englishCount
+- wastePerShrink → weftRow.wastePerShrink (NOT shrinkagePercent)
+
+**CALCULATION FUNCTION PARAMETERS:**
+calculateWarpWeight() expects:
+  {
+    pattern: number,
+    totalPattern: number,
+    totalEnds: number,
+    englishCount: number,
+    wastePerShrink: number  // ✅ NOT shrinkagePercent
+  }
+
+calculateWeftWeight() expects:
+  {
+    pattern: number,
+    totalPattern: number,
+    totalPicks: number,
+    reedSpace: number,
+    englishCount: number,
+    wastePerShrink: number,  // ✅ NOT shrinkagePercent
+    pickInsert: number,
+    selvedgeWidthType: number
+  }
+
+================================================================================
+SECTION 5: COMMON ERRORS & SOLUTIONS
+================================================================================
+
+ERROR 1: "CALC_CONSTANTS has already been declared"
+CAUSE: Duplicate constant declaration
+FIX: Use safe declaration
+```javascript
+// ❌ WRONG
+const CALC_CONSTANTS = {...};
+const CALC_CONSTANTS = {...};  // Error!
+
+// ✅ CORRECT
+var CALC_CONSTANTS = CALC_CONSTANTS || {...};
+```
+
+ERROR 2: "Unexpected token const" or "Unexpected token let"
+CAUSE: Google Apps Script doesn't fully support ES6
+FIX: Replace all const/let with var
+```javascript
+// ❌ WRONG (in Apps Script)
+const finalReed = ...;
+let reedSpace = 0;
+
+// ✅ CORRECT
+var finalReed = ...;
+var reedSpace = 0;
+```
+
+ERROR 3: Material dropdown shows items but count doesn't auto-fill
+CAUSE: Missing data-count attribute or wrong selector
+DEBUG STEPS:
+1. Check HTML: data-count="${i.englishCount || ''}"
+2. Check console: Any errors in materialChanged()?
+3. Verify selector: row.querySelector('.warp-count')
+4. Check itemMasterData: Does it have englishCount?
+
+ERROR 4: Calculations not updating on input change
+CAUSE: Missing triggerAutoCalculate() on input fields
+FIX: Add oninput handler
+```javascript
+// ✅ CORRECT
+<input type="number" id="reed" oninput="triggerAutoCalculate()">
+<input type="number" class="warp-pattern" oninput="triggerAutoCalculate()">
+```
+
+ERROR 5: Auto-calculation is slow or delayed
+CAUSE: Debounce timer too long
+FIX: Set timer to 0ms
+```javascript
+// ❌ SLOW (500ms delay)
+setTimeout(function() { autoCalculate(); }, 500);
+
+// ✅ INSTANT
+setTimeout(function() { autoCalculate(); }, 0);
+```
+
+ERROR 6: Parameter name mismatch in calculations
+CAUSE: Using shrinkagePercent instead of wastePerShrink
+FIX: Update parameter names
+```javascript
+// ❌ WRONG
+function calculateWarpWeight(params) {
+  var shrinkagePercent = params.shrinkagePercent;  // Won't work!
+}
+
+// ✅ CORRECT
+function calculateWarpWeight(params) {
+  var wastePerShrink = params.wastePerShrink;  // Works!
+}
+```
+
+ERROR 7: NaN or undefined in calculations
+CAUSE: Missing parseFloat() or null values
+FIX: Always parseFloat and provide defaults
+```javascript
+// ❌ RISKY
+var total = formData.reed * formData.denting;
+
+// ✅ SAFE
+var total = parseFloat(formData.reed || 0) * parseFloat(formData.denting || 0);
+```
+
+================================================================================
+SECTION 6: TESTING CHECKLIST
+================================================================================
+
+BEFORE DEPLOYING, TEST:
+
+□ Login works without errors
+□ Form loads all dropdowns (Weave, Selvedge, Materials)
+□ Add warp row shows material dropdown with items
+□ Select material auto-fills English Count
+□ Green flash appears on auto-fill
+□ Manual entry works if count missing
+□ Enter Reed (136) → Final Reed shows 136.0
+□ Enter Denting (2) → Final Reed updates to 136.0
+□ Enter Width (63) + Extra Width (3.5) → Reed Space shows 66.5
+□ Total Ends shows 9044
+□ Width in CM shows 160.02
+□ Enter Pattern 100 + Count 51 + Shrinkage 7 → Warp grms calculates
+□ Enter Weft Pattern 1 + Count 51 + Shrinkage 5 → Weft grms calculates
+□ GLM shows sum of warp + weft grms
+□ GSM shows GLM ÷ width in meters
+□ Save button works
+□ No console errors in browser DevTools
+
+APPS SCRIPT LOGS:
+□ Run testCalculations() in Apps Script Editor
+□ Check View → Logs for calculation results
+□ Verify no errors in execution log
+
+================================================================================
+SECTION 7: FILE STRUCTURE REFERENCE
+================================================================================
+
+**calculation.gs** (Google Apps Script)
+- Contains all calculation functions
+- Uses 'var' instead of 'const/let'
+- Exports calculateAllSortMasterValues()
+- Called from HTML via google.script.run
+
+**HTML File** (Sort Master Form)
+- Contains form UI
+- Includes JavaScript for client-side logic
+- Calls calculation.gs via google.script.run
+- Handles material dropdown and auto-fill
+
+**Key Functions:**
+HTML Side:
+- loadMasterData() - Loads items, weaves, selvedges
+- addWarpRow() - Creates warp table row with material dropdown
+- addWeftRow() - Creates weft table row with material dropdown
+- materialChanged(select, type) - Handles material selection
+- triggerAutoCalculate() - Debounced calculation trigger
+- autoCalculate() - Calls server-side calculations
+- collectFormData() - Gathers all form data
+- displayCalculations(calc) - Shows calculation results
+
+GAS Side (calculation.gs):
+- calculateFinalReed(reed, denting)
+- calculateReedSpace(width, extraWidth, finalReed, type)
+- calculateTotalEnds(reedSpace, finalReed)
+- calculateWarpWeight(params)
+- calculateWeftWeight(params)
+- calculateAllSortMasterValues(formData) - Main function
+
+================================================================================
+SECTION 8: DEBUGGING TEMPLATE FOR AI AGENTS
+================================================================================
+
+When user submits code with issues, respond with:
+```
+# 🔍 ANALYSIS
+
+## Issue Identified:
+[Describe the specific problem found]
+
+## Root Cause:
+[Explain why this is happening]
+
+## Impact:
+[What functionality is broken]
+
+---
+
+# ✅ SOLUTION
+
+## Changes Required:
+1. [First change needed]
+2. [Second change needed]
+3. [etc...]
+
+## Fixed Code:
+[Provide complete fixed code section]
+
+## Why This Works:
+[Explain the fix]
+
+---
+
+# 🧪 TESTING
+
+## How to Test:
+1. [Step 1]
+2. [Step 2]
+3. [Expected result]
+
+## Verification Checklist:
+□ [Check 1]
+□ [Check 2]
+□ [Check 3]
+```
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
+
+This document should be provided to AI agents when debugging Sort Master code.
+It contains all formulas, parameter mappings, common errors, and solutions.
+
+For latest updates, check: Sort Master System 2026 Documentation
+Last Updated: December 27, 2025

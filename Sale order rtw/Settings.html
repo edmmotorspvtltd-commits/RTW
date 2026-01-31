@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - <?= appName ?></title>
+  
+  <?!= include('Styles'); ?>
+  
+  <style>
+    .settings-container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    
+    .setting-group {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .setting-group-header {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark-brown);
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--light-gray);
+    }
+    
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-label {
+      flex: 1;
+    }
+    
+    .setting-label h4 {
+      font-size: 15px;
+      color: var(--dark-brown);
+      margin-bottom: 5px;
+    }
+    
+    .setting-label p {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .setting-value {
+      min-width: 200px;
+    }
+    
+    .setting-value input,
+    .setting-value select {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <?!= include('Navigation'); ?>
+  
+  <div class="settings-container">
+    <div class="card">
+      <div class="card-header">⚙️ System Settings</div>
+      
+      <form id="settingsForm">
+        <!-- General Settings -->
+        <div class="setting-group">
+          <div class="setting-group-header">🔧 General Settings</div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Company Name</h4>
+              <p>Your company's official name</p>
+            </div>
+            <div class="setting-value">
+              <input type="text" class="form-input" id="companyName" value="RAMRATAN TECHNO WEAVE" readonly>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>GST Number</h4>
+              <p>Company GST registration number</p>
+            </div>
+            <div class="setting-value">
+              <input type="text" class="form-input" id="gstNumber" value="27AAPCR5895L1ZX" readonly>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Financial Year Start Month</h4>
+              <p>Month when financial year starts (1-12)</p>
+            </div>
+            <div class="setting-value">
+              <select class="form-select" id="fyStartMonth">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3" selected>March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Telegram Settings -->
+        <div class="setting-group">
+          <div class="setting-group-header">📱 Telegram Settings</div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Telegram Bot Token</h4>
+              <p>Bot token for sending PDFs via Telegram</p>
+            </div>
+            <div class="setting-value">
+              <input type="text" class="form-input" id="telegramToken" value="8398512229:AAGUBN1as8A9SalazravrVMwy7YdG8_JjYo">
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Test Telegram Connection</h4>
+              <p>Send a test message to verify bot setup</p>
+            </div>
+            <div class="setting-value">
+              <button type="button" class="btn btn-info" onclick="testTelegram()">🧪 Test Connection</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Numbering Settings -->
+        <div class="setting-group">
+          <div class="setting-group-header">🔢 Numbering Settings</div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Sale Order Prefix</h4>
+              <p>Prefix for sale order numbers</p>
+            </div>
+            <div class="setting-value">
+              <input type="text" class="form-input" id="soPrefix" value="RTWSO NO/" readonly>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>RTWE Number Prefix</h4>
+              <p>Prefix for RTWE enquiry numbers</p>
+            </div>
+            <div class="setting-value">
+              <input type="text" class="form-input" id="rtwePrefix" value="RTWE" readonly>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Session Settings -->
+        <div class="setting-group">
+          <div class="setting-group-header">🔒 Security Settings</div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Session Timeout (minutes)</h4>
+              <p>Auto-logout after inactivity</p>
+            </div>
+            <div class="setting-value">
+              <input type="number" class="form-input" id="sessionTimeout" value="480" min="30" max="1440">
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Enable Audit Logging</h4>
+              <p>Track all user actions</p>
+            </div>
+            <div class="setting-value">
+              <select class="form-select" id="auditLogging">
+                <option value="true" selected>Enabled</option>
+                <option value="false">Disabled</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h4>Audit Log Retention (days)</h4>
+              <p>Keep audit logs for specified days</p>
+            </div>
+            <div class="setting-value">
+              <input type="number" class="form-input" id="auditRetention" value="90" min="30" max="365">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Save Button -->
+        <div style="text-align: right; margin-top: 20px;">
+          <button type="submit" class="btn btn-success" style="padding: 12px 40px;">💾 Save Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <?!= include('Scripts'); ?>
+  
+  <script>
+    // Test Telegram connection
+    async function testTelegram() {
+      const chatId = prompt('Enter your Telegram Chat ID to test:');
+      
+      if (!chatId) return;
+      
+      showLoading();
+      
+      const result = await apiCall('test-telegram', { chatId: chatId });
+      
+      hideLoading();
+      
+      if (result.success) {
+        showToast('✅ Test message sent successfully!', 'success');
+      } else {
+        showToast('❌ ' + (result.error || 'Failed to send test message'), 'error');
+      }
+    }
+    
+    // Save settings
+    document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const settings = {
+        TELEGRAM_BOT_TOKEN: document.getElementById('telegramToken').value,
+        FINANCIAL_YEAR_START_MONTH: document.getElementById('fyStartMonth').value,
+        SESSION_TIMEOUT_MINUTES: document.getElementById('sessionTimeout').value,
+        AUDIT_LOG_ENABLED: document.getElementById('auditLogging').value,
+        AUDIT_LOG_RETENTION_DAYS: document.getElementById('auditRetention').value
+      };
+      
+      showLoading();
+      
+      const result = await apiCall('update-settings', settings);
+      
+      hideLoading();
+      
+      if (result.success) {
+        showToast('✅ Settings saved successfully!', 'success');
+      } else {
+        showToast('❌ ' + (result.error || 'Failed to save settings'), 'error');
+      }
+    });
+  </script>
+</body>
+</html>

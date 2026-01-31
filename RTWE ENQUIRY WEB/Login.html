@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - RTWE Enquiry System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #D7CCC8 0%, #BCAAA4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+    }
+
+    .login-header {
+      background: #5D4037;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .login-header h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .login-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .login-body {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #5D4037;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #D7CCC8;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #5D4037;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      font-weight: normal;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .checkbox-group small {
+      display: block;
+      color: #888;
+      font-size: 11px;
+      margin-top: 4px;
+      margin-left: 22px;
+    }
+
+    /* Password Toggle */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 45px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+      font-size: 18px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .password-toggle:hover {
+      color: #5D4037;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: #5D4037;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-login:hover {
+      background: #4E342E;
+    }
+
+    .btn-login:disabled {
+      background: #BCAAA4;
+      cursor: not-allowed;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .message.error {
+      background: #FFEBEE;
+      color: #C62828;
+      border: 1px solid #EF9A9A;
+    }
+
+    .message.success {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border: 1px solid #A5D6A7;
+    }
+
+    .message.info {
+      background: #E3F2FD;
+      color: #1565C0;
+      border: 1px solid #90CAF9;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    .links a {
+      color: #5D4037;
+      text-decoration: none;
+      font-size: 14px;
+      display: block;
+      margin: 10px 0;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      color: #666;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #5D4037;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        margin: 10px;
+      }
+
+      .login-header h1 {
+        font-size: 20px;
+      }
+
+      .login-body {
+        padding: 20px;
+      }
+    }
+
+    /* Fullscreen Loading Overlay for Redirect */
+    .redirect-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #5D4037 0%, #3E2723 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .redirect-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .redirect-spinner {
+      width: 80px;
+      height: 80px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top: 5px solid #fff;
+      border-radius: 50%;
+      animation: redirectSpin 0.8s linear infinite;
+      margin-bottom: 30px;
+    }
+
+    .redirect-content {
+      text-align: center;
+      color: white;
+    }
+
+    .redirect-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      animation: redirectPulse 1.5s ease-in-out infinite;
+    }
+
+    .redirect-subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .redirect-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+      animation: redirectPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes redirectSpin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes redirectPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>🏭 RTWE Enquiry System</h1>
+      <p>Ramratan Techno Weave</p>
+    </div>
+
+    <div class="login-body">
+      <!-- Message Area -->
+      <div id="messageArea"></div>
+
+      <!-- Loading Indicator -->
+      <div id="loadingArea" class="loading">
+        <div class="spinner"></div>
+        <div>Logging in...</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username or Email</label>
+          <input type="text" id="username" name="username" required autocomplete="username"
+            placeholder="Enter your username or email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" name="password" required autocomplete="current-password"
+              placeholder="Enter your password">
+            <button type="button" class="password-toggle" onclick="togglePassword()" title="Show/Hide Password">
+              <span id="eyeIcon">👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="checkbox-group">
+          <div>
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            <label for="rememberMe">Keep me logged in</label>
+            <small>If unchecked, you will be logged out after 30 minutes of inactivity</small>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          Login
+        </button>
+      </form>
+
+      <div class="links">
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=forgot-password">🔑 Forgot Password?</a>
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=register">👤 Create New Account</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Redirect Loading Overlay -->
+  <div id="redirectOverlay" class="redirect-overlay">
+    <div class="redirect-icon">🏠</div>
+    <div class="redirect-spinner"></div>
+    <div class="redirect-content">
+      <div class="redirect-title">Welcome!</div>
+      <div class="redirect-subtitle">Loading Dashboard...</div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    const webAppUrl = '<?= ScriptApp.getService().getUrl() ?>';
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    window.addEventListener('DOMContentLoaded', function () {
+      initializePage();
+    });
+
+    function initializePage() {
+      // Check if user has a stored session (back button fix)
+      try {
+        const storedSession = localStorage.getItem('rtwe_session');
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+
+        // If we have a stored session and this isn't an explicit login request
+        if (storedSession && !message) {
+          console.log('Found stored session, verifying...');
+
+          google.script.run
+            .withSuccessHandler(function (result) {
+              if (result && result.valid) {
+                console.log('Session valid, redirecting to dashboard');
+                window.location.href = webAppUrl + '?page=dashboard&sessionId=' + storedSession;
+              } else {
+                console.log('Session expired, showing login');
+                localStorage.removeItem('rtwe_session');
+              }
+            })
+            .withFailureHandler(function (error) {
+              console.log('Session check failed, showing login');
+              localStorage.removeItem('rtwe_session');
+            })
+            .checkSession(storedSession);
+
+          return;
+        }
+
+        // Display message if passed from URL
+        if (message) {
+          showMessage(decodeURIComponent(message), 'info');
+          localStorage.removeItem('rtwe_session');
+        }
+      } catch (e) {
+        console.log('Storage not available:', e);
+      }
+
+      // Auto-focus username field
+      document.getElementById('username').focus();
+
+      // Handle form submission
+      document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        handleLogin();
+      });
+    }
+
+    // ========================================
+    // PASSWORD TOGGLE
+    // ========================================
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = '👁️';
+      }
+    }
+
+    // ========================================
+    // LOGIN HANDLER
+    // ========================================
+    function handleLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      // Validate inputs
+      if (!username || !password) {
+        showMessage('Please enter username and password', 'error');
+        return;
+      }
+
+      if (username.length < 3) {
+        showMessage('Username must be at least 3 characters', 'error');
+        return;
+      }
+
+      // Show loading state
+      setLoadingState(true);
+      clearMessage();
+
+      // Call server-side login function
+      google.script.run
+        .withSuccessHandler(onLoginSuccess)
+        .withFailureHandler(onLoginFailure)
+        .loginUserSecure(username, password, rememberMe);
+    }
+
+    // ========================================
+    // SUCCESS HANDLER
+    // ========================================
+    function onLoginSuccess(result) {
+      setLoadingState(false);
+
+      console.log('Login result:', result);
+
+      if (result.success) {
+        showMessage('✅ Login successful! Redirecting...', 'success');
+
+        // Store session data in localStorage
+        try {
+          localStorage.setItem('rtwe_session', result.sessionId);
+          localStorage.setItem('rtwe_userName', result.session?.name || 'User');
+        } catch (e) {
+          console.error('Storage error:', e);
+        }
+
+        // Show fullscreen loading overlay
+        const overlay = document.getElementById('redirectOverlay');
+        overlay.classList.add('show');
+
+        // Redirect to dashboard after animation
+        setTimeout(function () {
+          const dashboardUrl = webAppUrl + '?page=dashboard&sessionId=' + result.sessionId;
+          window.location.href = dashboardUrl;
+        }, 1500);
+
+      } else {
+        showMessage(result.message || 'Login failed. Please try again.', 'error');
+        document.getElementById('username').focus();
+      }
+    }
+
+    // ========================================
+    // FAILURE HANDLER
+    // ========================================
+    function onLoginFailure(error) {
+      setLoadingState(false);
+
+      console.error('Login error:', error);
+
+      let errorMessage = 'An error occurred while logging in. Please try again.';
+      if (error && error.message) {
+        errorMessage = error.message;
+      }
+
+      showMessage(errorMessage, 'error');
+      document.getElementById('username').focus();
+    }
+
+    // ========================================
+    // UI HELPER FUNCTIONS
+    // ========================================
+    function setLoadingState(isLoading) {
+      const loadingArea = document.getElementById('loadingArea');
+      const loginBtn = document.getElementById('loginBtn');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+
+      if (isLoading) {
+        loadingArea.classList.add('show');
+        loginBtn.disabled = true;
+        usernameInput.disabled = true;
+        passwordInput.disabled = true;
+      } else {
+        loadingArea.classList.remove('show');
+        loginBtn.disabled = false;
+        usernameInput.disabled = false;
+        passwordInput.disabled = false;
+      }
+    }
+
+    function showMessage(text, type) {
+      const messageArea = document.getElementById('messageArea');
+      messageArea.innerHTML = '<div class="message ' + type + '">' + escapeHtml(text) + '</div>';
+      messageArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearMessage() {
+      document.getElementById('messageArea').innerHTML = '';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ========================================
+    // KEYBOARD SHORTCUTS
+    // ========================================
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+        const activeElement = document.activeElement;
+        if (activeElement.tagName === 'INPUT') {
+          e.preventDefault();
+          document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

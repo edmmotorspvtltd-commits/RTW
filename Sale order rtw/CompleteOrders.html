@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Orders - RTWE Sales Order System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #6B4423;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .topbar h1 {
+      font-size: 20px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .orders-container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-box h3 {
+      font-size: 32px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .stat-box p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+      padding: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .filter-bar {
+      background: white;
+      padding: 20px;
+      border-bottom: 2px solid #E0E0E0;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-input {
+      padding: 12px 15px;
+      border: 2px solid #E0E0E0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #6B4423;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #4A2F1A;
+    }
+
+    .btn-secondary {
+      background: #E0E0E0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #BDBDBD;
+    }
+
+    .btn-success {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #388E3C;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-info {
+      background: #2196F3;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #1976D2;
+    }
+
+    .btn-danger {
+      background: #F44336;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #D32F2F;
+    }
+
+    .table-container {
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #F5F5F5;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #4CAF50;
+      border-bottom: 2px solid #4CAF50;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    tbody tr:hover {
+      background: #F9F9F9;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4CAF50;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .loading-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-content {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      z-index: 10001;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: #4CAF50;
+    }
+
+    .toast.error {
+      background: #F44336;
+    }
+
+    .toast.info {
+      background: #2196F3;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .action-buttons .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <h1>🏭 RTWE Sales Order System</h1>
+    <div class="topbar-right">
+      <span id="userName">User</span>
+      <a href="#" class="btn-back" id="btnBack">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div id="loadingText">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <div class="orders-container">
+    <!-- Statistics -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <h3 id="totalOrders">0</h3>
+        <p>Total Complete Orders</p>
+      </div>
+
+      <div class="stat-box">
+        <h3 id="totalValue">₹ 0.00</h3>
+        <p>Total Value</p>
+      </div>
+
+      <div class="stat-box">
+        <h3 id="thisMonth">0</h3>
+        <p>This Month</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">✅ Complete Sale Orders</div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-row">
+          <div class="form-group">
+            <input type="text" class="form-input" id="searchInput" placeholder="🔍 Search SO No, Buyer, Quality...">
+          </div>
+
+          <div class="form-group">
+            <label style="font-size: 12px; color: #666;">From Date</label>
+            <input type="date" class="form-input" id="dateFrom">
+          </div>
+
+          <div class="form-group">
+            <label style="font-size: 12px; color: #666;">To Date</label>
+            <input type="date" class="form-input" id="dateTo">
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary" onclick="applyFilters()">🔍 Filter</button>
+              <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+              <button class="btn btn-success" onclick="exportToExcel()">📊 Export</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div id="loadingArea" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <div>Loading complete orders...</div>
+      </div>
+
+      <div id="tableArea" class="table-container">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>SO Number</th>
+              <th>RTWE No</th>
+              <th>Date</th>
+              <th>Buyer</th>
+              <th>Consignee</th>
+              <th>Quality</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Final Amount</th>
+              <th>Completed At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <!-- Will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CONFIGURATION & SESSION
+    // ========================================
+    const webAppUrl = "<?= webAppUrl ?>";
+    let sessionId = "<?= sessionId ?>";
+    let userName = "<?= userName ?>";
+    let allOrders = [];
+
+    console.log('Complete Orders loaded');
+    console.log('Initial sessionId:', sessionId);
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    window.addEventListener('DOMContentLoaded', function () {
+      initializePage();
+    });
+
+    function initializePage() {
+      console.log('Initializing page...');
+
+      // Recover session from localStorage if needed
+      if (!sessionId || sessionId === 'undefined' || sessionId.trim() === '') {
+        console.log('No sessionId from server, checking localStorage...');
+        const storedSession = localStorage.getItem('saleorder_session');
+        const storedUserName = localStorage.getItem('saleorder_userName');
+
+        if (storedSession) {
+          console.log('Found stored session');
+          sessionId = storedSession;
+          userName = storedUserName || 'User';
+        } else {
+          console.log('No session found, redirecting to login...');
+          window.location.href = webAppUrl + '?page=login';
+          return;
+        }
+      }
+
+      // Update UI with user name
+      document.getElementById('userName').textContent = userName;
+
+      // Update back button
+      document.getElementById('btnBack').href = webAppUrl + '?page=dashboard&sessionId=' + sessionId;
+
+      // Enable live search
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+      // Load complete orders
+      loadCompleteOrders();
+    }
+
+    // ========================================
+    // LOAD COMPLETE ORDERS
+    // ========================================
+    function loadCompleteOrders() {
+      console.log('Loading complete orders...');
+
+      document.getElementById('loadingArea').style.display = 'block';
+      document.getElementById('tableArea').style.display = 'none';
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          console.log('Complete orders loaded:', result);
+
+          document.getElementById('loadingArea').style.display = 'none';
+          document.getElementById('tableArea').style.display = 'block';
+
+          if (result.success && result.orders) {
+            allOrders = result.orders;
+            displayOrders(allOrders);
+            calculateStats();
+          } else {
+            displayEmptyState();
+          }
+        })
+        .withFailureHandler(function (error) {
+          console.error('Failed to load orders:', error);
+
+          document.getElementById('loadingArea').style.display = 'none';
+          document.getElementById('tableArea').style.display = 'block';
+
+          showToast('Failed to load orders: ' + error.message, 'error');
+          displayEmptyState();
+        })
+        .getCompleteOrders(sessionId);
+    }
+
+    // ========================================
+    // DISPLAY ORDERS
+    // ========================================
+    function displayOrders(orders) {
+      const tbody = document.getElementById('ordersBody');
+      tbody.innerHTML = '';
+
+      if (!orders || orders.length === 0) {
+        displayEmptyState();
+        return;
+      }
+
+      orders.forEach(function (order) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td><strong>${escapeHtml(order.soNumber)}</strong></td>
+          <td>${escapeHtml(order.rtweNo || '-')}</td>
+          <td>${formatDate(order.date)}</td>
+          <td>${escapeHtml(order.buyer)}</td>
+          <td>${escapeHtml(order.consignee)}</td>
+          <td>${escapeHtml(order.quality)}</td>
+          <td>${formatNumber(order.quantity)} MTR</td>
+          <td>${formatCurrency(order.rate)}</td>
+          <td><strong>${formatCurrency(order.finalAmount)}</strong></td>
+          <td>${formatDateTime(order.completedAt)}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-info btn-sm" onclick="viewOrder('${escapeHtml(order.soNumber)}')" title="View Details">👁️ View</button>
+              <button class="btn btn-primary btn-sm" onclick="editOrder('${escapeHtml(order.soNumber)}')" title="Edit Order">✏️ Edit</button>
+              <button class="btn btn-success btn-sm" onclick="printOrder('${escapeHtml(order.soNumber)}')" title="Print Invoice">🖨️ Print</button>
+              <button class="btn btn-secondary btn-sm" onclick="sharePDF('${escapeHtml(order.soNumber)}')" title="Share PDF">📤 Share</button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    // ... (existing displayEmptyState function) ...
+
+    // ... (existing calculateStats, applyFilters, clearFilters functions) ...
+
+    // ========================================
+    // ORDER ACTIONS
+    // ========================================
+    function viewOrder(soNumber) {
+      showToast('Opening order details...', 'info');
+      console.log('View order:', soNumber);
+      // TODO: Implement view order modal
+    }
+
+    function editOrder(soNumber) {
+      if (confirm('Do you want to edit this order?')) {
+        window.location.href = webAppUrl + '?page=sale-order-form&sessionId=' + sessionId + '&edit=' + soNumber;
+      }
+    }
+
+    function printOrder(soNumber) {
+      showLoading('Generating PDF Invoice...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          if (result.success) {
+            showToast('✅ PDF Generated', 'success');
+            // Open PDF in new tab
+            window.open(result.url, '_blank');
+          } else {
+            showToast('❌ Error: ' + result.message, 'error');
+          }
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          showToast('❌ Server Error: ' + error.message, 'error');
+        })
+        .generateOrderPDF(soNumber, sessionId);
+    }
+
+    function sharePDF(soNumber) {
+      const email = prompt("Enter email address to send PDF:");
+      if (!email) return;
+
+      showLoading('Sending PDF...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          if (result.success) {
+            showToast('✅ Email sent successfully!', 'success');
+          } else {
+            showToast('❌ Error: ' + result.message, 'error');
+          }
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          showToast('❌ Server Error: ' + error.message, 'error');
+        })
+        .emailOrderPDF(soNumber, email, sessionId);
+    }
+
+    // ========================================
+    // EXPORT TO EXCEL
+    // ========================================
+    function exportToExcel() {
+      const visibleRows = Array.from(document.querySelectorAll('#ordersBody tr'))
+        .filter(row => row.style.display !== 'none' && row.cells.length > 1);
+
+      if (visibleRows.length === 0) {
+        showToast('No data to export', 'error');
+        return;
+      }
+
+      showToast('Exporting to Excel...', 'info');
+
+      // Create CSV
+      let csv = 'SO Number,RTWE No,Date,Buyer,Consignee,Quality,Quantity,Rate,Final Amount,Completed At\n';
+
+      visibleRows.forEach(row => {
+        const cells = row.cells;
+        for (let i = 0; i < 10; i++) {
+          csv += '"' + cells[i].textContent.trim().replace(/"/g, '""') + '",';
+        }
+        csv = csv.slice(0, -1) + '\n';
+      });
+
+      // Download
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'complete_orders_' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      showToast('✅ Exported successfully!', 'success');
+    }
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function formatDateTime(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }) + ' ' + date.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function formatNumber(num) {
+      if (!num) return '0';
+      return parseFloat(num).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatCurrency(amount) {
+      if (!amount) return '₹ 0.00';
+      return '₹ ' + parseFloat(amount).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showLoading(text) {
+      document.getElementById('loadingText').textContent = text || 'Processing...';
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type;
+      toast.classList.add('show');
+
+      setTimeout(function () {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+
+</html>

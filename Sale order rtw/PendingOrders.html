@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pending Orders - RTWE Sales Order System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .topbar h1 {
+      font-size: 20px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-back::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-back:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-back:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+      color: white;
+      padding: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-count {
+      background: white;
+      color: #FF9800;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .search-bar {
+      background: #FFF8E1;
+      padding: 20px;
+      border-bottom: 2px solid #FFE082;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .search-bar input {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 15px;
+      border: 2px solid #FFE082;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: #FF9800;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-refresh {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+    }
+
+    .btn-refresh:hover {
+      transform: translateY(-3px) rotate(180deg);
+      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-refresh:active {
+      transform: translateY(-1px) rotate(180deg);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: white;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #E0E0E0;
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background: #FFF8E1;
+      transform: scale(1.01);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    tbody tr:nth-child(even) {
+      background: #FAFAFA;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* ========================================
+       🎨 COOL BUTTON ANIMATIONS
+       ======================================== */
+
+    /* VIEW BUTTON - Blue with ripple effect */
+    .btn-view {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      color: white;
+      box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
+    }
+
+    .btn-view::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-view:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-view:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(33, 150, 243, 0.5);
+      background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+    }
+
+    .btn-view:active {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+    }
+
+    /* Eye icon animation */
+    .btn-view:hover {
+      animation: viewPulse 0.6s ease;
+    }
+
+    @keyframes viewPulse {
+
+      0%,
+      100% {
+        transform: translateY(-5px) scale(1.05);
+      }
+
+      50% {
+        transform: translateY(-7px) scale(1.08);
+      }
+    }
+
+    /* MAKE SALE ORDER BUTTON - Green with bounce */
+    .btn-create {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-create::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-create:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-create:hover {
+      transform: translateY(-5px) scale(1.05) rotate(2deg);
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6);
+      background: linear-gradient(135deg, #388E3C 0%, #1B5E20 100%);
+      animation: createBounce 0.6s ease;
+    }
+
+    .btn-create:active {
+      transform: translateY(-2px) scale(1.02);
+      animation: createPop 0.3s ease;
+    }
+
+    @keyframes createBounce {
+
+      0%,
+      100% {
+        transform: translateY(-5px) scale(1.05) rotate(2deg);
+      }
+
+      25% {
+        transform: translateY(-8px) scale(1.08) rotate(-2deg);
+      }
+
+      50% {
+        transform: translateY(-10px) scale(1.1) rotate(2deg);
+      }
+
+      75% {
+        transform: translateY(-7px) scale(1.06) rotate(-1deg);
+      }
+    }
+
+    @keyframes createPop {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(0.95);
+      }
+
+      100% {
+        transform: scale(1.02);
+      }
+    }
+
+    /* CANCEL BUTTON - Red with shake */
+    .btn-cancel {
+      background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
+      color: white;
+      box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+    }
+
+    .btn-cancel::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-cancel:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-cancel:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(244, 67, 54, 0.6);
+      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      animation: cancelShake 0.5s ease;
+    }
+
+    .btn-cancel:active {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    @keyframes cancelShake {
+
+      0%,
+      100% {
+        transform: translateY(-5px) scale(1.05) rotate(0deg);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateY(-5px) scale(1.05) rotate(-3deg);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateY(-5px) scale(1.05) rotate(3deg);
+      }
+    }
+
+    /* Glowing effect on hover for all action buttons */
+    .action-buttons .btn-sm {
+      position: relative;
+    }
+
+    .action-buttons .btn-sm::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      border-radius: 6px;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      filter: blur(10px);
+      z-index: -1;
+    }
+
+    .action-buttons .btn-sm:hover::after {
+      opacity: 0.7;
+      animation: glow 1.5s infinite;
+    }
+
+    @keyframes glow {
+
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      50% {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    /* Loading state animation */
+    .btn-sm.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .btn-sm.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .loading-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-content {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      text-align: center;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #FF9800;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    /* Inline button spinner */
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      z-index: 10001;
+      opacity: 0;
+      transform: translateX(400px);
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
+      animation: toastBounce 0.6s ease;
+    }
+
+    @keyframes toastBounce {
+      0% {
+        transform: translateX(400px);
+      }
+
+      60% {
+        transform: translateX(-20px);
+      }
+
+      80% {
+        transform: translateX(10px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
+    }
+
+    .toast.info {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .empty-state-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    /* View Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-overlay.show .modal-content {
+      animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: scale(0.7) translateY(-50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #6B4423 0%, #4A2F1A 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    .modal-body {
+      padding: 25px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .detail-item {
+      padding: 12px;
+      background: #F5F5F5;
+      border-radius: 6px;
+      border-left: 4px solid #FF9800;
+      transition: all 0.3s ease;
+      animation: slideInLeft 0.4s ease;
+    }
+
+    .detail-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-left-width: 6px;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .detail-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      font-size: 15px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .detail-full {
+      grid-column: span 3;
+    }
+
+    .modal-footer {
+      padding: 15px 25px;
+      background: #F5F5F5;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-full {
+        grid-column: span 1;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <h1>🏭 RTWE Sales Order System</h1>
+    <div class="topbar-right">
+      <span id="userName">User</span>
+      <a href="#" class="btn-back" id="btnBack">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div id="loadingText">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- View Modal -->
+  <div id="viewModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📋 Enquiry Details</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Loaded dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()" style="background: #9E9E9E; color: white;">Close</button>
+        <button class="btn btn-create" id="btnCreateFromModal" onclick="createSaleOrderFromModal()">
+          📦 Make Sale Order
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        ⏳ Pending RTWE Orders
+        <span class="badge-count" id="totalCount">0 Orders</span>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Search by RTWE No, Broker, Quality...">
+        <button class="btn btn-primary" onclick="searchOrders()">Search</button>
+        <button class="btn btn-refresh" onclick="loadPendingOrders()">🔄 Refresh</button>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="table-container">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>RTWE No</th>
+              <th>Broker</th>
+              <th>Quality</th>
+              <th>Final Rate</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr>
+              <td colspan="6" class="empty-state">
+                <div class="spinner"></div>
+                Loading pending orders...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CONFIGURATION & SESSION
+    // ========================================
+    const webAppUrl = "<?= webAppUrl ?>";
+    let sessionId = "<?= sessionId ?>";
+    let userName = "<?= userName ?>";
+    let allOrders = [];
+    let currentViewData = null;
+
+    console.log('Pending Orders loaded');
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    window.addEventListener('DOMContentLoaded', function () {
+      initializePage();
+    });
+
+    function initializePage() {
+      // Recover session from localStorage if needed
+      if (!sessionId || sessionId === 'undefined' || sessionId.trim() === '') {
+        const storedSession = localStorage.getItem('saleorder_session');
+        const storedUserName = localStorage.getItem('saleorder_userName');
+
+        if (storedSession) {
+          sessionId = storedSession;
+          userName = storedUserName || 'User';
+        } else {
+          window.location.href = webAppUrl + '?page=login';
+          return;
+        }
+      }
+
+      document.getElementById('userName').textContent = userName;
+      document.getElementById('btnBack').href = webAppUrl + '?page=dashboard&sessionId=' + sessionId;
+
+      // Live search
+      document.getElementById('searchInput').addEventListener('input', searchOrders);
+
+      // Load pending orders from "Pending orders RTWE" sheet
+      loadPendingOrders();
+    }
+
+    // ========================================
+    // LOAD PENDING RTWE ORDERS
+    // ========================================
+    function loadPendingOrders() {
+      console.log('Loading pending RTWE orders...');
+      showLoading('Loading pending orders...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          console.log('Pending RTWE orders loaded:', result);
+
+          if (result.success && result.data) {
+            allOrders = result.data;
+            displayOrders(allOrders);
+            document.getElementById('totalCount').textContent = allOrders.length + ' Orders';
+          } else {
+            displayEmptyState();
+            document.getElementById('totalCount').textContent = '0 Orders';
+          }
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          console.error('Failed to load orders:', error);
+          showToast('Failed to load orders: ' + error.message, 'error');
+          displayEmptyState();
+        })
+        .getPendingRTWEOrders(sessionId);
+    }
+
+    // ========================================
+    // DISPLAY ORDERS
+    // ========================================
+    function displayOrders(orders) {
+      const tbody = document.getElementById('ordersBody');
+      tbody.innerHTML = '';
+
+      if (!orders || orders.length === 0) {
+        displayEmptyState();
+        return;
+      }
+
+      orders.forEach(function (order, index) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${escapeHtml(order.rtweNo || '-')}</strong></td>
+          <td>${escapeHtml(order.broker || '-')}</td>
+          <td>${escapeHtml(order.quality || '-')}</td>
+          <td style="color: #4CAF50; font-weight: bold;">₹ ${order.finalRate || order.givenRate || '-'}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-view" onclick="viewOrder('${escapeHtml(order.rtweNo)}')">
+                👁️ View
+              </button>
+              <button class="btn btn-sm btn-create" onclick="createSaleOrder('${escapeHtml(order.rtweNo)}')">
+                📦 Make Sale Order
+              </button>
+              <button class="btn btn-sm btn-cancel" onclick="cancelOrder('${escapeHtml(order.rtweNo)}')">
+                ❌ Cancel
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function displayEmptyState() {
+      const tbody = document.getElementById('ordersBody');
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <h3>No Pending Orders</h3>
+              <p>All RTWE enquiries have been processed into Sale Orders.</p>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    // ========================================
+    // SEARCH
+    // ========================================
+    function searchOrders() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      if (!searchTerm) {
+        displayOrders(allOrders);
+        return;
+      }
+
+      const filtered = allOrders.filter(function (order) {
+        return (
+          (order.rtweNo && order.rtweNo.toLowerCase().includes(searchTerm)) ||
+          (order.broker && order.broker.toLowerCase().includes(searchTerm)) ||
+          (order.quality && order.quality.toLowerCase().includes(searchTerm))
+        );
+      });
+
+      displayOrders(filtered);
+    }
+
+    // ========================================
+    // VIEW ORDER (Modal with full details)
+    // ========================================
+    function viewOrder(rtweNo) {
+      // Show loading on button
+      const btn = event.target.closest('button');
+      const originalHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-spinner"></span> Loading...';
+      }
+
+      showLoading('Loading details...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          // Restore button
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+          }
+
+          if (result && result.rtweNo) {
+            currentViewData = result;
+            showViewModal(result);
+          } else {
+            showToast('Order details not found', 'error');
+          }
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          // Restore button
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+          }
+          showToast('Error: ' + error.message, 'error');
+        })
+        .getPendingRTWEOrderDetails(rtweNo, sessionId);
+    }
+
+    function showViewModal(data) {
+      const modalBody = document.getElementById('modalBody');
+
+      modalBody.innerHTML = `
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">RTWE No</div>
+            <div class="detail-value">${data.rtweNo || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Costing No</div>
+            <div class="detail-value">${data.costingNo || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Enquiry Date</div>
+            <div class="detail-value">${data.enqDate || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Broker</div>
+            <div class="detail-value">${data.broker || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Buyer</div>
+            <div class="detail-value">${data.buyer || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">P/O No</div>
+            <div class="detail-value">${data.poNo || '-'}</div>
+          </div>
+          <div class="detail-item detail-full">
+            <div class="detail-label">Quality</div>
+            <div class="detail-value">${data.quality || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Given Rate</div>
+            <div class="detail-value">₹ ${data.givenRate || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Final Rate</div>
+            <div class="detail-value" style="color: #4CAF50; font-size: 18px;">₹ ${data.finalRate || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Order Status</div>
+            <div class="detail-value">${data.orderStatus || 'Confirmed'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Total MTR</div>
+            <div class="detail-value">${data.totalMTR || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Total Order Value</div>
+            <div class="detail-value" style="color: #6B4423; font-size: 18px;">₹ ${data.totalOrderValue || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Delivery Date</div>
+            <div class="detail-value">${data.deliveryDate || '-'}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Payment Terms</div>
+            <div class="detail-value">${data.paymentTerms || '-'}</div>
+          </div>
+          <div class="detail-item detail-full">
+            <div class="detail-label">Remark</div>
+            <div class="detail-value">${data.remark || '-'}</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('viewModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('viewModal').classList.remove('show');
+      currentViewData = null;
+    }
+
+    function createSaleOrderFromModal() {
+      if (currentViewData) {
+        createSaleOrder(currentViewData.rtweNo);
+      }
+      closeModal();
+    }
+
+    // ========================================
+    // CREATE SALE ORDER (Pre-fill form)
+    // ========================================
+    function createSaleOrder(rtweNo, buttonElement) {
+      // Show loading on button (if button element passed via event)
+      const btn = buttonElement || event.target.closest('button');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-spinner"></span> Opening...';
+      }
+
+      // Store RTWE No for the form to load
+      localStorage.setItem('saleorder_prefill_rtwe', rtweNo);
+
+      // Redirect to Sale Order Form
+      window.location.href = webAppUrl + '?page=sale-order-form&sessionId=' + sessionId + '&rtweNo=' + encodeURIComponent(rtweNo);
+    }
+
+    // ========================================
+    // CANCEL ORDER
+    // ========================================
+    function cancelOrder(rtweNo) {
+      // Show loading on button immediately
+      const btn = event.target.closest('button');
+      const originalHtml = btn ? btn.innerHTML : '';
+
+      if (!confirm('Are you sure you want to cancel RTWE Order: ' + rtweNo + '?')) {
+        return;
+      }
+
+      const reason = prompt('Enter cancellation reason:');
+      if (!reason || reason.trim() === '') {
+        showToast('Cancellation reason is required', 'error');
+        return;
+      }
+
+      // Now show loading state
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-spinner"></span> Cancelling...';
+      }
+      showLoading('Cancelling order...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          // Restore button
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+          }
+
+          if (result.success) {
+            showToast('✅ Order cancelled successfully', 'success');
+            setTimeout(function () {
+              loadPendingOrders();
+            }, 1500);
+          } else {
+            showToast('❌ ' + (result.message || 'Failed to cancel'), 'error');
+          }
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          // Restore button
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+          }
+          showToast('❌ Error: ' + error.message, 'error');
+        })
+        .cancelPendingRTWEOrder(rtweNo, reason, sessionId);
+    }
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showLoading(text) {
+      document.getElementById('loadingText').textContent = text || 'Processing...';
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+
+      setTimeout(function () {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+
+</html>

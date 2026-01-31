@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - RTWE</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            min-height: 100vh;
+        }
+
+        .form-side {
+            padding: 30px 50px;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .preview-side {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            padding: 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #2E7D32;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            background: #E8F5E9;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: #C8E6C9;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2E7D32;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .section {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .section.prefilled {
+            background: #E8F5E9;
+            border-color: #4CAF50;
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .section-badge.auto-filled {
+            background: #2196F3;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: #fafafa;
+        }
+
+        .form-group input[readonly] {
+            background: #E8F5E9;
+            color: #2E7D32;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+
+        /* Dynamic Design Table Styles */
+        .design-table-container {
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        .design-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px;
+        }
+
+        .design-table thead {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+        }
+
+        .design-table th {
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .design-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #E0E0E0;
+            vertical-align: middle;
+        }
+
+        .design-table tbody tr:hover {
+            background: #E8F5E9;
+        }
+
+        .design-table select,
+        .design-table input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .design-table .taga-input {
+            width: 120px;
+            text-align: center;
+        }
+
+        .btn-add-design {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-add-design:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-remove-design {
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-remove-design:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .design-count-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-outline:hover {
+            border-color: #4CAF50;
+            background: #E8F5E9;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Preview Side */
+        .preview-header {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .preview-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .preview-label {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+        }
+
+        .preview-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 3px solid rgba(255, 255, 255, 0.4);
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 12px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .modal-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            padding: 0 25px 25px;
+        }
+
+        .email-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .email-input-container input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn-add-email {
+            padding: 12px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .email-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .email-tag {
+            background: #E8F5E9;
+            border: 2px solid #4CAF50;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .email-tag-remove {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 10001;
+            min-width: 280px;
+        }
+
+        .toast.active {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #f44336;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .toast-message {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-side {
+                position: relative;
+                height: auto;
+                order: -1;
+                padding: 25px;
+            }
+
+            .form-side {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .form-grid,
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <?!= include('Navigation'); ?>
+
+    <div class="main-container">
+        <!-- Form Side -->
+        <div class="form-side">
+            <div class="header">
+                <a href="<?= ScriptApp.getService().getUrl() ?>?page=pending-approved&sessionId=<?= sessionId ?>"
+                    class="back-link">
+                    ← Back to Pending Approved
+                </a>
+                <div class="logo">✅ Order Confirmation</div>
+                <div class="subtitle">Confirm order and move to Order Confirm Data</div>
+            </div>
+
+            <form id="orderForm">
+                <!-- Pre-filled Enquiry Details -->
+                <div class="section prefilled">
+                    <div class="section-title">
+                        📋 Enquiry Details
+                        <span class="section-badge">Pre-filled</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>RTWE NO</label>
+                            <input type="text" id="rtweNo" value="<?= rtweNo ?>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>COSTING NO</label>
+                            <input type="text" id="costingNo" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>ENQUIRY DATE</label>
+                            <input type="text" id="enqDate" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>BROKER</label>
+                            <input type="text" id="broker" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>QUALITY</label>
+                            <input type="text" id="quality" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>GIVEN RATE</label>
+                            <input type="text" id="givenRate" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Details - User fills these -->
+                <div class="section">
+                    <div class="section-title">📝 Order Details <span class="required">*</span></div>
+
+                    <!-- Approval Info -->
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>APPROVED DATE</label>
+                            <input type="date" id="approvedDate" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>APPROVED TIME</label>
+                            <input type="time" id="approvedTime" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Basic Order Info -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>FINAL RATE <span class="required">*</span></label>
+                            <input type="number" id="finalRate" step="0.01" placeholder="Final Rate" required
+                                oninput="calculateOrderValue()">
+                        </div>
+                        <div class="form-group">
+                            <label>BUYER NAME <span class="required">*</span></label>
+                            <select id="buyer" required onchange="updatePreview()">
+                                <option value="">-- Select Buyer --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>P/O NUMBER <span class="required">*</span></label>
+                            <input type="text" id="poNo" placeholder="Enter PO Number" required
+                                oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>S/O NUMBER</label>
+                            <input type="text" id="soNo" placeholder="Enter SO Number" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>QUALITY ORDER</label>
+                            <input type="text" id="qualityOrder" placeholder="Quality Order">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC Design & Taga Details -->
+                <div class="section">
+                    <div class="section-title">
+                        🎨 Design & Taga Details
+                        <span class="design-count-badge" id="designCountBadge">0 Designs</span>
+                    </div>
+
+                    <div class="design-table-container">
+                        <table class="design-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">#</th>
+                                    <th>Design</th>
+                                    <th style="width: 150px;">Taga</th>
+                                    <th style="width: 60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="designTableBody">
+                                <!-- Rows will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn-add-design" onclick="addDesignRow()">
+                        + Add Design
+                    </button>
+                </div>
+
+                <!-- Order Calculations -->
+                <div class="section">
+                    <div class="section-title">📊 Order Calculations</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>TOTAL ORDER TAGA</label>
+                            <input type="number" id="totalOrderTaga" placeholder="Auto-calculated" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>COUNT METER</label>
+                            <input type="number" id="countMeter" step="0.01" placeholder="Count Meter"
+                                oninput="calculateTotalMTR()">
+                        </div>
+                        <div class="form-group">
+                            <label>TOTAL MTR</label>
+                            <input type="number" id="totalMTR" step="0.01" placeholder="Total Meters" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>SIZING BEAM MTR</label>
+                            <input type="number" id="sizingBeam" step="0.01"
+                                placeholder="Auto-calculated (Total MTR + 7%)" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>TOTAL ORDER VALUE</label>
+                            <input type="number" id="totalOrderValue" step="0.01" placeholder="Auto-calculated"
+                                readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selvedge Details - AUTO-FILLED BY BROKER -->
+                <div class="section prefilled">
+                    <div class="section-title">
+                        🧵 Selvedge Details
+                        <span class="section-badge auto-filled">Auto-filled by Broker</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>NAME OF SELVEDGE</label>
+                            <input type="text" id="selvedgeName" placeholder="Auto-filled by broker" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>ENDS OF SELVEDGE</label>
+                            <input type="number" id="selvedgeEnds" placeholder="Auto-filled by broker" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>COLOR OF SELVEDGE</label>
+                            <input type="text" id="selvedgeColor" placeholder="Auto-filled by broker" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="section">
+                    <div class="section-title">📋 Additional Details</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>YARN TO BE USED</label>
+                            <select id="yarnUsed">
+                                <option value="">-- Select Yarn --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>PAYMENT TERMS</label>
+                            <input type="text" id="paymentTerms" placeholder="Payment Terms">
+                        </div>
+                        <div class="form-group">
+                            <label>DELIVERY DATE</label>
+                            <input type="date" id="deliveryDate" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>REMARK</label>
+                            <textarea id="orderRemark" placeholder="Any additional notes..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-outline" onclick="cancelForm()">✖ Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmOrder()">💾 Save</button>
+                    <button type="button" class="btn btn-secondary" onclick="openShareModal()">📤 Save & Share</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Preview Side -->
+        <div class="preview-side">
+            <div class="preview-header">📋 Order Preview</div>
+
+            <!-- Basic Info -->
+            <div class="preview-card">
+                <div class="preview-item">
+                    <div class="preview-label">RTWE Number</div>
+                    <div class="preview-value" id="previewRtwe">
+                        <?= rtweNo ?>
+                    </div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Broker</div>
+                    <div class="preview-value" id="previewBroker">Loading...</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Quality</div>
+                    <div class="preview-value" id="previewQuality">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Order Details -->
+            <div class="preview-card">
+                <div class="preview-item">
+                    <div class="preview-label">Buyer</div>
+                    <div class="preview-value" id="previewBuyer">Not selected</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">PO Number</div>
+                    <div class="preview-value" id="previewPO">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">SO Number</div>
+                    <div class="preview-value" id="previewSO">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Final Rate</div>
+                    <div class="preview-value" id="previewRate">₹ 0.00</div>
+                </div>
+            </div>
+
+            <!-- Calculations -->
+            <div class="preview-card">
+                <div class="preview-item">
+                    <div class="preview-label">Total Order Taga</div>
+                    <div class="preview-value" id="previewTotalTaga">0</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Count Meter</div>
+                    <div class="preview-value" id="previewCountMeter">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Total MTR</div>
+                    <div class="preview-value" id="previewTotalMTR">0.00</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Sizing Beam</div>
+                    <div class="preview-value" id="previewSizingBeam">0.00 MTR</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Total Order Value</div>
+                    <div class="preview-value" id="previewOrderValue">₹ 0.00</div>
+                </div>
+            </div>
+
+            <!-- Designs & Tagas -->
+            <div class="preview-card">
+                <div class="preview-label" style="margin-bottom: 10px; font-weight: 700;">Designs & Tagas</div>
+                <div id="previewDesigns" style="font-size: 12px; line-height: 1.8; color: rgba(255,255,255,0.9);">
+                    No designs added
+                </div>
+            </div>
+
+            <!-- Selvedge Details -->
+            <div class="preview-card">
+                <div class="preview-label" style="margin-bottom: 10px; font-weight: 700;">Selvedge Details
+                    <span style="font-size: 10px; opacity: 0.7;">(Auto-filled)</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Name</div>
+                    <div class="preview-value" id="previewSelvedgeName">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Ends</div>
+                    <div class="preview-value" id="previewSelvedgeEnds">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Color</div>
+                    <div class="preview-value" id="previewSelvedgeColor">--</div>
+                </div>
+            </div>
+
+            <!-- Delivery & Status -->
+            <div class="preview-card">
+                <div class="preview-item">
+                    <div class="preview-label">Delivery Date</div>
+                    <div class="preview-value" id="previewDelivery">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Status</div>
+                    <div class="status-badge">Order Confirmed</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                💡 Confirming will move this enquiry to Order Confirm Data and remove it from Pending Approved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📤 Share Order Confirmation</h2>
+                <p id="shareRtweNo">RTWE: Loading...</p>
+            </div>
+
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; color: #666; font-size: 13px;">
+                    📧 Share will send PDF with Broker Link (72 hours, 3 uses)
+                </p>
+
+                <label style="font-size: 12px; font-weight: 600; color: #333; display: block; margin-bottom: 8px;">
+                    EMAIL RECIPIENTS
+                </label>
+                <div class="email-input-container">
+                    <input type="email" id="emailInput" placeholder="Enter email address">
+                    <button type="button" class="btn-add-email" onclick="addEmail()">+ Add</button>
+                </div>
+                <div id="emailTags" class="email-tags"></div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sendTelegram">
+                    <label for="sendTelegram">📱 Also send via Telegram</label>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeShareModal()">Cancel</button>
+                <button type="button" class="btn btn-secondary" onclick="shareOrder()">📤 Share Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-icon" id="toastIcon">✅</div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Success</div>
+            <div class="toast-message" id="toastMessage">Order confirmed</div>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = '<?= sessionId ?>';
+        const webAppUrl = '<?= ScriptApp.getService().getUrl() ?>';
+        const userName = '<?= userName ?>';
+        const rtweNo = '<?= rtweNo ?>';
+
+        // Dynamic Design Variables
+        let designCounter = 0;
+        let masterDesigns = [];
+
+        // Initialize
+        window.onload = function () {
+            console.log('=== ORDER CONFIRM FORM INITIALIZED ===');
+            console.log('RTWE:', rtweNo);
+            console.log('Session:', sessionId);
+
+            setApprovedDateTime();
+            loadEnquiryData();
+            loadMasterData();
+
+            // Add first design row by default
+
+        };
+
+        function setApprovedDateTime() {
+            const now = new Date();
+            document.getElementById('approvedDate').value = now.toISOString().split('T')[0];
+            document.getElementById('approvedTime').value = now.toTimeString().split(' ')[0].substring(0, 5);
+        }
+
+        function loadEnquiryData() {
+            if (!rtweNo) {
+                showToast('Error', 'No RTWE number provided', 'error');
+                return;
+            }
+
+            console.log('Loading enquiry data for:', rtweNo);
+
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    console.log('Enquiry data loaded:', data);
+                    if (data) {
+                        document.getElementById('costingNo').value = data.costingNo || '';
+                        document.getElementById('enqDate').value = data.enqDate || '';
+                        document.getElementById('broker').value = data.broker || '';
+                        document.getElementById('quality').value = data.quality || '';
+                        document.getElementById('givenRate').value = data.givenRate || '';
+                        document.getElementById('finalRate').value = data.givenRate || '';
+
+                        // Update preview
+                        document.getElementById('previewBroker').textContent = data.broker || '--';
+                        document.getElementById('previewQuality').textContent = data.quality || '--';
+                        updatePreview();
+                    }
+                })
+                .withFailureHandler(function (err) {
+                    console.error('Load error:', err);
+                    showToast('Error', 'Failed to load enquiry data', 'error');
+                })
+                .getEnquiryForOrderConfirm(rtweNo);
+        }
+
+        function loadMasterData() {
+            console.log('Loading master data...');
+
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    console.log('Master data loaded:', data);
+                    if (data) {
+                        populateDropdown('buyer', data.buyers || []);
+                        masterDesigns = data.designs || [];
+                        console.log('Master designs loaded:', masterDesigns.length);
+                        populateDropdown('yarnUsed', data.yarns || []);
+                        addDesignRow();
+                    }
+                })
+                .withFailureHandler(function (err) {
+                    console.error('Master data error:', err);
+                })
+                .getMasterDataForForm();
+        }
+
+        function populateDropdown(selectId, options) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            options.forEach(function (opt) {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+        }
+
+        // ========================================
+        // DYNAMIC DESIGN ROW FUNCTIONS
+        // ========================================
+
+        function addDesignRow() {
+            designCounter++;
+            const tbody = document.getElementById('designTableBody');
+            const tr = document.createElement('tr');
+            tr.id = 'design-row-' + designCounter;
+
+            tr.innerHTML = `
+                <td><strong>${designCounter}</strong></td>
+                <td>
+                    <select class="design-select" onchange="updatePreview()">
+                        <option value="">-- Select Design --</option>
+                        ${masterDesigns.map(d => `<option value="${d}">${d}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="taga-input" placeholder="Enter Taga" min="0" oninput="calculateTotalOrderTaga()">
+                </td>
+                <td>
+                    <button type="button" class="btn-remove-design" onclick="removeDesignRow(${designCounter})">×</button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+            updateDesignCount();
+        }
+
+        function removeDesignRow(id) {
+            const row = document.getElementById('design-row-' + id);
+            const rowCount = document.querySelectorAll('#designTableBody tr').length;
+
+            if (rowCount <= 1) {
+                showToast('Warning', 'At least one design row is required', 'error');
+                return;
+            }
+
+            if (row) {
+                row.remove();
+                updateDesignCount();
+                calculateTotalOrderTaga();
+                updatePreview();
+            }
+        }
+
+        function updateDesignCount() {
+            const count = document.querySelectorAll('#designTableBody tr').length;
+            document.getElementById('designCountBadge').textContent = count + ' Design' + (count !== 1 ? 's' : '');
+        }
+
+        function calculateTotalOrderTaga() {
+            let total = 0;
+            const inputs = document.querySelectorAll('.taga-input');
+            inputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalOrderTaga').value = total;
+            document.getElementById('previewTotalTaga').textContent = total;
+
+            calculateTotalMTR();
+            updatePreview();
+        }
+
+        function calculateTotalMTR() {
+            const totalTaga = parseFloat(document.getElementById('totalOrderTaga').value) || 0;
+            const countMeter = parseFloat(document.getElementById('countMeter').value) || 0;
+            const totalMTR = totalTaga * countMeter;
+
+            document.getElementById('totalMTR').value = totalMTR.toFixed(2);
+            document.getElementById('previewTotalMTR').textContent = totalMTR.toFixed(2);
+            document.getElementById('previewCountMeter').textContent = countMeter || '--';
+
+            calculateSizingBeam();
+            calculateOrderValue();
+        }
+
+        function calculateSizingBeam() {
+            const totalMTR = parseFloat(document.getElementById('totalMTR').value) || 0;
+            const sizingBeam = totalMTR * 1.07; // Total MTR + 7%
+
+            document.getElementById('sizingBeam').value = sizingBeam.toFixed(2);
+            document.getElementById('previewSizingBeam').textContent = sizingBeam.toFixed(2) + ' MTR';
+        }
+
+        function calculateOrderValue() {
+            const rate = parseFloat(document.getElementById('finalRate').value) || 0;
+            const mtr = parseFloat(document.getElementById('totalMTR').value) || 0;
+            const orderValue = rate * mtr;
+
+            document.getElementById('totalOrderValue').value = orderValue.toFixed(2);
+            document.getElementById('previewOrderValue').textContent = '₹ ' + orderValue.toFixed(2);
+            document.getElementById('previewRate').textContent = '₹ ' + rate.toFixed(2);
+        }
+
+        function updatePreview() {
+            try {
+                // Basic order details
+                const buyer = document.getElementById('buyer').value;
+                document.getElementById('previewBuyer').textContent = buyer || 'Not selected';
+
+                const poNo = document.getElementById('poNo').value;
+                document.getElementById('previewPO').textContent = poNo || '--';
+
+                const soNo = document.getElementById('soNo').value;
+                document.getElementById('previewSO').textContent = soNo || '--';
+
+                // Designs & Tagas - DYNAMIC
+                let designsHTML = '';
+                const rows = document.querySelectorAll('#designTableBody tr');
+                rows.forEach((row, index) => {
+                    const designSelect = row.querySelector('.design-select');
+                    const tagaInput = row.querySelector('.taga-input');
+
+                    const design = designSelect ? designSelect.value : '';
+                    const taga = tagaInput ? tagaInput.value : '';
+
+                    if (design || taga) {
+                        designsHTML += `<div style="margin-bottom: 5px;">
+                            <strong>Design ${index + 1}:</strong> ${design || '-'} 
+                            <span style="opacity: 0.7;">| Taga:</span> ${taga || '-'}
+                        </div>`;
+                    }
+                });
+                document.getElementById('previewDesigns').innerHTML = designsHTML || 'No designs added';
+
+                // Selvedge Details (readonly, just update preview)
+                const selvedgeName = document.getElementById('selvedgeName').value;
+                document.getElementById('previewSelvedgeName').textContent = selvedgeName || '--';
+
+                const selvedgeEnds = document.getElementById('selvedgeEnds').value;
+                document.getElementById('previewSelvedgeEnds').textContent = selvedgeEnds || '--';
+
+                const selvedgeColor = document.getElementById('selvedgeColor').value;
+                document.getElementById('previewSelvedgeColor').textContent = selvedgeColor || '--';
+
+                // Delivery Date
+                const deliveryDate = document.getElementById('deliveryDate').value;
+                document.getElementById('previewDelivery').textContent = deliveryDate || '--';
+            } catch (e) {
+                console.log('Preview update error (safe to ignore during load):', e.message);
+            }
+        }
+
+        function collectDesignsArray() {
+            const designs = [];
+            const rows = document.querySelectorAll('#designTableBody tr');
+
+            rows.forEach(row => {
+                const designSelect = row.querySelector('.design-select');
+                const tagaInput = row.querySelector('.taga-input');
+
+                const design = designSelect ? designSelect.value : '';
+                const taga = tagaInput ? tagaInput.value : '';
+
+                // Only add if at least design or taga is filled
+                if (design || taga) {
+                    designs.push({
+                        design: design || '',
+                        taga: taga || '0'
+                    });
+                }
+            });
+
+            return designs;
+        }
+
+        function collectOrderData() {
+            const designs = collectDesignsArray();
+
+            return {
+                rtweNo: rtweNo,
+                costingNo: document.getElementById('costingNo').value,
+                enqDate: document.getElementById('enqDate').value,
+                enqTime: '',
+                broker: document.getElementById('broker').value,
+                quality: document.getElementById('quality').value,
+                givenRate: document.getElementById('givenRate').value,
+                approvedDate: document.getElementById('approvedDate').value,
+                approvedTime: document.getElementById('approvedTime').value,
+                finalRate: document.getElementById('finalRate').value,
+                buyer: document.getElementById('buyer').value,
+                poNo: document.getElementById('poNo').value,
+                soNo: document.getElementById('soNo').value,
+                qualityOrder: document.getElementById('qualityOrder').value,
+                designs: designs, // NEW: Dynamic designs array
+                totalOrderTaga: document.getElementById('totalOrderTaga').value,
+                countMeter: document.getElementById('countMeter').value,
+                totalMTR: document.getElementById('totalMTR').value,
+                totalOrderValue: document.getElementById('totalOrderValue').value,
+                selvedgeName: document.getElementById('selvedgeName').value,
+                selvedgeEnds: document.getElementById('selvedgeEnds').value,
+                selvedgeColor: document.getElementById('selvedgeColor').value,
+                yarnUsed: document.getElementById('yarnUsed').value,
+                sizingBeam: document.getElementById('sizingBeam').value,
+                paymentTerms: document.getElementById('paymentTerms').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                orderRemark: document.getElementById('orderRemark').value,
+                confirmedBy: userName,
+                confirmedAt: new Date().toISOString()
+            };
+        }
+
+        function confirmOrder() {
+            console.log('=== CONFIRM ORDER CLICKED ===');
+
+            const buyer = document.getElementById('buyer').value;
+            const poNo = document.getElementById('poNo').value;
+            const finalRate = document.getElementById('finalRate').value;
+
+            if (!buyer) { showToast('Error', 'Please select a Buyer', 'error'); return; }
+            if (!poNo) { showToast('Error', 'Please enter PO Number', 'error'); return; }
+            if (!finalRate) { showToast('Error', 'Please enter Final Rate', 'error'); return; }
+
+            showLoading('Confirming order...');
+
+            const orderData = collectOrderData();
+            console.log('Order data to save:', orderData);
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    console.log('Confirm result:', result);
+                    hideLoading();
+                    if (result.success) {
+                        showToast('Success!', 'Order confirmed. Redirecting...', 'success');
+                        setTimeout(function () {
+                            window.location.href = webAppUrl + '?page=order-confirm&sessionId=' + sessionId;
+                        }, 1500);
+                    } else {
+                        showToast('Error', result.message || 'Failed to confirm order', 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    console.error('Confirm error:', error);
+                    hideLoading();
+                    showToast('Error', error.message || 'Failed to confirm order', 'error');
+                })
+                .confirmOrderFromApproved(orderData);
+        }
+
+        // ===== SHARE MODAL FUNCTIONS =====
+        let emailList = [];
+
+        function openShareModal() {
+            console.log('=== OPEN SHARE MODAL ===');
+
+            // Validate required fields first
+            const buyer = document.getElementById('buyer').value;
+            const poNo = document.getElementById('poNo').value;
+            const finalRate = document.getElementById('finalRate').value;
+
+            if (!buyer) { showToast('Error', 'Please select a Buyer', 'error'); return; }
+            if (!poNo) { showToast('Error', 'Please enter PO Number', 'error'); return; }
+            if (!finalRate) { showToast('Error', 'Please enter Final Rate', 'error'); return; }
+
+            // Update modal title
+            document.getElementById('shareRtweNo').textContent = 'RTWE: ' + rtweNo;
+
+            // Show modal
+            document.getElementById('shareModal').classList.add('active');
+
+            // Allow Enter key to add email
+            document.getElementById('emailInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addEmail();
+                }
+            });
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+            emailList = [];
+            document.getElementById('emailTags').innerHTML = '';
+            document.getElementById('emailInput').value = '';
+        }
+
+        function addEmail() {
+            const input = document.getElementById('emailInput');
+            const email = input.value.trim();
+
+            if (!email) return;
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showToast('Invalid Email', 'Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (emailList.includes(email)) {
+                showToast('Duplicate', 'Email already added', 'warning');
+                return;
+            }
+
+            emailList.push(email);
+            renderEmailTags();
+            input.value = '';
+        }
+
+        function removeEmail(email) {
+            emailList = emailList.filter(e => e !== email);
+            renderEmailTags();
+        }
+
+        function renderEmailTags() {
+            const container = document.getElementById('emailTags');
+            container.innerHTML = '';
+
+            emailList.forEach(email => {
+                const tag = document.createElement('div');
+                tag.className = 'email-tag';
+                tag.innerHTML = `
+                    <span>${email}</span>
+                    <button class="email-tag-remove" onclick="removeEmail('${email}')">×</button>
+                `;
+                container.appendChild(tag);
+            });
+        }
+
+        function shareOrder() {
+            console.log('=== SHARE ORDER CLICKED ===');
+
+            if (emailList.length === 0) {
+                showToast('No Recipients', 'Please add at least one email address', 'error');
+                return;
+            }
+
+            const sendTelegram = document.getElementById('sendTelegram').checked;
+            const emailsToSend = [...emailList]; // Create a copy
+
+            console.log('Emails to send:', emailsToSend);
+            console.log('Send Telegram:', sendTelegram);
+
+            closeShareModal();
+            showLoading('Saving and sharing order...');
+
+            const orderData = collectOrderData();
+            console.log('Order data for share:', orderData);
+
+            // First, save the order
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    console.log('Save result:', result);
+                    if (result.success) {
+                        // Then share it
+                        google.script.run
+                            .withSuccessHandler(function (shareResult) {
+                                console.log('Share result:', shareResult);
+                                hideLoading();
+                                if (shareResult.success) {
+                                    showToast('Success!', 'Order confirmed and shared. Redirecting...', 'success');
+                                    setTimeout(function () {
+                                        window.location.href = webAppUrl + '?page=order-confirm&sessionId=' + sessionId;
+                                    }, 1500);
+                                } else {
+                                    showToast('Partial Success', 'Order saved but sharing failed: ' + shareResult.message, 'warning');
+                                    setTimeout(function () {
+                                        window.location.href = webAppUrl + '?page=order-confirm&sessionId=' + sessionId;
+                                    }, 2000);
+                                }
+                            })
+                            .withFailureHandler(function (error) {
+                                console.error('Share error:', error);
+                                hideLoading();
+                                showToast('Partial Success', 'Order saved but sharing failed', 'warning');
+                                setTimeout(function () {
+                                    window.location.href = webAppUrl + '?page=order-confirm&sessionId=' + sessionId;
+                                }, 2000);
+                            })
+                            .shareOrderConfirmation(orderData, emailsToSend, sendTelegram);
+                    } else {
+                        hideLoading();
+                        showToast('Error', result.message || 'Failed to save order', 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    console.error('Save error:', error);
+                    hideLoading();
+                    showToast('Error', error.message || 'Failed to save order', 'error');
+                })
+                .confirmOrderFromApproved(orderData);
+        }
+
+        function cancelForm() {
+            if (confirm('Are you sure you want to cancel?')) {
+                window.location.href = webAppUrl + '?page=pending-approved&sessionId=' + sessionId;
+            }
+        }
+
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text || 'Processing...';
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function showToast(title, message, type) {
+            const toast = document.getElementById('toast');
+            const icons = { success: '✅', error: '❌', warning: '⚠️' };
+            document.getElementById('toastIcon').textContent = icons[type] || '✅';
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            toast.className = 'toast active ' + type;
+            setTimeout(function () { toast.classList.remove('active'); }, 4000);
+        }
+    </script>
+</body>
+
+</html>

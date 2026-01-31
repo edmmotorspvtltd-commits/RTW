@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RTWE KPI Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .dashboard-header {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-header h2 {
+      color: #5D4037;
+      margin: 0;
+    }
+
+    .last-updated {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .btn-refresh {
+      background: #5D4037;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-refresh:hover {
+      background: #4E342E;
+    }
+
+    .section-title {
+      background: #5D4037;
+      color: white;
+      padding: 12px 20px;
+      margin: 25px 0 15px 0;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .section-title:first-child {
+      margin-top: 0;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .kpi-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border-left: 4px solid #5D4037;
+      transition: transform 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #5D4037;
+    }
+
+    .kpi-card.highlight {
+      background: linear-gradient(135deg, #5D4037 0%, #4E342E 100%);
+      color: white;
+      border-left-color: #8D6E63;
+    }
+
+    .kpi-card.highlight .kpi-label {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .kpi-card.highlight .kpi-value {
+      color: white;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      margin-bottom: 25px;
+    }
+
+    .data-table-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-header {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 15px;
+      color: #5D4037;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #5D4037;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #5D4037;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 13px;
+    }
+
+    tr:hover {
+      background: #EFEBE9;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .recent-orders-table {
+      grid-column: 1 / -1;
+    }
+
+    .alerts-container {
+      background: #FFF3E0;
+      border-left: 4px solid #FF9800;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .alerts-header {
+      font-weight: 600;
+      font-size: 15px;
+      color: #E65100;
+      margin-bottom: 10px;
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-modal {
+      background: white;
+      border-radius: 12px;
+      padding: 40px 50px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #E0E0E0;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-modal h3 {
+      color: #5D4037;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .data-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .kpi-card {
+        padding: 15px;
+      }
+
+      .kpi-value {
+        font-size: 22px;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>📊 RTWE KPI Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=dashboard&sessionId=<?= sessionId ?>" class="btn-back">← Back
+        to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Global variables for Navigation - MUST be before Navigation include -->
+  <script>
+    var webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+    var sessionId = "<?= sessionId ?>";
+  </script>
+
+  <?!= include('Navigation') ?>
+
+  <div class="container">
+    <div class="dashboard-header">
+      <div>
+        <h2>📈 Order Analytics</h2>
+        <p class="last-updated">Last Refreshed: <span id="lastUpdated">--</span></p>
+      </div>
+      <button class="btn-refresh" onclick="refreshDashboard()">🔄 Refresh Dashboard</button>
+    </div>
+
+    <!-- Top KPIs -->
+    <div class="section-title">📊 TOP KPIs</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Enquiries</div>
+        <div class="kpi-value" id="totalEnquiries">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">This Month</div>
+        <div class="kpi-value" id="thisMonth">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Today</div>
+        <div class="kpi-value" id="today">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pending</div>
+        <div class="kpi-value" id="pending">0</div>
+      </div>
+      <div class="kpi-card highlight">
+        <div class="kpi-label">Conversion %</div>
+        <div class="kpi-value" id="conversion">0%</div>
+      </div>
+    </div>
+
+    <!-- Second Row KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Active Orders</div>
+        <div class="kpi-value" id="activeOrders">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Order Value</div>
+        <div class="kpi-value" id="totalValue">₹0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Approved</div>
+        <div class="kpi-value" id="approved">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total MTR</div>
+        <div class="kpi-value" id="totalMTR">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Open Order Value</div>
+        <div class="kpi-value" id="openValue">₹0</div>
+      </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="section-title">📋 ORDER STATUS OVERVIEW (Recent Orders)</div>
+    <div class="data-table-container recent-orders-table">
+      <table>
+        <thead>
+          <tr>
+            <th>RTWE No</th>
+            <th>Costing No</th>
+            <th>Enq Date</th>
+            <th>Buyer</th>
+            <th>Broker</th>
+            <th>Quality</th>
+            <th>Status</th>
+            <th>Delivery</th>
+            <th>MTR</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody id="recentOrdersBody">
+          <tr>
+            <td colspan="10" style="text-align: center; color: #999;">No recent orders</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Broker Performance and Monthly Summary -->
+    <div class="data-grid">
+      <div class="data-table-container">
+        <div class="table-header">🏢 Broker Performance</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Broker</th>
+              <th>Orders</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="brokerPerformance">
+            <tr>
+              <td colspan="3" style="text-align: center; color: #999;">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-table-container">
+        <div class="table-header">📅 Monthly Summary</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Orders</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="monthlySummary">
+            <tr>
+              <td colspan="3" style="text-align: center; color: #999;">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Alerts Section -->
+    <div class="alerts-container">
+      <div class="alerts-header">⚠️ Alerts & Notifications</div>
+      <div id="alertsContent" style="color: #666;">No alerts at this time</div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-modal">
+      <div class="spinner"></div>
+      <h3>Loading Dashboard...</h3>
+    </div>
+  </div>
+
+  <script>
+    // sessionId and webAppUrl already declared above for Navigation
+
+    window.onload = function () {
+      refreshDashboard();
+    };
+
+    function refreshDashboard() {
+      showLoading();
+      updateLastRefreshed();
+
+      google.script.run
+        .withSuccessHandler(function (data) {
+          hideLoading();
+          updateDashboard(data);
+        })
+        .withFailureHandler(function (error) {
+          hideLoading();
+          console.error('Dashboard error:', error);
+        })
+        .getKPIDashboardData(sessionId);
+    }
+
+    function updateDashboard(data) {
+      if (!data) return;
+
+      // Update KPIs
+      document.getElementById('totalEnquiries').textContent = data.totalEnquiries || 0;
+      document.getElementById('thisMonth').textContent = data.thisMonth || 0;
+      document.getElementById('today').textContent = data.today || 0;
+      document.getElementById('pending').textContent = data.pending || 0;
+      document.getElementById('approved').textContent = data.approved || 0;
+      document.getElementById('conversion').textContent = (data.conversion || 0) + '%';
+      document.getElementById('activeOrders').textContent = data.activeOrders || 0;
+      document.getElementById('totalValue').textContent = '₹' + formatNumber(data.totalValue || 0);
+      document.getElementById('totalMTR').textContent = formatNumber(data.totalMTR || 0);
+      document.getElementById('openValue').textContent = '₹' + formatNumber(data.openValue || 0);
+
+      // Update Recent Orders
+      if (data.recentOrders && data.recentOrders.length > 0) {
+        const tbody = document.getElementById('recentOrdersBody');
+        tbody.innerHTML = data.recentOrders.map(order => `
+          <tr>
+            <td>${order.rtweNo || '-'}</td>
+            <td>${order.costingNo || '-'}</td>
+            <td>${order.enqDate || '-'}</td>
+            <td>${order.buyer || '-'}</td>
+            <td>${order.broker || '-'}</td>
+            <td>${order.quality || '-'}</td>
+            <td>${order.status || '-'}</td>
+            <td>${order.delivery || '-'}</td>
+            <td>${order.mtr || '-'}</td>
+            <td>${order.value ? '₹' + formatNumber(order.value) : '-'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('en-IN').format(num);
+    }
+
+    function updateLastRefreshed() {
+      const now = new Date();
+      document.getElementById('lastUpdated').textContent = now.toLocaleString();
+    }
+
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+  </script>
+</body>
+
+</html>

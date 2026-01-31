@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Portal - RTWE</title>
+    <style>
+        :root {
+            --primary: #5D4037;
+            --secondary: #D7CCC8;
+            --bg: #F5F5F5;
+            --text: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome h2 {
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #eee;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .app-card .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .app-card h3 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .app-card p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .admin-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            display: none;
+        }
+
+        /* Simple Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #eee;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* Modern Success Popup */
+        .success-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-popup-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            animation: slideIn 0.4s ease;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: checkmark 0.5s ease 0.2s both;
+        }
+
+        .success-icon::before {
+            content: '✓';
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .success-popup h3 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .success-popup p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .success-popup .btn-ok {
+            background: linear-gradient(135deg, #5D4037 0%, #4E342E 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .success-popup .btn-ok:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🏭 RTWE Master Portal</h1>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h2>Welcome, <span id="userName">
+                    <?= userName ?>
+                </span></h2>
+            <p>Select an application to begin</p>
+        </div>
+
+        <div id="loading">🚀 Preparing your workspace...</div>
+        <div class="app-grid" id="appGrid"></div>
+    </div>
+
+    <button class="admin-btn" id="adminBtn" onclick="showAdminModal()">⚙️ Manage Links</button>
+
+    <!-- Success Popup -->
+    <div class="success-popup" id="successPopup">
+        <div class="success-popup-content">
+            <div class="success-icon"></div>
+            <h3>Success!</h3>
+            <p id="successMessage">App link updated successfully!</p>
+            <button class="btn-ok" onclick="closeSuccessPopup()">OK</button>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <h3>Manage App Links</h3>
+
+            <!-- Add New App Button -->
+            <button class="btn btn-save" onclick="showAddAppForm()" style="margin-bottom: 20px; width: 100%;">
+                ➕ Add New App
+            </button>
+
+            <!-- Add App Form (Hidden by default) -->
+            <div id="addAppForm"
+                style="display: none; background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px;">Add New Application</h4>
+                <div class="form-group">
+                    <label>App Name</label>
+                    <input type="text" id="newAppName" placeholder="e.g., Sales Order">
+                </div>
+                <div class="form-group">
+                    <label>Icon (Emoji)</label>
+                    <input type="text" id="newAppIcon" placeholder="e.g., 📦" maxlength="2">
+                </div>
+                <div class="form-group">
+                    <label>Web App URL (Optional)</label>
+                    <input type="text" id="newAppUrl" placeholder="Paste deployment URL">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-save" onclick="addNewApp()">Add App</button>
+                    <button class="btn btn-cancel" onclick="hideAddAppForm()">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Existing Apps -->
+            <div id="adminForm"></div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeAdminModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = "<?= sessionId ?>";
+        let allApps = [];
+
+        window.onload = function () {
+            loadApps();
+        };
+
+        function loadApps() {
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    document.getElementById('loading').style.display = 'none';
+                    if (result.success) {
+                        allApps = result.apps;
+                        renderApps(result.apps);
+                        if (result.isAdmin) document.getElementById('adminBtn').style.display = 'block';
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                })
+                .getPortalApps(sessionId);
+        }
+
+        function renderApps(apps) {
+            const grid = document.getElementById('appGrid');
+            grid.innerHTML = '';
+
+            apps.forEach(app => {
+                const link = app.url ? `${app.url}?session=${sessionId}` : '#';
+                const card = document.createElement('a');
+                card.className = 'app-card';
+                card.href = link;
+                card.target = "_blank"; // Always open in new tab
+                card.rel = "noopener noreferrer"; // Security best practice
+
+                if (!app.url) {
+                    card.onclick = (e) => {
+                        e.preventDefault();
+                        alert('This app is not yet configured. Please add the Web App URL in Manage Links.');
+                    };
+                }
+
+                card.innerHTML = `
+          <span class="icon">${app.icon}</span>
+          <h3>${app.name}</h3>
+          <p>Launch ${app.name}</p>
+        `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showAdminModal() {
+            const form = document.getElementById('adminForm');
+            form.innerHTML = '';
+
+            allApps.forEach(app => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                group.innerHTML = `
+          <label>${app.name} URL</label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="url_${app.id}" value="${app.url || ''}" placeholder="Paste Web App URL">
+            <button class="btn btn-save" onclick="saveUrl(${app.id})">Save</button>
+          </div>
+        `;
+                form.appendChild(group);
+            });
+
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function saveUrl(appId) {
+            const url = document.getElementById(`url_${appId}`).value;
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    showSuccessPopup(res.message);
+                    loadApps();
+                })
+                .updatePortalApp(sessionId, appId, url);
+        }
+
+        function showSuccessPopup(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successPopup').style.display = 'flex';
+        }
+
+        function closeSuccessPopup() {
+            document.getElementById('successPopup').style.display = 'none';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+            hideAddAppForm();
+        }
+
+        function showAddAppForm() {
+            document.getElementById('addAppForm').style.display = 'block';
+        }
+
+        function hideAddAppForm() {
+            document.getElementById('addAppForm').style.display = 'none';
+            document.getElementById('newAppName').value = '';
+            document.getElementById('newAppIcon').value = '';
+            document.getElementById('newAppUrl').value = '';
+        }
+
+        function addNewApp() {
+            const appName = document.getElementById('newAppName').value.trim();
+            const appIcon = document.getElementById('newAppIcon').value.trim();
+            const appUrl = document.getElementById('newAppUrl').value.trim();
+
+            if (!appName) {
+                alert('Please enter an app name');
+                return;
+            }
+
+            if (!appIcon) {
+                alert('Please enter an icon (emoji)');
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    if (res.success) {
+                        showSuccessPopup(res.message);
+                        hideAddAppForm();
+                        loadApps();
+                    } else {
+                        alert('Error: ' + res.message);
+                    }
+                })
+                .addNewPortalApp(sessionId, appName, appIcon, appUrl);
+        }
+    </script>
+</body>
+
+</html>

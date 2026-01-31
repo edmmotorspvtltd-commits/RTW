@@ -1,0 +1,100 @@
+<!-- Footer Component - Reusable across all pages -->
+<style>
+  .footer {
+    background: #2C2C2C;
+    color: white;
+    padding: 25px 20px;
+    margin-top: 50px;
+    text-align: center;
+    font-size: 13px;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .footer-logo {
+    font-size: 18px;
+    font-weight: bold;
+    color: #8B6F47;
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .footer-links a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .footer-links a:hover {
+    color: #8B6F47;
+  }
+  
+  .footer-bottom {
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+  }
+  
+  .footer-bottom a {
+    color: #8B6F47;
+    text-decoration: none;
+  }
+  
+  .footer-version {
+    margin-top: 10px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+  }
+  
+  @media (max-width: 768px) {
+    .footer-top {
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .footer-links {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+</style>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-top">
+      <div class="footer-logo">
+        📊 Sort Master System
+      </div>
+      <div class="footer-links">
+        <a href="?page=dashboard&session=<?= sessionId ?>">Dashboard</a>
+        <a href="?page=pending-orders&session=<?= sessionId ?>">Pending Orders</a>
+        <a href="?page=complete-orders&session=<?= sessionId ?>">Complete Orders</a>
+        <?php if (user.role === 'ADMIN') { ?>
+        <a href="?page=settings&session=<?= sessionId ?>">Settings</a>
+        <?php } ?>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 Sort Master System | Textile ERP Management</p>
+      <p>Developed for Professional Textile Manufacturing</p>
+      <div class="footer-version">
+        Version 1.0.0 | Build 2025-12-25
+      </div>
+    </div>
+  </div>
+</footer>

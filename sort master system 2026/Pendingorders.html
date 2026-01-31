@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pending Orders - Sort Master System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      font-size: 14px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .navbar {
+      background: white;
+      padding: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar a {
+      display: block;
+      padding: 15px 20px;
+      color: #5D4037;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .navbar a.active {
+      background: #D7CCC8;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .page-header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .page-header h2 {
+      color: #5D4037;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .search-filters {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 15px;
+    }
+
+    .search-row input {
+      padding: 10px;
+      border: 1px solid #D7CCC8;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .btn-search {
+      padding: 10px 20px;
+      background: #5D4037;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #5D4037;
+      color: white;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    tbody tr:hover {
+      background: #F5F5F5;
+    }
+
+    td {
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      background: #FFF3E0;
+      color: #F57C00;
+    }
+
+    .btn-create {
+      background: #4CAF50;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pagination {
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination button {
+      padding: 8px 15px;
+      background: #D7CCC8;
+      color: #5D4037;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ============ MOBILE RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .btn-logout {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .navbar a {
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .page-header h2 {
+        font-size: 18px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 600px;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+      }
+
+      .btn-action {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .pagination button {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar-left h1 {
+        font-size: 14px;
+      }
+
+      .navbar ul {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .navbar a {
+        padding: 10px;
+        border-bottom: 1px solid #E0E0E0;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th,
+      td {
+        padding: 8px 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>📊 Sort Master System</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        👤 <strong>
+          <?= user.userName ?>
+        </strong>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="<?= webAppUrl ?>?page=dashboard&session=<?= sessionId ?>"
+          onclick="showLoading('Dashboard')">Dashboard</a></li>
+      <li><a href="<?= webAppUrl ?>?page=pending-orders&session=<?= sessionId ?>" class="active"
+          onclick="showLoading('Pending Orders')">Pending Orders</a></li>
+      <li><a href="<?= webAppUrl ?>?page=complete-orders&session=<?= sessionId ?>"
+          onclick="showLoading('Complete Orders')">Complete Orders</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h2>📋 Pending Orders</h2>
+      <div style="color: #666; font-size: 14px; margin-top: 5px;">
+        Orders waiting for Sort Master creation
+      </div>
+    </div>
+
+    <div class="search-filters">
+      <div class="search-row">
+        <input type="text" id="searchRTWE" placeholder="Search RTWE No...">
+        <input type="text" id="searchBroker" placeholder="Search Broker...">
+        <input type="text" id="searchQuality" placeholder="Search Quality...">
+        <button class="btn-search" onclick="loadOrders()">🔍 Search</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div id="loadingArea" class="loading">
+        <div class="spinner"></div>
+        <div>Loading orders...</div>
+      </div>
+
+      <div id="tableArea" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th>RTWE No</th>
+              <th>Broker Name</th>
+              <th>Quality</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+
+        <div class="pagination" id="paginationArea"></div>
+      </div>
+
+      <div id="emptyArea" class="empty-state" style="display: none;">
+        <h3>🎉 All orders have Sort Masters!</h3>
+        <p>No pending orders at the moment.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sessionId = '<?= sessionId ?>';
+    const webAppUrl = '<?= webAppUrl ?>';
+    let currentPage = 1;
+
+    console.log('=== PENDING ORDERS INITIALIZED ===');
+    console.log('Session ID:', sessionId);
+    console.log('Web App URL:', webAppUrl);
+
+    window.onload = function () {
+      console.log('⏳ Page loaded, calling loadOrders()...');
+      loadOrders();
+    };
+
+    function loadOrders(page = 1) {
+      currentPage = page;
+
+      console.log('========================================');
+      console.log('📞 CALLING getPendingOrders');
+      console.log('Page:', page);
+      console.log('========================================');
+
+      document.getElementById('loadingArea').style.display = 'block';
+      document.getElementById('tableArea').style.display = 'none';
+      document.getElementById('emptyArea').style.display = 'none';
+
+      const filters = {
+        rtweNo: document.getElementById('searchRTWE').value.trim(),
+        broker: document.getElementById('searchBroker').value.trim(),
+        quality: document.getElementById('searchQuality').value.trim()
+      };
+
+      console.log('Filters:', filters);
+
+      // ✅ Use google.script.run
+      google.script.run
+        .withSuccessHandler(onOrdersSuccess)
+        .withFailureHandler(onOrdersFailure)
+        .getPendingOrders(filters, page, 25);
+
+      console.log('✅ google.script.run.getPendingOrders() called');
+    }
+
+    function onOrdersSuccess(data) {
+      console.log('========================================');
+      console.log('✅ SUCCESS HANDLER');
+      console.log('========================================');
+      console.log('Response:', data);
+      console.log('Success:', data.success);
+      console.log('Orders:', data.orders ? data.orders.length : 0);
+      console.log('========================================');
+
+      document.getElementById('loadingArea').style.display = 'none';
+
+      if (data.success) {
+        if (!data.orders || data.orders.length === 0) {
+          console.log('No orders - showing empty state');
+          document.getElementById('emptyArea').style.display = 'block';
+        } else {
+          console.log('Displaying ' + data.orders.length + ' orders');
+          displayOrders(data.orders);
+          displayPagination(data.page, data.totalPages, data.total);
+          document.getElementById('tableArea').style.display = 'block';
+        }
+      } else {
+        console.error('Success false:', data.message);
+        alert('Error: ' + data.message);
+      }
+    }
+
+    function onOrdersFailure(error) {
+      console.log('========================================');
+      console.log('❌ FAILURE HANDLER');
+      console.log('========================================');
+      console.error('Error:', error);
+      console.log('========================================');
+
+      document.getElementById('loadingArea').style.display = 'none';
+      alert('Failed to load orders: ' + (error && error.message ? error.message : String(error)));
+    }
+
+    function displayOrders(orders) {
+      console.log('displayOrders called with', orders.length, 'orders');
+
+      const tbody = document.getElementById('ordersBody');
+      tbody.innerHTML = '';
+
+      orders.forEach((order, index) => {
+        console.log('Order ' + (index + 1) + ':', order);
+
+        const tr = document.createElement('tr');
+
+        const dateStr = order.date ? new Date(order.date).toLocaleDateString() : '';
+
+        tr.innerHTML = `
+          <td><strong>${escapeHtml(order.rtweNo)}</strong></td>
+          <td>${escapeHtml(order.brokerName)}</td>
+          <td>${escapeHtml(order.quality)}</td>
+          <td>${dateStr}</td>
+          <td><span class="status-badge">Pending</span></td>
+          <td>
+            <a href="${webAppUrl}?page=sort-master-form&session=${sessionId}&rtweNo=${encodeURIComponent(order.rtweNo)}" 
+               class="btn-create" onclick="showLoading('Sort Master Form')">
+              ✨ Make Sort Master
+            </a>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      console.log('✅ Table populated with ' + orders.length + ' rows');
+    }
+
+    function displayPagination(page, totalPages, total) {
+      const paginationArea = document.getElementById('paginationArea');
+      paginationArea.innerHTML = '';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.textContent = '← Previous';
+      prevBtn.disabled = page <= 1;
+      prevBtn.onclick = () => loadOrders(page - 1);
+      paginationArea.appendChild(prevBtn);
+
+      const info = document.createElement('span');
+      info.textContent = `Page ${page} of ${totalPages} (${total} total)`;
+      paginationArea.appendChild(info);
+
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next →';
+      nextBtn.disabled = page >= totalPages;
+      nextBtn.onclick = () => loadOrders(page + 1);
+      paginationArea.appendChild(nextBtn);
+    }
+
+    function handleLogout() {
+      // Create and show logout overlay
+      showLogoutOverlay();
+
+      try {
+        sessionStorage.removeItem('sortmaster_session');
+        sessionStorage.removeItem('sortmaster_webAppUrl');
+        sessionStorage.clear();
+      } catch (e) { }
+
+      setTimeout(function () {
+        google.script.run
+          .withSuccessHandler(function () {
+            redirectToLogin('Logged out successfully');
+          })
+          .withFailureHandler(function () {
+            redirectToLogin('Logged out');
+          })
+          .serverLogout(sessionId);
+      }, 500);
+    }
+
+    function showLogoutOverlay() {
+      const overlay = document.createElement('div');
+      overlay.id = 'logoutOverlay';
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 50px;border-radius:12px;text-align:center"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Logging Out...</h3><p style="color:#666;margin-top:10px">Please wait</p></div>';
+      document.body.appendChild(overlay);
+    }
+
+    function redirectToLogin(message) {
+      const url = webAppUrl + '?page=login&message=' + encodeURIComponent(message);
+      try {
+        if (window.top && window.top !== window) {
+          window.top.location.href = url;
+        } else {
+          window.location.href = url;
+        }
+      } catch (e) {
+        window.location.href = url;
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showLoading(pageName) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 60px;border-radius:12px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Loading ' + pageName + '</h3><p style="color:#666;margin-top:10px">Please wait...</p></div>';
+      document.body.appendChild(overlay);
+    }
+  </script>
+  <style>
+    @keyframes spin {
+      from {
+        transform: rotate(0)
+      }
+
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+</body>
+
+</html>

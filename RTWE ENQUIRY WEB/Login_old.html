@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+    }
+
+    .login-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid #d4a574;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      font-size: 26px;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo p {
+      font-size: 14px;
+      color: #8b7355;
+      font-weight: 500;
+    }
+
+    .required-notice {
+      background: #fff8f0;
+      border: 2px solid #d4a574;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 24px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .required-notice strong {
+      color: #8b7355;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .required-notice p {
+      color: #5a4a3a;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2c2c2c;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+      background: #fafafa;
+      color: #1a1a1a;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #d4a574;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.1);
+    }
+
+    .caps-warning {
+      display: none;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #c62828;
+      font-weight: 600;
+      padding: 6px 10px;
+      background: #ffebee;
+      border-radius: 6px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #5a4a3a;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      cursor: pointer;
+      accent-color: #8b7355;
+    }
+
+    .remember-me label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-login {
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
+      background: linear-gradient(135deg, #6b5745 0%, #5a4a3a 100%);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .message.error {
+      display: block;
+      background: #ffebee;
+      border: 2px solid #ef5350;
+      color: #c62828;
+    }
+
+    .message.success {
+      display: block;
+      background: #e8f5e9;
+      border: 2px solid #66bb6a;
+      color: #2e7d32;
+    }
+
+    .test-credentials {
+      margin-top: 24px;
+      background: #fafafa;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .test-credentials h4 {
+      color: #8b7355;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .test-credentials p {
+      margin: 6px 0;
+      color: #5a4a3a;
+    }
+
+    .test-credentials b {
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn-login.loading .spinner {
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+  <div class="logo">
+    <h1>🔐 RTWE System v3.0</h1>
+    <p>Ramratan Techno Weave</p>
+  </div>
+
+  <div class="required-notice">
+    <strong>MANDATORY LOGIN</strong>
+    <p>Please login to continue</p>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <form id="loginForm" onsubmit="handleLogin(event)">
+    <div class="form-group">
+      <label>User ID</label>
+      <input type="text" id="username" required autofocus>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" required onkeyup="checkCaps(event)">
+      <div id="capsWarning" class="caps-warning">⚠️ Caps Lock is ON</div>
+    </div>
+
+    <div class="remember-me">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Remember me</label>
+    </div>
+
+    <button type="submit" class="btn-login" id="loginBtn">
+      Login
+      <span class="spinner"></span>
+    </button>
+  </form>
+
+  <div class="test-credentials">
+    <h4>Default Login Credentials</h4>
+    <p>Username: <b>admin</b></p>
+    <p>Password: <b>admin123</b></p>
+  </div>
+
+</div>
+
+<script>
+function handleLogin(e) {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const remember = document.getElementById('rememberMe').checked;
+  const msg = document.getElementById('message');
+  const loginBtn = document.getElementById('loginBtn');
+
+  // Clear previous messages
+  msg.style.display = "none";
+  msg.className = "message";
+
+  // Disable button and show loading
+  loginBtn.disabled = true;
+  loginBtn.classList.add('loading');
+  loginBtn.innerHTML = 'Logging in... <span class="spinner"></span>';
+
+  // Call backend login function
+  google.script.run
+    .withSuccessHandler(function(res) {
+      loginBtn.disabled = false;
+      loginBtn.classList.remove('loading');
+      loginBtn.innerHTML = 'Login';
+
+      if (res.success) {
+        // Show success message
+        msg.textContent = res.message || "✅ Login Successful!";
+        msg.className = "message success";
+        msg.style.display = "block";
+
+        // Wait 1 second then close dialog and refresh menu
+        setTimeout(function() {
+          google.script.run.refreshMenuAfterLogin();
+          google.script.host.close();
+        }, 1000);
+
+      } else {
+        // Show error message
+        msg.textContent = res.message || "❌ Login failed!";
+        msg.className = "message error";
+        msg.style.display = "block";
+        document.getElementById('password').value = "";
+        document.getElementById('password').focus();
+      }
+    })
+    .withFailureHandler(function(error) {
+      loginBtn.disabled = false;
+      loginBtn.classList.remove('loading');
+      loginBtn.innerHTML = 'Login';
+      
+      msg.textContent = "❌ Error: " + error.message;
+      msg.className = "message error";
+      msg.style.display = "block";
+      document.getElementById('password').value = "";
+    })
+    .loginUserSecure(username, password, remember);
+}
+
+function checkCaps(e) {
+  const caps = e.getModifierState && e.getModifierState('CapsLock');
+  document.getElementById('capsWarning').style.display = caps ? 'block' : 'none';
+}
+
+// Auto-focus username field on load
+window.onload = function() {
+  document.getElementById('username').focus();
+};
+</script>
+
+</body>
+</html>

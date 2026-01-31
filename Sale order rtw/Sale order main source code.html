@@ -1,0 +1,6383 @@
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Sales Order</title>
+<meta http-equiv="Content-Type" content="text/html; charset = utf-8">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="/iTexRAMTest/resources/images/favicon.ico"
+	rel="shortcut icon" type="image/x-icon" />
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/moment.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/moment-with-locales.js"></script>
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/validate.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/bootstrapnew.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/loader.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/bootstrap-datetimepicker.min.js"></script>
+
+<script
+	src="/iTexRAMTest/resources/js/jquery-ui.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/fabric_spec_form.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/domestic_fabric_spec.js"></script>
+<link rel="stylesheet"
+	href="/iTexRAMTest/resources/css/jquery-ui.css">
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/bootstrap.min.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/style.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/menu.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/loginPage.css"
+	rel="Stylesheet" />
+
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/bootstrap-datetimepicker.min.css"
+	rel="Stylesheet" />
+<link rel="stylesheet"
+	href="/iTexRAMTest/resources/css/chosen.min.css">
+<script
+	src="/iTexRAMTest/resources/js/chosen.jquery.min.js"></script>
+	
+		
+	<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/datevalidation.js"></script>
+	<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/JsBarcode.all.min.js"></script>
+
+		<input type="hidden" value="1" id="editAccess"/>
+	<input type="hidden" value="1" id="addAccess"/>
+	<input type="hidden" value="yes" id="dynamiceMenuEnabled"/>
+	<input type="hidden" value="1" id="deleteAccess"/>
+<input type="hidden" id="fromFinancialDate" value="2025-04-01 00:00:00.0" />
+<input type="hidden" id="editModeDateLock" value="0" />
+<input type="hidden" id="prevDateSelectionRange" value="0" />
+
+<script>
+
+
+	$(document)
+	.ready(function() {
+	$( "select" ).addClass( "livesearch" );
+	$(".livesearch").chosen({max_selected_options:Infinity,search_contains: true});
+	$.validator.setDefaults({ ignore: ":hidden:not(select)" });
+	 $(".livesearch-deselect").chosen({allow_single_deselect:true});
+	 $('input[type="number"]').attr('onkeypress', ' return (event.charCode == 8 || event.charCode == 0) ? null : ((event.charCode >= 48 && event.charCode <= 57) || event.charCode==46)');
+	 try{
+			if('yes'== $("#dynamiceMenuEnabled").val())
+			checkAddEditAccess();
+		}catch(err){
+			
+		}
+	
+	});
+	 function checkAddEditAccess(){
+			
+			if($("#addAccess").val()==0){
+				$('.skyBlueBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Add")){
+						obj.style.display='none';
+					}
+				});
+			}
+			
+			if($("#editAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("images/edit.png") || obj.src.trim().includes("images/close.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				$('.greenBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Save")||compareValues(obj.value,"Submit")||compareValues(obj.value,"Update")){
+						obj.style.display='none';
+					}
+				});
+				 
+				
+				$('a').each(function(index,anchorTag) {
+				    
+				    if(compareValues(anchorTag.innerHTML,"Edit")){
+				    	anchorTag.style.display='none';
+				    }
+				});
+				
+				
+			}
+		
+			
+			
+			if($("#deleteAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("pageImg/delete.JPG") || obj.src.trim().includes("images/delete.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				 
+				
+				
+			}
+			
+		
+		} 
+		
+		function compareValues(val1,val2){
+			return val1.trim().toUpperCase() === val2.trim().toUpperCase();
+		}
+	
+	function getConfirmation(num){
+    	if(num == 2){
+       var retVal  =  confirm("Do you want to Cancel ?");
+    	}
+    	if(num == 1){
+    		var retVal  =  confirm("Do you want to Go Back ?");
+    	}
+       if( retVal == true ){
+    	   history.go(-1);
+           return false;
+       }
+    }
+	
+	 $(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+	
+	 
+	 $(function() {
+		 $('.txtBox').on('blur',function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    });
+		    
+		   /*  $('textarea').on('blur', function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    }); */
+		});
+	 function getDecimalValue(value)
+	{
+		 actual = Math.trunc(value); 
+		 return Number((value-actual).toFixed(2));
+	}
+	 $(document).ready(function(){
+			$('.indianFormat2').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 2,
+	                	minimumFractionDigits: 2,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		 $(document).ready(function(){
+			$('.indianFormat4').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 4,
+	                	minimumFractionDigits: 4,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		$(document).ready(function(){
+			$('.indianFormat3').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 3,
+	                	minimumFractionDigits: 3,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		
+		$(document).ready(function(){
+			$('.indianFormat0').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 0,
+	                	minimumFractionDigits: 0,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 
+		$(document).ready(function(){
+			$('.indianFormat1').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 1,
+	                	minimumFractionDigits: 1,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 function numberFormater(amount,divId,appendP,maximumFractionDigits_var,minimumFractionDigits_var){
+			var convertedVal = 0;
+			if($.isNumeric(amount)){
+				convertedVal =	amount.toLocaleString('en-IN', {
+			    maximumFractionDigits: maximumFractionDigits_var,minimumFractionDigits: minimumFractionDigits_var
+			});
+			}
+			document.getElementById(divId).innerHTML = convertedVal;
+		}
+	 function checkNumberValue(checkNumber){
+		 	if(checkNumber!=null){
+		 		return $.isNumeric(parseFloat(checkNumber)) ? parseFloat(checkNumber) : 0;	
+		 	}else{
+		 		return 0;
+		 	}
+			
+		} 
+	 
+	 function getDecimalValue(inputId,noOfDecimals){
+		 var value=$(inputId).val();
+		 if($.isNumeric(value)){
+			 value=decimalRound(value,noOfDecimals);
+		 }
+		 $(inputId).val(value);
+		}
+	 
+	 function decimalRound(num,scale){
+			if($.isNumeric(num)){
+				if(!("" + num).includes("e")) {
+				    return +(Math.round(num + "e+" + scale)  + "e-" + scale);
+				  } else {
+				    var arr = ("" + num).split("e");
+				    var sig = ""
+				    if(+arr[1] + scale > 0) {
+				      sig = "+";
+				    }
+				    return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
+				  }
+		 	}else{
+		 		return parseFloat(0).toFixed(scale);
+		 	}
+		} 
+	 function decimalRoundoff(num)
+	 {
+		
+		 if(num!=null)
+		 {
+			 if(Math.round((parseFloat(num)%0.2)*100) %2 !=0)
+		    	{
+				 return num=num+0.01;
+		    	}
+			 else{
+				 return num;
+			 }
+		 }
+		 else {
+			 return 0;
+		 }
+	 }
+	 
+	 (function waitForDatePicker() {
+		 
+		    var attempts = 0;
+		    var maxAttempts = 50;
+
+		    var interval = setInterval(function () {
+		        attempts++;
+
+		        var entryFields = $(".entry-date");
+		        var editFields = $(".edit-date");
+
+		        if (entryFields.length === 0 && editFields.length === 0) {
+		            if (attempts >= maxAttempts) clearInterval(interval);
+		            return;
+		        }
+
+		        var allReady = true;
+		        $(".entry-date, .edit-date").each(function () {
+		            if (!$(this).data("datepicker")) {
+		                allReady = false;
+		            }
+		        });
+
+		        if (!allReady) {
+		            if (attempts >= maxAttempts) clearInterval(interval);
+		            return;
+		        }
+
+		     // ENTRY MODE: allow last N days up to today
+		        $(".entry-date").each(function () {
+		            var f = $(this);
+		            var prevDateSelectionRange = parseInt($("#prevDateSelectionRange").val(), 10); // Convert to integer
+		            if (isNaN(prevDateSelectionRange)) { // Fallback if null/undefined/invalid
+		                prevDateSelectionRange = 0;
+		            }
+
+		            f.datepicker("option", {
+		                minDate: -prevDateSelectionRange,  // N days before today
+		                maxDate: 0                         // today
+		            });
+
+		            if (!f.val()) {
+		                f.datepicker("setDate", new Date());
+		            }
+		        });
+
+
+		        // EDIT MODE: lock date
+		        $(".edit-date").each(function () {
+		            var f = $(this);
+
+		            f.prop("readonly", true);
+
+		            f.datepicker("option", "beforeShow", function () {
+		                return false;
+		            });
+
+		            var t = setInterval(function () {
+		                var btn = f.next(".ui-datepicker-trigger");
+		                if (btn.length > 0) {
+		                    btn.css("pointer-events", "none");
+		                    btn.css("opacity", "0.5");
+		                    clearInterval(t);
+		                }
+		            }, 50);
+		        });
+
+		        clearInterval(interval);
+		    }, 100);
+
+		})();	 
+	</script>
+<style type="text/css">
+
+    
+th {
+	position: sticky;
+	top: 0px;
+	background: inherit;
+}
+thead tr.first th  {
+  background: black;
+   position: -webkit-sticky;
+  position: sticky;
+  top: 0;        
+} 
+thead tr.second th  {
+  background: black;
+   position: -webkit-sticky;
+  position: sticky;
+  top: 0;        
+} 
+.divForItem{
+	width: 100%;
+	overflow: auto;
+	margin-bottom: 30px;
+	max-height: 400px;
+}
+
+</style>
+</head>
+<body>
+	
+
+
+<nav class="navbar navbar-default headerColor" role="navigation">
+<script type="text/javascript">
+ 
+
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ru7nwa3ncs");
+
+</script>
+	<div class="navbar-header menuItemsCss">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+			data-target="#example-navbar-collapse">
+			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
+			<span class="icon-bar"></span> <span class="icon-bar"></span>
+		</button>
+		<img
+			src="/iTexRAMTest/resources/images/i2tex_logo.png"
+			class="logo" /></div>
+			
+			 
+			 <div class="col-sm-2" style="margin-top: 20px;margin-left: 5px;">
+				
+				<select style="margin-left: -80px;!important" id="clientId"
+						name="clientId" onchange="setCompanyAndFinYearToSession()">
+						<option value="">Select
+							Company
+						</option>
+						
+							<option value="1"
+								selected="selected">RAMRATAN TECHNO WEAVE</option>
+						
+					</select> 
+				
+			
+					</div>
+					
+					
+					
+				
+				
+				
+							
+							
+							
+				<div class="col-sm-1" style="margin-top: 20px;">
+					<label class="LoginLblTxt fontFamily">25-26</label>
+					
+				</div>
+				
+				
+				
+	
+
+	
+	<div class="collapse navbar-collapse" id="example-navbar-collapse">
+		<div class="img-with-text">
+			<a href="/iTexRAMTest/lgn/logoutUser"> <img
+				src="/iTexRAMTest/resources/images/logout.png"
+				width="50px"
+				style="float: right; margin-top: 17px; margin-right: 33px;"
+				title="Logout"></a>
+		</div>
+			<ul class='nav navbar-nav menuAlignment'><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>ACCOUNT MASTER<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/buyermlist?buyerTypeStr=2&pageNum=1'>Domestic Buyer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/getvendorgrouplist?pageNum=1'>Vendor Group</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/vendorlist?pageNum=1'>Vendor</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/commonConsigneeMlist?pageNum=1'>Consignee</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/insuranceList'>INSURANCE</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/godownlocationlist?pageNum=1'>Godown Location</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/stocktype'>Stock Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/displayvendorprefix?pageNum=1'>Vendor Prefix</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/agentmlist?pageNum=1'>Agent</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/termsandconditionsmlist?pageNum=1'>Terms & Condition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/paymenttermsmlist?pageNum=1'>Payment Terms</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/sourcingByList?pageNum=1'>Sourcing By</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/transportationMlist?pageNum=1'>Transportation</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/showRateMasterList'>Rate</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnExcess'>YARN ADJUST ENTRY</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/orderTargetList?pageNum=1'>Sales Target</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/selvedgeMasterlist?pageNum=1'>Selvedge Master</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>QUICK ACCCESS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/productionnew/jobPendingReport?pageNum=1'>Job Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/warpPendingReport?pageNum=1'>Warp Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/report/sizingPlanReport'>Sizing Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/beaminwardreport?pageNum=1'>BEAM OUTWARD PENDING REPORT</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>APPROVAL<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/store/editinspection'>Yarn Inspected Edit</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/approval/displayjobworkapproval?isReset=0'>Po-Fabric Processing Jw</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/approval/domesticSalesOrderApprovalAdd?state=1&productionFor=2'>So-Domestic</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>DOMESTIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticpackinglist?pageNum=1'>Challan List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticinvoicelist?flow=invoice&pageNum=1'>Invoice List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itempurchaserequisitionlist?prStatus=0'>Item Purchase Requisition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itempolist?pageNum=1'>Item PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/iteminwardlist?pageNum=1&isOpeningBalance=0'>Item Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemtransferlist?pageNum=1'>Item Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemoutwardlist?pageNum=1'>Item Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemreturnlist?pageNum=1'>Item Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticinvoicelist?flow=jw&pageNum=1'>Trading Job Invoice</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/domesticsalesorderlist?state=1&moveToProduction=0'>Sales Order </a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkweavingcontractlistnew'>Job work Weaving Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/getsizingsetlistnew?pageNum=1'>Sizing Plan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnRequiredlist?pageNum=1'>Yarn Required</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/sortmasterlist?pageNum=1'>Sort Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/buyerProductQuality'>Buyer Quality Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/orderList?pageNum=1'>Order List</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN MASTER<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/fabricmaster/fabriccountlist?pageNum=1'>Count</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/fabricmaster/fabricplylist?pageNum=1'>Ply</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/uommlist?pageNum=1'>UOM</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/millMasterlist?pageNum=1'>Mill Master</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/yarnvarietylist?pageNum=1'>Yarn Variety</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/getyarntypelist?pageNum=1'>Yarn Type</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/getyarnlist?pageNum=1'>YARN LIST</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/tpmlist?pageNum=1'>TPM</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=1'>Yarn Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/displayyarnpO?pageNum=1'>Yarn PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=0'>Yarn Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/yarncontractlist?pageNum=1'>Yarn Sales Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarnsalescontractlist?pageNum=1'>Yarn Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarninvoicelist?pageNum=1&eInvoice=1'>Yarn sales Invoice</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarnSalesReturn?pageNum=1'>Yarn Sales Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/displayStockTransferNewLIST?pageNum=1&itemType=1'>Stock Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN ISSUE<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/sort/sizingsetjobworklist?pageNum=1&state=1'>Sizing Yarn Issue</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/jobworkweftcontractlist'>Job work Weaving Weft Issue</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/reWindingIssueListStockTypeWise?pageNum=1&&state=1'>Yarn Issue To Rewinding</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/getyarnissuetorewindinglist?pageNum=1'>Yarn Issued To Winding List</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN RETURN(TRADING)<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/yarnreceivefrpartytoloclist'>Party To Location</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/jobworkrewindingreceivelist?pageNum=1'>Winding Jobwork Receive</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/returningYarn'>Yarn Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnExcess'>YARN ADJUST ENTRY</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamBalanceAtWeaverList'>Beam Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beaminwardlist'>Beam Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamoutwardlist?productionType=0'>Beam Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamreceivefromweaver1'>Beam Receive From Weaver</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/jobworkweftbottomreceivelist?pageNum=1'>Bottom Receive Outside</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/karainwardlist?pageNum=1'>Kara Inward</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/displayfabricpO?pageNum=1'>Fabric PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInwardListpage?isOpeningBalance=0'>Fabric Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/purchaseFabricReturnList'>Purchase Fabric Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=1&fabricType=2'>Factory Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=0&fabricType=1'>Job work Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/balePackingList?state=2'>Bale Packing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/clothchallanList?state=2&pageNum=1&fromdate=&pageNum=1&todate=&sortMasterId=&orderId=&clothChallanId=&buyername=&buyerId=&slipno=&balepackingid='>Cloth Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/gradelist?pageNum=1'>Grade</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricOpenBalanceInwardListpage?isOpeningBalance=1'>Fabric Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/salesReturnList?pageNum=1'>Sales Retrun</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PROCESS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/designMaster?pageNum=1'>Design Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkprocesscontractlist?statusType=1'>Jobwork Process Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkprocesspiecedetailslist?pageNum=1'>Jobwork Process Contract Issue</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/finshedfabricreceiveList?isOpeningBalance=0'>Jobwork Finished Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/processReturnList?pageNum=1'>Process Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/srsortmasterlist?isexport=1&pageNum=1'>Quality</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MARKETING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/production/productDevelopment'>Product Development List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/pegPlanDesignList?pageNum=1'>Peg Plan Design</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/costinglist?pageNum=1'>Costing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/productionfabricsamplesstatuslist?pageNum=1'>Production Fabric Samples Status</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/costingreport'>Costing Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/othersamplestatuslist?pageNum=1'>Other Sample Status</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/ocrRepotList'>OCR Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/complaint/complaintReport?pageUse=1'>Complaint Register</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>REPORTS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/sostatus?state=1&productionFor=2'>Sales Order Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/salesorderstatusview?productionFor=2&listType=1'>Domestic Order Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/contractCompletedReport?pageNum=1'>Contract Completed Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/jobContractStatusReportNew1?pageNum=1'>Job Contract Detail Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/qualityWiseJobworkStatus?pageNum=1'>Job Contract Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/soosstatus?state=1&productionFor=2'>SO OS</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/orderstatusview'>SALES ORDER STATUS REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/report/dailyReportsview'>Daily Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/storesstockinwardreportlist'>Stock Inward Yarn Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/getOBCBReport'>Yarn Opening And Closing Balance Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/yarnPoStatusReport'>Yarn PO Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/yarnInvoiceReport?pageNum=1'>Yarn Invoice Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/domesticsalesorder/YarnSalesReturnReport?pageNum=1'>Yarn Sales Return Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarnEntryInOutReport?pageNum=1'>YARN IN OUT REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/locationWiseYarnStock'>Location Wise Yarn Stock</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/report/sizingPlanReport?pageNum=1'>SIZING PLAN REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/sizingReconcilationReport?pageNum=1'>Pending Set Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/qualityWiseSizingSetIssueReport?pageNum=1'>Quality Wise Sizing Set Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/dailysizingSetIssueReport?pageNum=1'>Daily Sizing Set Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarntoweftregisterreportlist?issueType=1'>Yarn To Sizing Register Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/beaminwardreport?pageNum=1'>BEAM OUTWARD PENDING REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/beaminwardagainstjobcontract'>BEAM INWARD AGAINST JOB CONTRACT REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/beamOutwardDetailReport?reportType=0'>BEAM OUTWARD REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/warpPendingReport?pageNum=1'>Warp Pending Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/jobPendingReport?pageNum=1'>Job Pending Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/SizingReconciliationReportList?pageNum=1'>Sizing Reconciliation Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WINDING <b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/warpbottomreport'>Bottom Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingissueandreceivereport?pageNum=1'>Rewinding Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingreceivereport?pageNum=1'>Rewinding Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingproductionreportlist?pageNum=1'>Rewinding Production Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingreceivependingreport?pageNum=1'>REWINDING RECEIVE PENDING REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/windinginoutreport'>Winding Issue and Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingEntryInOutReport'>REWINDING YARN ENTRY WISE IN-OUT REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/fabricobcbreport?state=1'>Fabric OBCB Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/commonStockReport'>Common Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/purchasestatusviewNew'>Fabric PO Status (PURCHASE) Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/fabricpostatusjobworkNew?state=1'>Fabric PO Status (JOBWORK) Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/fabricinwardreport?listType=1'>Jobwork Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/fabricinwardreport?listType=3'>Purchase Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/fabricoutwardRePort?pageNum=1'>Fabric Outward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/piecebalestock'>Piece And Bale Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/fabricinventory?state=1'>Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/qualitywiseinventoryfabric?state=3'>Quality Wise Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/domesticsalesorder/fabricInOutRpt'>Fabric In Out Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/YAndNReport?isCompleted=0&state=8'>Piecewise Available Details Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/YAndNReport?isCompleted=1'>PieceWise Dispatched Details Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/pendingBaleReport?pageNum=1'>PENDING BALE REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PROCESS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/salesfinishedorderstatusview?productionFor=2&listType=1'>Domestic Order Status (FINISHED)</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/processJobworkRepotList?'>Process Reconciliation Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/processJobworkDetailedRepotList?'>Process Jobwork RECO Detailed Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/processingjobworkissuechallanreport?pageNum=1'>Processing Challan Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WEAVER REPORTS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/weftissuereport'>Weft Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/weavingReconcilationRpt?isExport=1'>Weaving Reconciliation Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/wefiReconcilation'>Weaving Reconciliation Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarnStockReport'>Yarn Stock Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MARKETING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/approvalDashboard?pageNum=1'>Approval Dashboard</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/complaint/complaintReportList?pageUse=1'>Complaint Register Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/jobweavinginventoryreport?groupType=3'>JOB WEAVING INVENTORY REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/report/selfsovsactualso?pageNum=1'>SELF SO V/S ACTUAL SO REPORT</a></li><li class='divider'></li></ul></li></ul>
+	</div>
+</nav>
+
+
+
+<div class="container">
+	
+		<div class="alert alert-success alert-dismissable fade in">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Success! </strong>Sales Order Item Added Successfully 
+		</div>
+	
+	
+	
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerr" style="display: none">
+		<a href="#" class="close"  onclick="$('#mastajxerr').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerror"></span>
+	</div>
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerrb" style="display: none">
+		<a href="#" class="close" onclick="$('#mastajxerrb').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerrorb"></span>
+	</div>
+	<div class="alert alert-info alert-dismissable fade in"
+		id="status1" style="display: none">
+		<a href="#" class="close"  onclick="$('#status1').hide();" aria-label="close">&times;</a>
+		<strong >Info! </strong> <span id="info"></span>
+	</div>
+</div>
+	
+	<script type="text/javascript">
+	$(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+</script>
+
+<style>
+.dropdown-menu1 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	
+}
+
+.dropdown-menu1 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu1>li>a {
+	display: block;
+	padding: 0px 80px;
+	clear: both;
+	font-weight: 400;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu {
+	display: block;
+	position: relative;
+	height: 30px;
+}
+
+.dropdown-submenu:hover .dropdown-menu1 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: 5px;
+	background-color: #1d1d1d;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu1 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+
+.glyphicon glyphicon-play {
+	width: 20px;
+	height: 20px;
+}
+
+.dropdown-menu2 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	height: auto;
+}
+
+.dropdown-menu2 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu2>li>a {
+	display: block;
+	padding: 2px 10px;
+	clear: both;
+	font-weight: 400;
+	line-height: 1.42857143;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu:hover .dropdown-menu2 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: -45px;
+	background-color: #6f1c17;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu2 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+</style>
+<script type="text/javascript">
+	function setCompanyAndFinYearToSession() {
+		var companyId = $('#clientId').val();
+		var finYearId = $('#financialYearId').val();
+		var url      = location.href;
+		$.ajax({
+			dataType : 'json',
+			type : "Post",
+			url : "/iTexRAMTest/fas/updatesession",
+			data : {
+				'companyId' : companyId,
+				'finYearId' : finYearId,
+				'pathName' : url
+			},
+			success : function(response) {
+				location.href=response.path;
+				
+			}
+
+		});
+
+	}
+</script>
+	<div class="container">
+	
+		<div class="row">
+		<div class="col-md-4" style="padding-left: 0px;">
+			<label class="leftHeading fontFamily">
+				Sales Order</label>
+				<ul style="margin-top: 0px"  class="breadcrumb fontFamily">
+			<li class="breadCrumbText"><a
+				href="/iTexRAMTest/salesorder/domesticsalesorderlist?state=1&moveToProduction=0"> Sales Order  List</a></li>
+			<li class="breadCrumbText">Sales Order Entry  </li>
+			</ul>
+				
+		</div>
+		<div class="col-md-4" ></div>
+		 <div class="col-md-4" style="padding-right: 0px;">
+				<a href="javascript:getConfirmation(1)"><img
+					src="/iTexRAMTest/resources
+				/images/back.png"
+					alt="Go Back" style="float: right; width: 40px;" title="Back"></a>
+			</div>
+		</div>
+		
+		<div style="color: red;font-size: 15px"></div>
+		
+	
+		<div class="col-md-12" style="padding: 0px 0px;">
+	<div class="contentBorderDiv"  style="padding: 0px 0px;"> 	
+			
+	<input name='add' id="add"  style="width: 120px;pointer-events: none;background-color:#2C476D;color:white;padding-left: 15px"
+		value="Order Details " style="background-color: #cbaa54"/>
+		
+				<form method="post" id="forms" name="forms">
+				<input type="hidden" id="salesOrderId" name="orderId"
+					value="489" />
+					<input type="hidden" id="clientStateId" name="clientStateId"
+							value="1" />
+				<input type="hidden" id="buyerStateid" name="buyerStateid" value=""
+						class="txtBox fontFamily" /> 
+				<input type="hidden" id="companyStateid" name="companyStateid" value="1"
+						class="txtBox fontFamily" />
+			   
+						
+							
+					
+						
+						
+			
+							
+						
+						
+						
+							
+						<input type="hidden" id="parentSalesOrderId" name="parentSalesOrderId"
+							value="489" /> 
+					
+					
+						
+				
+							 
+						
+					
+					
+				<!-- row 1 -->
+			<div class="row marginBottomFourty">
+				
+			
+					  <div class="col-md-2 ">
+					
+						
+						<label class="lblTxt fontFamily">Date<sup class="mandatory">*</sup></label>
+								<br>
+								<input  type="text" id="orderDate" onchange="validateDates();" name="orderDate" class="txtBox fontFamily orderDate"  readonly="readonly"
+									value='31/12/2025' />
+							<label for="orderDate" class="error"></label><label
+								style="color: red;" id="numerror">&nbsp;</label>
+							
+ 								
+						
+						
+					
+					
+					</div> 
+					
+					
+				
+				
+					
+					
+					<div class="col-md-2"> 
+									<input type="hidden" id="productionFor" name="productionFor" value="2" />
+							
+								 <label class="lblTxt fontFamily">Buyer<sup class="mandatory">*</sup></label></label>
+							<select   name="buyerM.buyerId"   id="buyerId"  class="txtBox fontFamily Select" required title="Please Select Buyer" onchange="getBuyerDetails(this.value)" disabled="disabled">
+								<option value="">Select Buyer </option>
+										
+								
+								
+									<option value="21"
+										>
+										AARVI COTSYN</option>
+								
+									<option value="84"
+										>
+										AARVI COTSYN.</option>
+								
+									<option value="48"
+										>
+										AAYUSH QUALITY WORLD LLP</option>
+								
+									<option value="26"
+										>
+										ABC</option>
+								
+									<option value="82"
+										>
+										ADITYA MARKETING</option>
+								
+									<option value="93"
+										>
+										AGARWAL EXPORT</option>
+								
+									<option value="94"
+										>
+										AGARWAL EXPORTS.</option>
+								
+									<option value="11"
+										>
+										AMIT BAKLIWAL</option>
+								
+									<option value="78"
+										>
+										AMIT INDUSTRIES</option>
+								
+									<option value="117"
+										>
+										AMIT MATULYA</option>
+								
+									<option value="76"
+										>
+										ANAND INDUSTRIESQ</option>
+								
+									<option value="9"
+										>
+										ANGOORA SILK MILLS</option>
+								
+									<option value="146"
+										>
+										ANKUR TEXTILES</option>
+								
+									<option value="164"
+										>
+										APSARA FABRICS DRS</option>
+								
+									<option value="191"
+										>
+										ARIHANT EXIM (SANJAY BHAI)</option>
+								
+									<option value="33"
+										>
+										ARIHANT TEXTILES</option>
+								
+									<option value="159"
+										>
+										ASHVIRA FASHION PVT LTD</option>
+								
+									<option value="177"
+										>
+										AUREVIA GLOBAL CREATION LLP</option>
+								
+									<option value="114"
+										>
+										AVINASH TEXCOM</option>
+								
+									<option value="166"
+										>
+										B C TEXTILES</option>
+								
+									<option value="174"
+										>
+										B K TEXTILES</option>
+								
+									<option value="95"
+										>
+										BAHETI COTTEXCO</option>
+								
+									<option value="102"
+										>
+										BAHETI COTTEXCO.</option>
+								
+									<option value="98"
+										>
+										BAJAJ SILK FAB PVT LTD</option>
+								
+									<option value="81"
+										>
+										BAKLIWAL TEXTILES PRAVATE LIMITED</option>
+								
+									<option value="99"
+										>
+										BALDEV TEXTILE MILLS</option>
+								
+									<option value="104"
+										>
+										BALDEV TEXTILE MILLS PRIVATE LIMITED</option>
+								
+									<option value="105"
+										>
+										BHAIRAV CORPORATION</option>
+								
+									<option value="107"
+										>
+										BHARAT JAIN</option>
+								
+									<option value="32"
+										>
+										BHAWANA FABRICS</option>
+								
+									<option value="55"
+										>
+										BHAWANI SHANKAR UDYOG (P) LTD</option>
+								
+									<option value="60"
+										>
+										BHAWANI WINDING</option>
+								
+									<option value="185"
+										>
+										BID INDUSTRIES</option>
+								
+									<option value="181"
+										>
+										BTM IMPEX</option>
+								
+									<option value="131"
+										>
+										COMBOZ INDUSTRIES</option>
+								
+									<option value="136"
+										>
+										D J IMPEX & CO</option>
+								
+									<option value="139"
+										>
+										D K FABRICS</option>
+								
+									<option value="140"
+										>
+										ENCOT FABRICS PVT LTD</option>
+								
+									<option value="178"
+										>
+										ENES TEXTILE MILLS ( B AND B )</option>
+								
+									<option value="66"
+										>
+										G M WEAVING MILLS</option>
+								
+									<option value="14"
+										>
+										G S PAGARIA</option>
+								
+									<option value="41"
+										>
+										G S TRADING CO`</option>
+								
+									<option value="91"
+										>
+										GM GROUP</option>
+								
+									<option value="101"
+										>
+										GRANTH SILK MILLS</option>
+								
+									<option value="144"
+										>
+										HARIKRIPA TEXOFAB</option>
+								
+									<option value="90"
+										>
+										HARSHIT TEXFAB</option>
+								
+									<option value="13"
+										>
+										HIMEER TEXTILES</option>
+								
+									<option value="148"
+										>
+										HIND COTT</option>
+								
+									<option value="113"
+										>
+										I M TEXTILES</option>
+								
+									<option value="1"
+										>
+										ICHALKARANJI WEAVER SOLUTIONS LLP</option>
+								
+									<option value="193"
+										>
+										INDIAN TEXTILS DRS</option>
+								
+									<option value="134"
+										>
+										INDRAPUJA IMPEX</option>
+								
+									<option value="170"
+										>
+										INDRAPUJA POLYCOT ( INDIA )</option>
+								
+									<option value="63"
+										>
+										ITALIAN SILK MILLS</option>
+								
+									<option value="130"
+										>
+										J K INTERNATIONAL</option>
+								
+									<option value="23"
+										>
+										J R C SYNTHETICS</option>
+								
+									<option value="86"
+										>
+										JAINCO SYNTEX PRIVATE LIM ITED</option>
+								
+									<option value="97"
+										>
+										JINDAL FABRICS PVT LTD</option>
+								
+									<option value="67"
+										>
+										JINEDRA ENTERPRISES</option>
+								
+									<option value="42"
+										>
+										JK FABTEX INDUSTRIES PRIVATE LIMITED</option>
+								
+									<option value="179"
+										>
+										K K P FASHIONS PVT LTD</option>
+								
+									<option value="110"
+										>
+										K K SILK MILLS LIMITED</option>
+								
+									<option value="2"
+										>
+										K M TEXTILES PVT LTD</option>
+								
+									<option value="30"
+										>
+										KAMADGIRI FASHIONS LTD</option>
+								
+									<option value="96"
+										>
+										KAMALANANT FABTEX LLP</option>
+								
+									<option value="157"
+										>
+										KANCHAN COTTON MILLS</option>
+								
+									<option value="120"
+										>
+										KHUSHBOO SYNTHETICS</option>
+								
+									<option value="171"
+										>
+										KRISHNA CREATION</option>
+								
+									<option value="183"
+										>
+										LAHOTI TEXTILES PRIVATE LIMITED</option>
+								
+									<option value="125"
+										>
+										M NARESHKUMAR & CO</option>
+								
+									<option value="176"
+										>
+										M NARESHKUMAR TEXTILES PRIVATE LIMITED</option>
+								
+									<option value="196"
+										>
+										M SANCHIT LEE TRENZ</option>
+								
+									<option value="188"
+										>
+										MAAN TEXTILE INDUSTRIES</option>
+								
+									<option value="12"
+										>
+										MADHAV AGENCIES</option>
+								
+									<option value="68"
+										>
+										MAHALAXMI ENTERPRISES</option>
+								
+									<option value="175"
+										>
+										MAHAMAYA TEXCOM</option>
+								
+									<option value="83"
+										>
+										MAHAVEER TEXTILE AGENCY</option>
+								
+									<option value="85"
+										>
+										MAHESH TEX FAB</option>
+								
+									<option value="50"
+										>
+										MAHESH TEXFAB</option>
+								
+									<option value="75"
+										>
+										MAHESHWARI TRADING COMPANY</option>
+								
+									<option value="127"
+										>
+										MAHESHWARY SYNTHETICS</option>
+								
+									<option value="169"
+										>
+										MAMTA FASHION</option>
+								
+									<option value="133"
+										>
+										MANAN TEXTILES</option>
+								
+									<option value="143"
+										>
+										MANGALAM CREATION</option>
+								
+									<option value="106"
+										>
+										MANISH MUNDRA</option>
+								
+									<option value="116"
+										>
+										MANISH TEXTILE MILLS DRS</option>
+								
+									<option value="124"
+										>
+										MATULYA COTTEX</option>
+								
+									<option value="3"
+										>
+										MAYANK SYN FAB</option>
+								
+									<option value="92"
+										>
+										MEGHNA TEXTILES LLP</option>
+								
+									<option value="141"
+										>
+										MITTAL INDUSTRIES</option>
+								
+									<option value="151"
+										>
+										MITVA FABRICS PVT LTD ( VAMA )</option>
+								
+									<option value="38"
+										>
+										MOHANLAL AND SONS</option>
+								
+									<option value="192"
+										>
+										MOHATUL SILK INDUSTRIES</option>
+								
+									<option value="4"
+										>
+										MONDAY FASHION PVT LTD</option>
+								
+									<option value="25"
+										>
+										MOOL TEX CREATION</option>
+								
+									<option value="142"
+										>
+										MR. MANGALAM INDUSTRIES</option>
+								
+									<option value="137"
+										>
+										MUKUT MANI CREATIONS PVT LTD</option>
+								
+									<option value="74"
+										>
+										MUNDRA & MUNDRA</option>
+								
+									<option value="27"
+										>
+										N C CORPORATION</option>
+								
+									<option value="195"
+										>
+										N MARGI TEXTILES AGENCY</option>
+								
+									<option value="100"
+										>
+										N T C SILK MILL</option>
+								
+									<option value="16"
+										>
+										NAMO TEX FAB</option>
+								
+									<option value="173"
+										>
+										NARAYANI EXPORTS</option>
+								
+									<option value="65"
+										>
+										NATIONAL TEXTILES</option>
+								
+									<option value="111"
+										>
+										NIKITA ENTERPRISES</option>
+								
+									<option value="37"
+										>
+										NIRAJ TEXTILES MILL</option>
+								
+									<option value="40"
+										>
+										PEARL IMPEX</option>
+								
+									<option value="123"
+										>
+										PRAVIN TEXTILE</option>
+								
+									<option value="53"
+										>
+										PREET ENTERPRISES</option>
+								
+									<option value="17"
+										>
+										PREM PRAKASH SILK MILLS</option>
+								
+									<option value="186"
+										>
+										PRERNA TEXTILES</option>
+								
+									<option value="18"
+										>
+										QMAX WORLD LLP</option>
+								
+									<option value="184"
+										>
+										R B AGENCIES </option>
+								
+									<option value="51"
+										>
+										R C MANTRI</option>
+								
+									<option value="58"
+										>
+										R J ENTERPRISES</option>
+								
+									<option value="34"
+										>
+										RAJKRIPA TEXTILES</option>
+								
+									<option value="109"
+										>
+										RAMPYARI TEXTILES</option>
+								
+									<option value="10"
+										selected="selected">
+										RAMRATAN TECHNO WEAVE</option>
+								
+									<option value="49"
+										>
+										RAMRATAN TECNO WEAVE</option>
+								
+									<option value="187"
+										>
+										RAMRATAN WEAVINGS JOB</option>
+								
+									<option value="69"
+										>
+										RAMSWAROOP C. MANTRI</option>
+								
+									<option value="54"
+										>
+										RATHI TEXFAB</option>
+								
+									<option value="190"
+										>
+										REGALIA FABRICS INTERNATIONAL LLP</option>
+								
+									<option value="103"
+										>
+										RIMZIM TEXCOM</option>
+								
+									<option value="56"
+										>
+										RUCHIKA TEXFAB</option>
+								
+									<option value="35"
+										>
+										RUDDHI SILK MILL</option>
+								
+									<option value="129"
+										>
+										S N TRADING COMPANY</option>
+								
+									<option value="154"
+										>
+										S R FASHION</option>
+								
+									<option value="62"
+										>
+										S V FEB</option>
+								
+									<option value="59"
+										>
+										SABOO SYNT</option>
+								
+									<option value="44"
+										>
+										SAIRAM SYNTHETICS INDIA</option>
+								
+									<option value="149"
+										>
+										SAKARIA SILK INDUSTRIES</option>
+								
+									<option value="158"
+										>
+										SANGEETA TRADING CO</option>
+								
+									<option value="165"
+										>
+										SANSKAR FABRICS</option>
+								
+									<option value="64"
+										>
+										SARA FABRICS</option>
+								
+									<option value="70"
+										>
+										SARVODAY TEXTILE INDUSTRIES PVT LTD.</option>
+								
+									<option value="155"
+										>
+										SATYAM FABRICS</option>
+								
+									<option value="29"
+										>
+										SAVLA FABRICS LLP</option>
+								
+									<option value="61"
+										>
+										SHAH KAMLESHKUMAR CHAMPALAL</option>
+								
+									<option value="20"
+										>
+										SHAH MAHESHKUMAR LAXMICHAND</option>
+								
+									<option value="52"
+										>
+										SHAH NEMICHAND DILIPKUMAR</option>
+								
+									<option value="31"
+										>
+										SHALI BHADRA TEXTILES</option>
+								
+									<option value="156"
+										>
+										SHASHWAT FABCOT</option>
+								
+									<option value="135"
+										>
+										SHIV TEX</option>
+								
+									<option value="189"
+										>
+										SHIVAM ENTERPRISES</option>
+								
+									<option value="15"
+										>
+										SHIVARMAN OVERSEAS PVT LTD</option>
+								
+									<option value="147"
+										>
+										SHRAVAK FABRICS</option>
+								
+									<option value="87"
+										>
+										SHREE LALIT SYNTEX</option>
+								
+									<option value="24"
+										>
+										SHREE LAXMINARAYAN TEX</option>
+								
+									<option value="138"
+										>
+										SHREE MAHAVIR FABRICS MFG CO</option>
+								
+									<option value="36"
+										>
+										SHREE NAMAN FABRICS</option>
+								
+									<option value="162"
+										>
+										SHREE NARAYAN SILK HOUSE PVT LTD</option>
+								
+									<option value="167"
+										>
+										SHREE SACHIYA MA COTTON MILLS</option>
+								
+									<option value="5"
+										>
+										SHREE SUDERSHAN SILK MILLS</option>
+								
+									<option value="126"
+										>
+										SHREYA IMPEX</option>
+								
+									<option value="112"
+										>
+										SHRI BALAJI TEXCOM</option>
+								
+									<option value="71"
+										>
+										SHRI KRISHNA INDUSTRIES</option>
+								
+									<option value="128"
+										>
+										SHRI MADANMOHAN CORPORATION</option>
+								
+									<option value="73"
+										>
+										SHRI MANGLAM INDUSTRIES</option>
+								
+									<option value="119"
+										>
+										SHRI RADHAKRISHNA EXPORT</option>
+								
+									<option value="122"
+										>
+										SHRIGOPAL COTSYN</option>
+								
+									<option value="180"
+										>
+										SHRIPAL TRADING CO</option>
+								
+									<option value="153"
+										>
+										SHUBH SYNTEX</option>
+								
+									<option value="108"
+										>
+										SHUBHAM SUITING</option>
+								
+									<option value="121"
+										>
+										SHUBHAM SUITING.</option>
+								
+									<option value="72"
+										>
+										SHUBHAM TEX FAB</option>
+								
+									<option value="161"
+										>
+										SIDDH CORPORATION</option>
+								
+									<option value="115"
+										>
+										SIDHARTH TEXTILES</option>
+								
+									<option value="6"
+										>
+										SILK INDIA</option>
+								
+									<option value="28"
+										>
+										SILLCON SYNTHETICS</option>
+								
+									<option value="22"
+										>
+										SIYARAM SILK MILLS LIMITED</option>
+								
+									<option value="79"
+										>
+										SKM INDUSTRIES</option>
+								
+									<option value="150"
+										>
+										SOMANI N SOMANI</option>
+								
+									<option value="182"
+										>
+										SOURABH RAYON</option>
+								
+									<option value="89"
+										>
+										SUDHIR DARGAD GROUP</option>
+								
+									<option value="172"
+										>
+										SUDHIR ENTERPRISES</option>
+								
+									<option value="88"
+										>
+										SUDHIR SHRIGOPAL DARGAD</option>
+								
+									<option value="7"
+										>
+										SUMIT COTTEX</option>
+								
+									<option value="46"
+										>
+										SUNCOTT CREATION</option>
+								
+									<option value="132"
+										>
+										SUNRISE SYNTEX</option>
+								
+									<option value="194"
+										>
+										SWADESH LIFESTYLE LLP</option>
+								
+									<option value="160"
+										>
+										SWETA INTERNATIONAL</option>
+								
+									<option value="57"
+										>
+										TEAM WORK TEXTILES</option>
+								
+									<option value="145"
+										>
+										TEXHUB INNVOATIONS PVT LTD</option>
+								
+									<option value="77"
+										>
+										TEXMACO</option>
+								
+									<option value="43"
+										>
+										TEXTREE K K SILK MILLS LTD</option>
+								
+									<option value="45"
+										>
+										VARDHAMAN FABRICS</option>
+								
+									<option value="8"
+										>
+										VELV FINE POLYTEX</option>
+								
+									<option value="19"
+										>
+										VENKATESHWAR TEXTILES</option>
+								
+									<option value="39"
+										>
+										VIJAYPATAKA INTERNATIONAL</option>
+								
+									<option value="80"
+										>
+										VISHAL TEXTILE INDUSTRIES</option>
+								
+									<option value="47"
+										>
+										VISHNU LAXMI SILK MILLS</option>
+								
+									<option value="163"
+										>
+										VYANKATESH INDUSTRIES</option>
+								
+									<option value="168"
+										>
+										WEAVE ART FABRICS</option>
+								
+									<option value="152"
+										>
+										YASHVI CREATION.32605114</option>
+								
+									<option value="118"
+										>
+										YATINKUMAR PRATIKKUMAR</option>
+								
+								
+							</select>
+                            <input type="hidden" name="buyerM.buyerId" id="hiddenBuyerId" value="10" />
+    
+								<label for="buyerId" class="error">&nbsp;</label>
+							
+							</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="col-md-2">
+							<label class="lblTxt fontFamily">Buyer PO No. </label>
+							<input type="hidden" name="manualOrderNo" id="manualOrderNo"  value="RTW/D/25-26/D-0262" />
+							<input  type="text" id="poNo" name="poNo" maxlength="60"
+								value="12" class="form-control txtBox fontFamily" /> 
+								<label for="poNo" class="error"></label><label
+								style="color: red;" id="numerror">&nbsp;</label>
+					</div>
+					
+					
+					
+					
+					
+					
+			 
+					
+					<div class="col-md-2">
+						<label style="font-size: 13px;padding-bottom: 5px;padding-top: 1px;">Consignee/Delivery Location<sup class="mandatory">*</sup></label>
+								<br>
+							<select  name="consigneeM.consigneeId" id="consigneeId"  
+								class="txtBox fontFamily Select consigneeId " required title="Please Select Consignee">
+								<option value="">Select ship To
+								</option>
+									
+									<option value="10"
+										selected="selected">
+										RAMRATAN TECHNO WEAVE</option>
+								
+							</select> <label for="consigneeId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+					
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Contract Type<sup class="mandatory">*</sup></label>
+								<br>
+							<select  name="contractTypeId" id="contractTypeId"
+								class="txtBox fontFamily Select contractTypeId" onchange="getroutedetails(this.value)" required title="Please Select Contract Type">
+								<option value="">Select Contract Type
+								</option>
+									
+									<option value="1"
+										selected="selected">
+										DOMESTIC</option>
+								
+							</select> <label for="contractTypeId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Contract Route<sup class="mandatory">*</sup></label>
+								<br>
+							<select  name="contractOrderRouteId" id="contractOrderRouteId"
+								class="txtBox fontFamily Select contractOrderRouteId" required title="Please Select Contract Route">
+								<option value="">Select Contract Route
+								</option>
+									
+									<option value="1"
+										>
+										RUNNING STOCK</option>
+								
+									<option value="2"
+										>
+										SURPLUS STOCK</option>
+								
+									<option value="3"
+										>
+										PURCHASE STOCK</option>
+								
+									<option value="4"
+										selected="selected">
+										SELF RUNNING</option>
+								
+							</select> <label for="contractOrderRouteId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+				</div>
+			
+
+				<!-- row 2 -->
+
+
+				<div class="row marginBottomFourty">
+
+                  <div class="col-md-2">
+						<label class="lblTxt fontFamily">Agent</label>
+								<br>
+							<select  name="agentId" id="agentId"
+								class="txtBox fontFamily Select agentId">
+								<option value="">Select Agent
+								</option>
+									
+									<option value="1"
+										selected="selected">
+										SURENDRA S DAMANI</option>
+								
+									<option value="2"
+										>
+										MADANGOPAL S DAMANI</option>
+								
+									<option value="3"
+										>
+										LALIT MALI</option>
+								
+									<option value="7"
+										>
+										SELF</option>
+								
+									<option value="8"
+										>
+										SAMRENDRA GHANOTRA</option>
+								
+									<option value="9"
+										>
+										SANDIP MUNDRA</option>
+								
+									<option value="10"
+										>
+										DEVKISHAN SARDA</option>
+								
+									<option value="11"
+										>
+										GIRISHKUMAR A SHARMA</option>
+								
+									<option value="12"
+										>
+										N KEWAL TEXTILE AGENCY</option>
+								
+							</select> <label for="agentId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+					</div>
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Agent Indent No.</label>
+						<input  type="text" id="agentIndentNo" name="agentIndentNo" maxlength="60" value="" class="form-control txtBox fontFamily" /> 
+						<label for="agentIndentNo" class="error"></label><label style="color: red;" id="numerror">&nbsp;</label>	
+					</div>
+					
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Mode of Shipment <sup class="mandatory">*</sup></label>
+								<br>
+							<select  name="modeOfShipment" id="modeOfShipment"
+								class="txtBox fontFamily Select modeOfShipment" required title="Please Select Mode of Shipment">
+								<option value="">Select Mode of Shipment
+								</option>
+									
+									<option value="1"
+										selected="selected">
+										ROAD</option>
+								
+							</select> <label for="modeOfShipment" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+					
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Payment Terms</label>
+								<br>
+							<select  name="termsOfpaymentId" id="termsOfpaymentId"
+								class="txtBox fontFamily Select termsOfpaymentId">
+								<option value="">Select Payment Terms
+								</option>
+									
+									<option value="1"
+										>
+										30DAYS 3+1</option>
+								
+									<option value="2"
+										>
+										90DAYS 1%</option>
+								
+									<option value="3"
+										>
+										7DAYS 4+1</option>
+								
+									<option value="4"
+										>
+										45DAYS 3+1</option>
+								
+									<option value="5"
+										>
+										45</option>
+								
+									<option value="6"
+										>
+										30</option>
+								
+									<option value="7"
+										>
+										90</option>
+								
+									<option value="8"
+										>
+										7</option>
+								
+									<option value="9"
+										>
+										15 DAYS 2%</option>
+								
+									<option value="10"
+										>
+										30 DAYS 3% LESS</option>
+								
+									<option value="11"
+										>
+										60 DAYS NETT</option>
+								
+									<option value="12"
+										>
+										7 DAYS 4%</option>
+								
+							</select> <label for="termsOfpaymentId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Delivery Terms <sup class="mandatory">*</sup></label>
+								<br>
+							<select  name="deliveryTermsM.deliveryTermsId" id="deliveryTermsId"
+								class="txtBox fontFamily Select deliveryTermsId" required title="Please Select Delivery Terms">
+								<option value="">Select Delivery Terms
+								</option>
+									
+									<option value="1"
+										selected="selected">
+										45DAYS</option>
+								
+							</select> <label for="deliveryTermsId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Bank</label>
+								<br>
+							<select  name="invoiceTyepBankId" id="invoiceTyepBankId"
+								class="txtBox fontFamily Select invoiceTyepBankId">
+								<option value="">Select Bank
+								</option>
+									
+									<option value="1"
+										>
+										MAHESH SAHAKARI BANK LTD</option>
+								
+							</select> <label for="invoiceTyepBankId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+					</div>
+					
+					<div class="col-md-2">
+					      <label class="lblTxt fontFamily">SO Type <sup class="mandatory">*</sup></label>
+							<br>
+							<select id="orderType" name="orderType"
+									class="txtBox fontFamily Select orderType" required title="Please Select SO Type">
+									<option value="">Select SO
+										Type</option>
+									<option value="1"
+										selected="selected">Bulk</option>
+									<option value="2"
+										>Sampling
+									</option>
+								</select><label for="orderType" class="error"></label><label
+								style="color: red;" id="buttaerror">&nbsp;</label>	
+					</div>
+					
+					<div class="col-md-2">
+						<label class="lblTxt fontFamily">Terms And Conditions</label>
+								<br>
+							<select  name="termsAndConditionId" id="termsAndConditionId"
+								class="txtBox fontFamily Select termsAndConditionId">
+								<option value="">Select Terms And Conditions
+								</option>
+									
+									<option value="1"
+										>
+										.DOMESTIC INSURANCE</option>
+								
+							</select> <label for="termsAndConditionId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+			</div>
+			<div class="col-md-2">
+						<label class="lblTxt fontFamily">GST Type <sup class="mandatory">*</sup></label>
+							<br>
+					
+							<select id="gstType" name="gstType" class="txtBox fontFamily Select gstType"
+								 required title="Please Select GST Type"  disabled>
+								<option value="">Select Gst Type</option>
+								<option value="1"
+									>IGST</option>
+								<option value="2"
+									selected="selected">CGST/SGST</option>
+							</select> <label for="gstType" class="error"></label>	
+							<input type="hidden" id="gstType1" name="gstType1" value="2" class="txtBox fontFamily" />	
+			</div>
+	     	<div class="col-md-2">
+						<label class="lblTxt fontFamily">Remark</label><br>
+					<textarea name="remarks" id="remarks"  class="form-control txtBox fontFamily remarks"  maxlength="255" rows="4" cols="50"></textarea>
+		    </div>
+		    
+		    <div class="col-md-2">
+						<label class="lblTxt fontFamily">Transport</label>
+								<br>
+							<select  name="transportationId" id="transportationId"
+								class="txtBox fontFamily Select transportationId">
+								<option value="">Select Transport
+								</option>
+									
+									<option value="1"
+										>
+										TEMPO</option>
+								
+									<option value="2"
+										>
+										SHRI DATTA CARYING CORPORATION</option>
+								
+									<option value="3"
+										>
+										NIRMAL WAREHOUSE AND TRANSPORTATION LLP</option>
+								
+									<option value="4"
+										>
+										SHRI MAHAGANPATI ROADLINES</option>
+								
+									<option value="5"
+										>
+										SARGAM TRANSPORT</option>
+								
+									<option value="6"
+										>
+										MOONGIPA ROADWAYS</option>
+								
+									<option value="7"
+										>
+										ROYAL TRANSPORT</option>
+								
+									<option value="8"
+										>
+										SHIV SHAKTI LOGISTICS</option>
+								
+									<option value="9"
+										>
+										MAHALAXMI CARGO SERVICES</option>
+								
+									<option value="10"
+										>
+										SHREE MARUTI</option>
+								
+									<option value="11"
+										>
+										DHANLAXMI CARGO SERVICES</option>
+								
+									<option value="12"
+										>
+										KHANDELWAL TRANSPORT</option>
+								
+							</select> <label for="transportationId" class="error">&nbsp;</label>	<label
+								style="color: red;" id="buttaerror">&nbsp;</label>
+							
+					
+			</div>
+			
+			<div class="col-md-2" style="text-align: right;">
+				<input  name="saveSalesOrder" id="saveSalesOrder" style="width: 125px;margin-top: 20px;"
+						type="button" value="Continue" class="greenBtn fontFamily">
+			</div>
+				
+			</div>
+			
+			
+
+		</form>
+</div>
+</div>
+
+
+	<!-- Item Details -->
+   
+<div class="col-md-9" style="padding: 0px 0px;">
+<!-- 	<div class="contentBorderDiv"  style="padding: 0px 0px;"> 	 -->
+	<div class="backgroundBG">
+			
+	<input name='add' id="add"  style="width: 120px;pointer-events: none;background-color:#2C476D;color:white;padding-left: 15px"
+		value="Item Details" style="background-color: #cbaa54"/><br><br>
+		<form method="post" id="itemForms" name="itemForms" >
+			<!-- Item Details row 1 -->
+	<input type="hidden" id="salesOrderItemId" name="orderItemId" value="" />
+	<input type="hidden" id="selfOrderItemIdValue" name="selfOrderItemIdValue" value="" />
+	<input type="hidden" id="finishedQualitytValue" name="finishedQualitytValue" value="" />
+		<input type="hidden" id="sortQualitytValue" name="sortQualitytValue" value="" />
+	
+	
+
+	
+		
+
+
+
+		
+		
+
+
+		
+	 <input type="hidden" id="salesOrderAdditionsDeductionsId" name="salesOrderAdditionsDeductionsId" value="" />
+	
+						<input type="hidden" id="salesOrderId" name="orderId"
+					value="489" />
+			
+			
+			
+					
+		 <input type="hidden" id="buyerId" name="buyerId"
+					value="10" />
+					
+					
+					
+					
+			<div align="left" style="width: 100%">
+				<label class="leftHeading fontFamily"></label>
+			</div>
+			<div class="row ">
+				<div class="col-md-2">
+					
+						<label class="lblTxt fontFamily">Fabric Type
+							<sup class="mandatory">*</sup>
+						</label><br> <select id="isFinishedProduct" name="isFinishedProduct" 
+							class="txtBox fontFamily Select isFinishedProduct" onchange="fabricTypeChanges()" required title="Please Select Fabric Type">
+							<option value="">Select Fabric Type  </option>
+							
+						
+						
+							<option value="2" >Grey</option>
+						
+						</select>
+						<label for="isFinishedProduct" class="error"></label></label>
+					
+				</div>
+				
+				<div class="col-md-2">
+					
+						<label class="lblTxt fontFamily">Quality
+							<sup class="mandatory">*</sup>
+						</label><br> <select id="sortMasterId" name="sortMasterId" 
+							class="txtBox fontFamily sortMasterId Select " onChange="gstCalculation();getSelforders(1);getBuyerProduct();" required title="Please Select Quality">
+							<option value="">Select Quality  </option>
+							
+										<option value="1"
+										>63"/165X100/60X60</option>
+									
+										<option value="2"
+										>63"/72*48/30*20c+20slb</option>
+									
+										<option value="4"
+										>63"/144X84/60X50</option>
+									
+										<option value="5"
+										>63"/165*80/60*50</option>
+									
+										<option value="6"
+										>80" 32X21CTN+20/1LY 80X67 DOBBY</option>
+									
+										<option value="7"
+										>63"/68X34/10SX10S</option>
+									
+										<option value="8"
+										>38"/84*84/60*60</option>
+									
+										<option value="9"
+										>82RS/96X80/40PVX97LYC</option>
+									
+										<option value="10"
+										>63"/84X44/30X30+20SLB</option>
+									
+										<option value="11"
+										>70RS 41/1CPTX41/1CPT 108X94</option>
+									
+										<option value="12"
+										>39"/120X84/40PVX80/300</option>
+									
+										<option value="13"
+										>62" 144X84 50X40</option>
+									
+										<option value="14"
+										>38"/76X60/31SLBX31SLB</option>
+									
+										<option value="15"
+										>63"/108X80/40PVX80DEN DOBBY</option>
+									
+										<option value="16"
+										>63"/144X84/60X50+80COMPUTER</option>
+									
+										<option value="17"
+										>39"/126X80/40PVX80DNR</option>
+									
+										<option value="18"
+										>39"/3/72X80/42PV75DEN</option>
+									
+										<option value="19"
+										>63" 32CTNX32CTN 120X56 TWILL</option>
+									
+										<option value="20"
+										>63"/96x84/40*40 DC</option>
+									
+										<option value="21"
+										>80RS/5/72X92/60X50C+50LYC</option>
+									
+										<option value="22"
+										>39"/92X72/40PVX40PV</option>
+									
+										<option value="23"
+										>63" 40/1PVX80/1DEN+150/1CATIONIC (90*1)(10*1) 108X80 DOBBY</option>
+									
+										<option value="24"
+										>63"/144X94/50X50</option>
+									
+										<option value="25"
+										>51RS/88X72/30VX30V+34V</option>
+									
+										<option value="26"
+										>63"/108X68/50X2/32+30</option>
+									
+										<option value="27"
+										>63"/108X74/60*60</option>
+									
+										<option value="28"
+										>63"/188X100/60X60</option>
+									
+										<option value="29"
+										>63"/176X100/60X60</option>
+									
+										<option value="30"
+										>63"41X41 20X70 DOBBY</option>
+									
+										<option value="31"
+										>67"/88X68/40X40</option>
+									
+										<option value="32"
+										>78RS51CTNX511LY108X76</option>
+									
+										<option value="33"
+										>63"/144X88/50+2/76X50</option>
+									
+										<option value="34"
+										>63"/72X48/30X20C+20SF</option>
+									
+										<option value="35"
+										>65RS/3/88*88/40VSC*40VSC</option>
+									
+										<option value="36"
+										>65RS 40VSCX40VSC 120X74</option>
+									
+										<option value="37"
+										>64"/72X48/32X21SLB+21C</option>
+									
+										<option value="38"
+										>63"/108X80/40PVX80CATIONIC</option>
+									
+										<option value="39"
+										>38" 40PVX80/300114X80</option>
+									
+										<option value="40"
+										>62"/80X68/60+ZARIX40</option>
+									
+										<option value="41"
+										>38" 40PVX75DEN 108X80 TWILL</option>
+									
+										<option value="42"
+										>63" 126X82 60X60+10</option>
+									
+										<option value="43"
+										>80RS 61X97LY 160X90 SATIN</option>
+									
+										<option value="44"
+										>63" 60X64 20SLBX20SLB</option>
+									
+										<option value="45"
+										>63"/96X72/40CX40TNC</option>
+									
+										<option value="46"
+										>63"/96X68/40X40S+40C</option>
+									
+										<option value="47"
+										>63"/108X68/40X30VIS</option>
+									
+										<option value="48"
+										>63"/108X68/40X40+150BRIGHT</option>
+									
+										<option value="49"
+										>63"/96X68/40X30VIS</option>
+									
+										<option value="50"
+										>63"/96X68/40X40+150BRI</option>
+									
+										<option value="51"
+										>69"/52X64/20SLBX40+20SLB</option>
+									
+										<option value="52"
+										>63"/126X78/50+2/80X50</option>
+									
+										<option value="53"
+										>38" 61X6064X66</option>
+									
+										<option value="54"
+										>73RS 32X220LY/136X76</option>
+									
+										<option value="55"
+										>48" 61X61/84X72</option>
+									
+										<option value="56"
+										>73RS92763030LYCRA</option>
+									
+										<option value="57"
+										>63"108X80/60X60</option>
+									
+										<option value="58"
+										>63"/80X68/60X60 MISDENT</option>
+									
+										<option value="59"
+										>38"/3/80*86/42PV*80D</option>
+									
+										<option value="60"
+										>76" 42X42 96X78 </option>
+									
+										<option value="61"
+										>39" 40PVX75D 114X78</option>
+									
+										<option value="62"
+										>81RS102704042LY16SLB</option>
+									
+										<option value="63"
+										>82RS 84X70/33PCX97LY</option>
+									
+										<option value="64"
+										>39"+39"/3/72*78/40PV*75D</option>
+									
+										<option value="65"
+										>63"/120*68/40*40</option>
+									
+										<option value="66"
+										>81RS/88X72/30PVX90LYCRA</option>
+									
+										<option value="67"
+										>67RS/2/72X44/32CTNX16SLUB</option>
+									
+										<option value="68"
+										>74RS/4/64X66/32CTNX240LY</option>
+									
+										<option value="69"
+										>63" 61X6184X70</option>
+									
+										<option value="70"
+										>63"/96X68/41X51+21SLB</option>
+									
+										<option value="71"
+										>84RS/4/56X70/32X220LYC</option>
+									
+										<option value="72"
+										>74RS 4/64X76 30X220LY</option>
+									
+										<option value="73"
+										>63" 108X52/40X21OE</option>
+									
+										<option value="74"
+										>38" 72X60 36PV HMX36PV HM</option>
+									
+										<option value="76"
+										>39"+39 88X80 42PVX80CATONIC</option>
+									
+										<option value="77"
+										>63"/128X120/50X50</option>
+									
+										<option value="78"
+										>62"/84X48/30X32+16SLB</option>
+									
+										<option value="79"
+										>64RS/120X76/80DX40C</option>
+									
+										<option value="80"
+										>64RS/72/2X92/80DX40C</option>
+									
+										<option value="81"
+										>64RS/120X90/80DX40C</option>
+									
+										<option value="82"
+										>63"/96X60/42PVX2/40PVX2/80</option>
+									
+										<option value="83"
+										>70RS/52X52/21SLBX21SLB</option>
+									
+										<option value="84"
+										>62"/52X48/20X20</option>
+									
+										<option value="85"
+										>63"/165X102/60X60 DOBBY</option>
+									
+										<option value="86"
+										>63"/160X100/60X60+2/80</option>
+									
+										<option value="87"
+										>63RS/72/4X76/80DENX40CPT</option>
+									
+										<option value="88"
+										>63"/180X96/60X60+40TENCEL</option>
+									
+										<option value="89"
+										>63"/180X88/60X60+40TENCIL</option>
+									
+										<option value="90"
+										>63"/180X100/60X60</option>
+									
+										<option value="91"
+										>63"/128X80/50CX60C+40SLUB</option>
+									
+										<option value="92"
+										>63"/160X84/60X60+20</option>
+									
+										<option value="93"
+										>63"/160X72/60X40V</option>
+									
+										<option value="94"
+										>63"/160X88/60X60+40V</option>
+									
+										<option value="95"
+										>63"/160X72/60X40+20SLUB</option>
+									
+										<option value="96"
+										>63"/160X80X/60X40V</option>
+									
+										<option value="97"
+										>63"/160X68/60X40+20</option>
+									
+										<option value="98"
+										>63"/160X80/60X30TEN</option>
+									
+										<option value="99"
+										>69"/96X72/60+ZARIX60</option>
+									
+										<option value="100"
+										>63"/160X100/60X60+150COM</option>
+									
+										<option value="101"
+										>67RS/132X86/40ZIRCONX80/300</option>
+									
+										<option value="102"
+										>63"/112X68/50+150X50</option>
+									
+										<option value="103"
+										>63RS/72/4X72/80DEVX40CPT</option>
+									
+										<option value="104"
+										>68.30RS/102X72/61X61</option>
+									
+										<option value="105"
+										>40RS/108X76/40PVX90DNR</option>
+									
+										<option value="106"
+										>41.50RS/52/4X84/40PVX80/300</option>
+									
+										<option value="107"
+										>63"/48X44/21ZX21Z+21C</option>
+									
+										<option value="108"
+										>67RS/52X48/321SWANX321SWAN</option>
+									
+										<option value="109"
+										>40RS/108X84/40PVX80/300</option>
+									
+										<option value="110"
+										>66.5RS/126X72/60X60</option>
+									
+										<option value="111"
+										>67RS/170X102/60X60</option>
+									
+										<option value="112"
+										>63"/128X104/50CX40C</option>
+									
+										<option value="113"
+										>63/108X72/50X50C+20SLB</option>
+									
+										<option value="114"
+										>63/108X76/50X50COTTON+30SLUB</option>
+									
+										<option value="116"
+										>63/108X80/50X50C+30C</option>
+									
+										<option value="117"
+										>63"/108X80/51CX51C+30C</option>
+									
+										<option value="118"
+										>63/180X102/60X60C</option>
+									
+										<option value="119"
+										>63/180X102/60X61C</option>
+									
+										<option value="120"
+										>63/180X102/61X61C</option>
+									
+										<option value="121"
+										>63/180X102/61X60C</option>
+									
+										<option value="122"
+										>82RS/102X88/42PVX97LYCRA</option>
+									
+										<option value="123"
+										>68RS/162X120/61X61</option>
+									
+										<option value="124"
+										>63"/52X52/24SLBX24SLB</option>
+									
+										<option value="125"
+										>63"/80X64/24SLBX24SLB</option>
+									
+										<option value="126"
+										>82RS/76X70/30.5SLBX40+97LYC</option>
+									
+										<option value="127"
+										>84RS/108X84/45PVX97 LYC</option>
+									
+										<option value="128"
+										>82RS/140X96/60PSFX97LYC</option>
+									
+										<option value="129"
+										>63"/64X62/31SLB+2/80DNRX31SLB</option>
+									
+										<option value="130"
+										>63"/80X70/60C+ZARIX60C</option>
+									
+										<option value="131"
+										>63"/102X70/40CX40TEN</option>
+									
+										<option value="132"
+										>63RS/72X72/2/80X32</option>
+									
+										<option value="133"
+										>82RS/102X80/42PVX97LYC</option>
+									
+										<option value="134"
+										>69RS/108X76/40CX40T</option>
+									
+										<option value="135"
+										>78RS/102X60/41X220</option>
+									
+										<option value="136"
+										>67RS/136X88/50X50</option>
+									
+										<option value="137"
+										>67RS/136X124/50X50</option>
+									
+									
+									
+						
+						</select>
+						<label for="sortMasterId" class="error"></label></label>
+					<input type="hidden" name="cgstPercent" id="cgstPercent" value=""> 			
+						<input type="hidden" name="sgstPercent" id="sgstPercent" value="">
+						<input type="hidden" name="igstPercent" id="igstPercent" value="">
+				</div>
+				
+				
+				<div class="col-md-2">
+					
+						<label class="lblTxt fontFamily">Design
+						
+						</label><br> <select id="designMasterId" name="designMasterId" 
+							class="txtBox fontFamily Select " onChange="getSelforders()" >
+							<option value="">Select Design  </option>
+							
+										<option value="1"
+										>64295</option>
+									
+										<option value="2"
+										>64295B</option>
+									
+										<option value="3"
+										>64294</option>
+									
+										<option value="4"
+										>64294A</option>
+									
+										<option value="5"
+										>64176R</option>
+									
+										<option value="6"
+										>64176B</option>
+									
+										<option value="7"
+										>64201R</option>
+									
+										<option value="8"
+										>64201RA</option>
+									
+										<option value="9"
+										>64287</option>
+									
+										<option value="10"
+										>64287A</option>
+									
+										<option value="11"
+										>64289</option>
+									
+										<option value="12"
+										>64289A</option>
+									
+										<option value="13"
+										>107</option>
+									
+										<option value="14"
+										>108</option>
+									
+										<option value="15"
+										>109</option>
+									
+										<option value="16"
+										>110</option>
+									
+										<option value="17"
+										>87427</option>
+									
+										<option value="18"
+										>87428</option>
+									
+										<option value="19"
+										>64859</option>
+									
+										<option value="20"
+										>64854B</option>
+									
+										<option value="21"
+										>64969</option>
+									
+										<option value="22"
+										>64971</option>
+									
+										<option value="23"
+										>64965</option>
+									
+										<option value="24"
+										>64967</option>
+									
+										<option value="25"
+										>64970</option>
+									
+										<option value="26"
+										>64968</option>
+									
+										<option value="27"
+										>87772</option>
+									
+										<option value="28"
+										>64972</option>
+									
+										<option value="29"
+										>64293B</option>
+									
+										<option value="30"
+										>64176RB</option>
+									
+										<option value="31"
+										>64290B</option>
+									
+										<option value="32"
+										>BENZ180</option>
+									
+										<option value="33"
+										>BENZ181</option>
+									
+										<option value="34"
+										>BENZ182</option>
+									
+										<option value="35"
+										>BENZ183</option>
+									
+										<option value="36"
+										>BENZ184</option>
+									
+										<option value="37"
+										>BENZ185</option>
+									
+										<option value="38"
+										>64556</option>
+									
+										<option value="39"
+										>64550</option>
+									
+										<option value="40"
+										>64554</option>
+									
+										<option value="41"
+										>64551</option>
+									
+										<option value="42"
+										>64557</option>
+									
+										<option value="43"
+										>64553</option>
+									
+										<option value="44"
+										>64555</option>
+									
+										<option value="45"
+										>64552</option>
+									
+										<option value="46"
+										>64556R</option>
+									
+										<option value="47"
+										>64550A</option>
+									
+										<option value="48"
+										>64554A</option>
+									
+										<option value="49"
+										>64551A</option>
+									
+										<option value="50"
+										>64557A</option>
+									
+										<option value="51"
+										>64553A</option>
+									
+										<option value="52"
+										>64555A</option>
+									
+										<option value="53"
+										>64552A</option>
+									
+										<option value="54"
+										>845</option>
+									
+										<option value="55"
+										>829</option>
+									
+										<option value="56"
+										>844</option>
+									
+										<option value="57"
+										>825</option>
+									
+										<option value="58"
+										>843</option>
+									
+										<option value="59"
+										>838</option>
+									
+										<option value="60"
+										>834</option>
+									
+										<option value="61"
+										>839</option>
+									
+										<option value="62"
+										>840</option>
+									
+										<option value="63"
+										>65663</option>
+									
+										<option value="64"
+										>65664</option>
+									
+										<option value="65"
+										>65493</option>
+									
+										<option value="66"
+										>100682</option>
+									
+										<option value="67"
+										>100683</option>
+									
+										<option value="68"
+										>88446</option>
+									
+										<option value="69"
+										>64966</option>
+									
+										<option value="70"
+										>64963</option>
+									
+										<option value="71"
+										>64964</option>
+									
+										<option value="72"
+										>30786</option>
+									
+										<option value="73"
+										>30782</option>
+									
+										<option value="74"
+										>30781</option>
+									
+										<option value="75"
+										>65767</option>
+									
+										<option value="76"
+										>631-1A</option>
+									
+										<option value="77"
+										>632-1B</option>
+									
+										<option value="78"
+										>633-1C</option>
+									
+										<option value="79"
+										>634-2A</option>
+									
+										<option value="80"
+										>635-2B</option>
+									
+										<option value="81"
+										>636-2C</option>
+									
+										<option value="82"
+										>637-3A</option>
+									
+										<option value="83"
+										>638-3B</option>
+									
+										<option value="84"
+										>639-3C</option>
+									
+										<option value="85"
+										>640-4A</option>
+									
+										<option value="86"
+										>641-4B</option>
+									
+										<option value="87"
+										>642-4C</option>
+									
+										<option value="88"
+										>9913</option>
+									
+										<option value="89"
+										>9914</option>
+									
+										<option value="90"
+										>9922</option>
+									
+										<option value="91"
+										>9924</option>
+									
+										<option value="92"
+										>695</option>
+									
+										<option value="93"
+										>9919</option>
+									
+										<option value="94"
+										>9920</option>
+									
+										<option value="95"
+										>9918</option>
+									
+										<option value="96"
+										>687</option>
+									
+										<option value="97"
+										>689</option>
+									
+										<option value="98"
+										>685</option>
+									
+										<option value="99"
+										>694</option>
+									
+										<option value="100"
+										>88424A(W)</option>
+									
+										<option value="101"
+										>88352A(W)</option>
+									
+										<option value="102"
+										>88354(W)</option>
+									
+										<option value="103"
+										>88354A(W)</option>
+									
+										<option value="104"
+										>100659(W)</option>
+									
+										<option value="105"
+										>88352(W)</option>
+									
+										<option value="106"
+										>88424(W)</option>
+									
+										<option value="107"
+										>88355A(W)</option>
+									
+										<option value="108"
+										>88355(W)</option>
+									
+										<option value="109"
+										>65883G</option>
+									
+										<option value="110"
+										>65883S</option>
+									
+										<option value="111"
+										>65884G</option>
+									
+										<option value="112"
+										>65885S</option>
+									
+										<option value="113"
+										>65886G</option>
+									
+										<option value="114"
+										>65886S</option>
+									
+										<option value="115"
+										>65887G</option>
+									
+										<option value="116"
+										>65887S</option>
+									
+										<option value="117"
+										>65885G</option>
+									
+										<option value="118"
+										>65884S</option>
+									
+										<option value="119"
+										>65888G</option>
+									
+										<option value="120"
+										>65888S</option>
+									
+										<option value="121"
+										>BENZ180B</option>
+									
+										<option value="122"
+										>BENZ183B</option>
+									
+										<option value="123"
+										>65524A</option>
+									
+										<option value="124"
+										>BENZ186</option>
+									
+										<option value="125"
+										>BENZ187</option>
+									
+										<option value="126"
+										>BENZ188</option>
+									
+										<option value="127"
+										>64200R</option>
+									
+										<option value="128"
+										>64200RA</option>
+									
+										<option value="129"
+										>64290</option>
+									
+										<option value="130"
+										>64198R</option>
+									
+										<option value="131"
+										>64198RA</option>
+									
+										<option value="132"
+										>87771</option>
+									
+										<option value="133"
+										>100791</option>
+									
+										<option value="134"
+										>88600</option>
+									
+										<option value="135"
+										>88707</option>
+									
+										<option value="136"
+										>88710</option>
+									
+										<option value="137"
+										>88711</option>
+									
+										<option value="138"
+										>8261A</option>
+									
+										<option value="139"
+										>123</option>
+									
+										<option value="140"
+										>DOBBY 4</option>
+									
+										<option value="141"
+										>33194 ( D 4 )</option>
+									
+										<option value="142"
+										>8834</option>
+									
+										<option value="143"
+										>8835</option>
+									
+										<option value="144"
+										>8836</option>
+									
+										<option value="145"
+										>8837</option>
+									
+										<option value="146"
+										>12483</option>
+									
+										<option value="147"
+										>12482</option>
+									
+										<option value="148"
+										>6082</option>
+									
+										<option value="149"
+										>6083</option>
+									
+										<option value="150"
+										>6084</option>
+									
+										<option value="151"
+										>6085</option>
+									
+										<option value="152"
+										>6086</option>
+									
+										<option value="153"
+										>6087</option>
+									
+										<option value="154"
+										>6088</option>
+									
+										<option value="155"
+										>6089</option>
+									
+										<option value="156"
+										>33525</option>
+									
+										<option value="157"
+										>33553</option>
+									
+										<option value="158"
+										>33728</option>
+									
+										<option value="159"
+										>33526</option>
+									
+										<option value="160"
+										>33727</option>
+									
+										<option value="161"
+										>12543</option>
+									
+										<option value="162"
+										>6097</option>
+									
+										<option value="163"
+										>6098</option>
+									
+										<option value="164"
+										>6099</option>
+									
+										<option value="165"
+										>6100</option>
+									
+										<option value="166"
+										>6101</option>
+									
+										<option value="167"
+										>6102</option>
+									
+										<option value="168"
+										>6103</option>
+									
+										<option value="169"
+										>6104</option>
+									
+										<option value="170"
+										>BENZZ183</option>
+									
+										<option value="171"
+										>BENZZ184</option>
+									
+										<option value="172"
+										>BENZZ186</option>
+									
+										<option value="173"
+										>BENZZ191</option>
+									
+										<option value="174"
+										>BENZZ192</option>
+									
+										<option value="175"
+										>BENZZ193</option>
+									
+										<option value="176"
+										>BENZZ209</option>
+									
+										<option value="177"
+										>BENZZ210</option>
+									
+										<option value="178"
+										>BENZZ211</option>
+									
+										<option value="179"
+										>BENZZ212</option>
+									
+										<option value="180"
+										>BENZZ213</option>
+									
+										<option value="181"
+										>BENZZ214</option>
+									
+										<option value="182"
+										>BENZZ287</option>
+									
+										<option value="183"
+										>BENZZ288</option>
+									
+										<option value="184"
+										>BENZZ289</option>
+									
+										<option value="185"
+										>BENZZ290</option>
+									
+										<option value="186"
+										>BENZZ291</option>
+									
+										<option value="187"
+										>BENZZ292</option>
+									
+										<option value="188"
+										>67081</option>
+									
+										<option value="189"
+										>67469</option>
+									
+										<option value="190"
+										>67461</option>
+									
+										<option value="191"
+										>67420</option>
+									
+										<option value="192"
+										>67423</option>
+									
+										<option value="193"
+										>67429</option>
+									
+										<option value="194"
+										>67430</option>
+									
+										<option value="195"
+										>8915A</option>
+									
+										<option value="196"
+										>33968</option>
+									
+										<option value="197"
+										>33969</option>
+									
+										<option value="198"
+										>33967</option>
+									
+										<option value="199"
+										>33965</option>
+									
+										<option value="200"
+										>34000</option>
+									
+										<option value="201"
+										>67579</option>
+									
+										<option value="202"
+										>67580</option>
+									
+										<option value="203"
+										>67581</option>
+									
+										<option value="204"
+										>67582</option>
+									
+										<option value="205"
+										>LITCO</option>
+									
+										<option value="206"
+										>TRILOK</option>
+									
+										<option value="207"
+										>TRIKSHA</option>
+									
+										<option value="208"
+										>RD2507-015</option>
+									
+										<option value="209"
+										>RD2507-018</option>
+									
+										<option value="210"
+										>RD2507-019</option>
+									
+										<option value="211"
+										>RD2409-082</option>
+									
+										<option value="212"
+										>RD2507-016</option>
+									
+										<option value="213"
+										>34210</option>
+									
+										<option value="214"
+										>34214</option>
+									
+										<option value="215"
+										>34215</option>
+									
+										<option value="216"
+										>34216</option>
+									
+										<option value="217"
+										>34217</option>
+									
+										<option value="218"
+										>34347</option>
+									
+										<option value="219"
+										>RD2507-084</option>
+									
+										<option value="220"
+										>RD2409-083</option>
+									
+										<option value="221"
+										>RD2507-021</option>
+									
+										<option value="222"
+										>8559</option>
+									
+										<option value="223"
+										>A0463</option>
+									
+										<option value="224"
+										>RD2508-30</option>
+									
+										<option value="225"
+										>711</option>
+									
+										<option value="226"
+										>722</option>
+									
+										<option value="227"
+										>713</option>
+									
+										<option value="228"
+										>719</option>
+									
+										<option value="229"
+										>FDCS001</option>
+									
+										<option value="230"
+										>FDCS002</option>
+									
+										<option value="231"
+										>ANTILIA</option>
+									
+										<option value="232"
+										>67871</option>
+									
+										<option value="233"
+										>67872</option>
+									
+										<option value="234"
+										>67856</option>
+									
+										<option value="235"
+										>67864</option>
+									
+										<option value="236"
+										>67867</option>
+									
+										<option value="237"
+										>34712</option>
+									
+										<option value="238"
+										>34715</option>
+									
+										<option value="239"
+										>34716</option>
+									
+										<option value="240"
+										>34717</option>
+									
+										<option value="241"
+										>67183</option>
+									
+										<option value="242"
+										>8688</option>
+									
+										<option value="243"
+										>8689</option>
+									
+										<option value="244"
+										>DVLS -029</option>
+									
+										<option value="245"
+										>DVLS -029E</option>
+									
+										<option value="246"
+										>DVLS-029F</option>
+									
+										<option value="247"
+										>1002</option>
+									
+										<option value="248"
+										>1007</option>
+									
+										<option value="249"
+										>93208</option>
+									
+										<option value="250"
+										>34211</option>
+									
+										<option value="251"
+										>34212</option>
+									
+										<option value="252"
+										>34213</option>
+									
+										<option value="253"
+										>34409</option>
+									
+										<option value="254"
+										>34412</option>
+									
+										<option value="255"
+										>34413</option>
+									
+										<option value="256"
+										>34291</option>
+									
+										<option value="257"
+										>34292</option>
+									
+										<option value="258"
+										>34293</option>
+									
+										<option value="259"
+										>34295</option>
+									
+										<option value="260"
+										>34296</option>
+									
+										<option value="261"
+										>34297</option>
+									
+										<option value="262"
+										>34300</option>
+									
+										<option value="263"
+										>34302</option>
+									
+										<option value="264"
+										>34446</option>
+									
+										<option value="265"
+										>33745</option>
+									
+										<option value="266"
+										>33746</option>
+									
+										<option value="267"
+										>33752</option>
+									
+										<option value="268"
+										>33747</option>
+									
+										<option value="269"
+										>33753</option>
+									
+										<option value="270"
+										>64969.1</option>
+									
+										<option value="271"
+										>87771.1</option>
+									
+										<option value="272"
+										>33737</option>
+									
+										<option value="273"
+										>8952</option>
+									
+										<option value="274"
+										>9452A</option>
+									
+										<option value="275"
+										>1005</option>
+									
+										<option value="276"
+										>1004</option>
+									
+										<option value="277"
+										>1003</option>
+									
+										<option value="278"
+										>DSN 40</option>
+									
+										<option value="279"
+										>DSN 39</option>
+									
+										<option value="280"
+										>DSN 38</option>
+									
+										<option value="281"
+										>DSN 37</option>
+									
+										<option value="282"
+										>DSN 34</option>
+									
+										<option value="283"
+										>DSN 36</option>
+									
+										<option value="284"
+										>1002 ENES</option>
+									
+										<option value="285"
+										>34803</option>
+									
+										<option value="286"
+										>34804</option>
+									
+										<option value="287"
+										>1</option>
+									
+										<option value="288"
+										>2</option>
+									
+						
+						</select>
+						<label for="designMasterId" class="error"></label></label>
+					
+				</div>
+				
+				
+				<div class="col-md-2">
+					
+						<label class="lblTxt fontFamily">Selvedge
+							
+						</label><br> <select id="selvedgeId" name="selvedgeId" 
+							class="txtBox fontFamily Select selvedgeId" onChange="getSelforders()">
+							<option value="">Select Selvedge  </option>
+							
+										<option value="1"
+										>21ST CENTURY FABRICS 100% GIZA MADE IN JAPAN (YING YANG)</option>
+									
+										<option value="2"
+										>21ST CENTURY FABRICS 100% COTTON 100-100 SHAHZADA LAWN</option>
+									
+										<option value="3"
+										>60 SUPERFINE ORGANIC COTTON LINEN TISSOT LEA</option>
+									
+										<option value="4"
+										>BENZ-053-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="5"
+										>BENZ-055-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="6"
+										>BENZ-180-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="7"
+										>BENZ-181-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="8"
+										>BENZ-182- FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="9"
+										>BENZ-183-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="10"
+										>100% COTTON - 70*70 LEA SLUB - ARMANI</option>
+									
+										<option value="11"
+										>100% COTTON 30*30 LEA SLUB - CASA MATTY</option>
+									
+										<option value="12"
+										>100% COTTON 90*90 LEA SLUB - TESLA</option>
+									
+										<option value="13"
+										>100% COTTON 80*80 LEA SLUB - JAGUAR</option>
+									
+										<option value="14"
+										>100% COTTON 60*60 LEA SLUB - FERARI</option>
+									
+										<option value="15"
+										>21ST CENTURY FABRIC</option>
+									
+										<option value="16"
+										>EXCELLENT</option>
+									
+										<option value="17"
+										>MAGNUM GIZA</option>
+									
+										<option value="18"
+										>KRIPLON</option>
+									
+										<option value="19"
+										>21ST CENTURY FABRICS 80 X80 GIZA (LA TESSUTI)</option>
+									
+										<option value="20"
+										>THE EXCLUSIVE GIZA COLLECTION (POSH)</option>
+									
+										<option value="21"
+										>21ST CENTURY FABRIC 100% COTTON DORIA SHIRTING (ITALIC REMI)</option>
+									
+										<option value="22"
+										>PREMIUM COTTON FABRIC GIZA X GIZA GUARANTEED</option>
+									
+										<option value="23"
+										>BENZ-185-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="24"
+										>BENZ-1810-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="25"
+										>BENZ-184-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="26"
+										>80*80 GIZA COTTON PREMIUM FABRICS</option>
+									
+										<option value="27"
+										>80*80 GIZA JAQUARD FABRIC</option>
+									
+										<option value="28"
+										>THE PREMIUM GIZA BELGIUM WAFFLE</option>
+									
+										<option value="29"
+										>VOLVO GIZA MADE BY 60 COTTON FEEL</option>
+									
+										<option value="30"
+										>DYNORA - 101</option>
+									
+										<option value="31"
+										>DYNORA - 102</option>
+									
+										<option value="32"
+										>DYNORA - 103</option>
+									
+										<option value="33"
+										>DYNORA - 104</option>
+									
+										<option value="34"
+										>100% SUPERFINE ITALIAN FINISH PREMIUM GIZA COTTON</option>
+									
+										<option value="35"
+										>PRADA GIZA</option>
+									
+										<option value="36"
+										>TUSCANY</option>
+									
+										<option value="37"
+										>WHITE ROSE MILLS</option>
+									
+										<option value="38"
+										>BENZ - 211 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="39"
+										>BENZ - 212 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="40"
+										>BENZ - 213 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="41"
+										>BENZ - 183 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="42"
+										>BENZ - 184 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="43"
+										>BENZ - 191  FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="44"
+										>BENZ - 287 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="45"
+										>BENZ - 290 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="46"
+										>BENZ - 291  FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="47"
+										>BENZ - 193 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="48"
+										>BENZ - 186 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="49"
+										>BENZ - 192 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="50"
+										>BENZ - 209 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="51"
+										>BENZ - 210 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="52"
+										>BENZ - 214 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="53"
+										>BENZ - 288  FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="54"
+										>BENZ - 289 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="55"
+										>BENZ - 292 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="56"
+										>JAQUARD BUTTA</option>
+									
+										<option value="57"
+										>SIYARAMS 60*60</option>
+									
+						
+						</select>
+						<label for="selvedgeId" class="error"></label></label>
+					
+				</div>
+								
+				
+				<div class="col-md-2 ">
+						<label class="lblTxt fontFamily">Quantity<sup class="mandatory">*</sup></label>
+							<br> <input type="number" name="orderQuantity" onchange="getNetAmount(0)" min="0"
+							id="orderedQuantity" class="txtBox fontFamily orderedQuantity"
+							value=""
+							style="width: 100% !important;" required title="Please Select Quantity"> <label
+							style="color: red;" id="nameerror"></label>
+				</div>
+				
+				
+					<div class="col-md-2 ">
+						<label class="lblTxt fontFamily">UnitPrice<sup class="mandatory">*</sup> </label>
+						<br> <input type="number" onchange="getNetAmount(0)" min="0"
+							name="pricePerUnit" id="price" class="txtBox fontFamily price" 
+							value=""
+							style="width: 100% !important;" required title="Please Select Unit Price">
+							 <label for="price" class="error"></label>
+							 
+				</div>
+				
+				
+				
+				
+				
+				
+					</div>
+				
+				
+				
+			<!-- Item Details row 2 -->
+			<div class="row marginBottomFourty" style="margin-top: 8px;">
+			
+			<div class="col-md-2">
+						<label class="lblTxt fontFamily">Net Amount
+						</label><br> <input type="number" name="basicAmount" id="netAmount" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				<div class="col-md-2">
+						<label class="lblTxt fontFamily">Delivery Date
+						<input  type="text" id="deliveryDate"  name="deliveryDate" class="txtBox fontFamily deliveryDate"  readonly="readonly"
+									value='' />
+						</label><br>
+					
+				</div>
+				<div class="col-md-2">
+					
+						<label class="lblTxt fontFamily">UOM
+							<sup class="mandatory">*</sup>
+						</label><br> <select id="uomId" name="uomM.uomId" 
+							class="txtBox fontFamily Select uomId" required title="Please Select UOM">
+							<option value="">Select Uom  </option>
+							
+										<option value="1"
+										>KGS</option>
+									
+										<option value="2"
+										>MTR</option>
+									
+										<option value="3"
+										>YRD</option>
+									
+										<option value="4"
+										>NE</option>
+									
+										<option value="5"
+										>DEN</option>
+									
+										<option value="6"
+										>COTLIN</option>
+									
+										<option value="7"
+										>ZARI</option>
+									
+										<option value="8"
+										>VISCOSE</option>
+									
+										<option value="9"
+										>PSF</option>
+									
+										<option value="10"
+										>OE</option>
+									
+										<option value="11"
+										>SLUB</option>
+									
+										<option value="12"
+										>TENCEL</option>
+									
+										<option value="13"
+										>LYCRA</option>
+									
+										<option value="14"
+										>PV HM</option>
+									
+						
+						</select>
+						<label for="uomId" class="error"></label></label>
+					
+				</div>
+				
+				
+				<div class="col-md-2">
+					
+						<label class="lblTxt fontFamily">Inspection Type
+							<sup class="mandatory">*</sup>
+						</label><br> <select id="inspectionTypeId" name="inspectionTypeId" 
+							class="txtBox fontFamily Select inspectionTypeId" required title="Please Select Inspection Type">
+							<option value="">Select Inspection Type  </option>
+							
+										<option value="1"
+										>4 POINT SYSTEM</option>
+									
+						
+						</select>
+						<label for="inspectionTypeId" class="error"></label></label>
+					
+				</div>
+			
+			
+			<div class="col-md-2 cgsts" >
+						<label class="lblTxt fontFamily">CGST
+						</label><br> <input type="text" name="cgstAmount" id="cgstAmount" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				<div class="col-md-2 cgsts" >
+						<label class="lblTxt fontFamily">SGST
+						</label><br> <input type="text" name="sgstAmount" id="sgstAmount" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				
+				<div class="col-md-2 igsts" >
+						<label class="lblTxt fontFamily">IGST
+						</label><br> <input type="text" name="igstAmount" id="igstAmount" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				</div>
+				
+			
+			
+			<!-- Item Details row 3 -->
+			<div class="row marginBottomFourty" >
+			
+			<div class="col-md-2">
+						<label class="lblTxt fontFamily">Total Amount<sup class="mandatory">*</sup>
+						</label><br> <input type="number" name="totalAmount" id="totalAmount" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;" required title="Please Select GST Details in Sort/Quality Master"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				<div class="col-md-2">
+						<label class="lblTxt fontFamily">Piece Length 
+						</label><br> <input type="number" name="pieceLength" id="pieceLength" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;" onchange="getNoofPieces();"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				<div class="col-md-2">
+						<label class="lblTxt fontFamily">No. of Pieces 
+						</label><br> <input type="number" name="totalPiece" id="totalPiece" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;" > <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				
+				<div class="col-md-2">
+						<label class="lblTxt fontFamily">Warp Details
+						</label><br> <input type="text" name="warpDetails" id="warpDetails" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				<div class="col-md-2">
+						<label class="lblTxt fontFamily">Weft Details
+						</label><br> <input type="text" name="weftDetails" id="weftDetails" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				<div class="col-md-2">
+						<label class="lblTxt fontFamily">Sizing Details
+						</label><br> <input type="text" name="sizingDetails" id="sizingDetails" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				
+				
+				
+		
+				
+			</div>
+
+
+
+         <div class="row marginBottomFourty" >
+           <div class="col-md-2">
+						<label class="lblTxt fontFamily">Weaving Details
+						</label><br> <input type="text" name="weaverDetails" id="weaverDetails" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+				
+				<div class="col-md-2" id="finishedDiv" style="display: none;">
+                  <label class="lblTxt fontFamily">Finished Quality <sup class="mandatory">*</sup></label><br>
+                           <select id="finishedQuality" name="finishedQuality" 
+							class="txtBox fontFamily finishedQuality Select " onchange="getSortQuality(this.value);" >
+							<option value="">SelectQuality  </option>
+							
+						</select>  
+						<label for="finishedQuality" class="error"></label></label>
+						             
+						 </div>
+						 <div class="col-md-2 " >
+                  <label class="lblTxt fontFamily">Buyer Product <sup class="mandatory">*</sup></label><br>
+                         	
+							<textarea name="buyerProductName" id="buyerProductName" required title="Please Enter Buyer Product"
+									class="txtBox fontFamily"/></textarea>
+						              
+						 </div>
+						 
+						 
+						 <div class="col-md-2 orderNoDiv" >
+                  <label class="lblTxt fontFamily">Orders</label><br>
+                           <select id="orders" name="selfOrderItemId" 
+							class="txtBox fontFamily orders Select " onchange="gstGenratedQuentity();">
+							<option value="">SelectOrders  </option>
+							
+						</select>               
+						 </div>
+						 <div class="col-md-2 orderNoDiv" >
+                  <label class="lblTxt fontFamily">Orders Quantity</label><br>
+                          <input type="text" name="selfOrderActualQuantity" id="orderqty" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;">
+							
+						              
+						 </div>
+						 <div class="col-md-2 orderNoDiv" >
+                  <label class="lblTxt fontFamily">Used Quantity</label><br>
+                         <input type="text" name="selfOrderUsedQuantity" id="genqty" readonly
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;">
+							
+						              
+						 </div>
+						 <div class="col-md-2">
+						<label class="lblTxt fontFamily">Bonus Commission
+						</label><br> <input type="number" name="bonusCommission" id="bonusCommission" 
+							class="txtBox fontFamily" value=""
+							style="width: 100% !important;"> <label
+							style="color: red;" id="nameerror"></label>
+					
+				</div>
+										 
+				<div class="col-md-2 " ><label class="lblTxt fontFamily">Costing Number</label>
+					<input type="text" name="costingNumber" id="costingNumber" class="txtBox fontFamily"  value=""
+							style="width: 100% !important;"> <label style="color: red;" id="nameerror"></label>
+
+						</div>
+                  
+
+        
+</div>
+
+         <div class="row marginBottomFourty" >
+          <div class="col-md-2 addSaveSaleOrderButton">
+				
+						<button id="saveSalesOrderItem" class="greenBtn fontFamily" >
+						
+						
+						Add  
+						
+						
+						
+						
+						</button>
+						
+					
+				</div>	
+         </div>
+
+
+
+
+
+				
+</div>
+	</div>
+	
+	<!-- later half div 2 -->
+			<!-- later half div 2 -->
+		<div class="col-md-3" style="padding-left: 8px;padding-right: 0px">
+		<div class="contentBorderDiv"  style="padding: 0px 0px;padding-bottom: 41px">
+		
+			<input name='add' id="add"  style="width: 135px;pointer-events: none;background-color:#2C476D;color:white;padding-left: 15px"
+		value="Order Summary" style="background-color: #cbaa54"/><br><br>
+		
+		
+		<div class="row marginBottomFourty" style="padding-top: 10px">
+		<div class="col-md-5">
+		<b>Total Items</b>
+		</div>
+		<div class="col-md-1"><b>:</b></div>
+		
+		<div class="col-md-5 AlignRight">
+		
+		
+		
+		
+		<input type="hidden" name="orderTotalItem" id="orderTotalItem" value="1" />
+		<b>         
+		1
+		
+		</b>
+		</div>
+		</div>
+			
+		
+		
+			
+		<div class="row marginBottomFourty" style="padding-top: 10px">
+    <div class="col-md-5">
+        <b>Amount</b>
+    </div>
+    <div class="col-md-1"><b>:</b></div>
+    <div class="col-md-5 AlignRight">
+        <b>
+            
+            
+                
+            
+            <input type="hidden" name="orderNetAmount" id="orderNetAmount" value="346500.0" />
+        </b>
+        <b>       
+            <span id="amountDiv" class="usaFormat2">  346500.0
+                
+            </span>
+        </b>
+    </div>
+</div>
+
+<div class="row marginBottomFourty" style="padding-top: 10px">
+    <div class="col-md-5">
+        <b>IGST</b>
+    </div>
+    <div class="col-md-1"><b>:</b></div>
+    <div class="col-md-5 AlignRight">
+        <b>
+            
+            
+                
+            
+            <input type="hidden" name="totaligst" id="totaligst" value="0.0" />
+        </b>
+        <b>       
+            <span id="amountDiv" class="usaFormat2">  0.0
+                
+            </span>
+        </b>
+    </div>
+</div>
+
+<div class="row marginBottomFourty" style="padding-top: 10px">
+    <div class="col-md-5">
+        <b>CGST</b>
+    </div>
+    <div class="col-md-1"><b>:</b></div>
+    <div class="col-md-5 AlignRight">
+        <b>
+            
+            
+                
+            
+            <input type="hidden" name="totalcgst" id="totalcgst" value="8662.5" />
+        </b>
+        <b>       
+            <span id="amountDiv" class="usaFormat2">  8662.5
+                
+            </span>
+        </b>
+    </div>
+</div>
+
+<div class="row marginBottomFourty" style="padding-top: 10px">
+    <div class="col-md-5">
+        <b>SGST</b>
+    </div>
+    <div class="col-md-1"><b>:</b></div>
+    <div class="col-md-5 AlignRight">
+        <b>
+            
+            
+                
+            
+            <input type="hidden" name="totalsgst" id="totalsgst" value="8662.5" />
+        </b>
+        <b>       
+            <span id="amountDiv" class="usaFormat2">  8662.5
+                
+            </span>
+        </b>
+    </div>
+</div>
+		
+			<div class="row marginBottomFourty" style="padding-top: 10px">
+		<div class="col-md-5">
+		<b>Additions</b>
+		</div>
+		<div class="col-md-1"><b>:</b></div>
+		<div class="col-md-5 AlignRight">
+		<b>
+		
+		
+		
+		<input type="hidden" name="orderTotalAddition" id="orderTotalAddition" value="0.00" />
+		<span id="totalAddition" class="usaFormat2 AlignRight">0.00
+		<!-- <script>
+			 $().ready(
+						function() {
+			 numberFormating(0.00,'totalAddition','yes')
+						});
+			 </script> -->
+		</span>
+	  </b>
+		</div>
+		</div>
+			<!-- deductions -->
+			<div class="row marginBottomFourty" style="padding-top: 8px">
+		<div class="col-md-5">
+		<b>Discount</b>
+		</div>
+		<div class="col-md-1"><b>:</b></div>
+		<div class="col-md-5 AlignRight" >
+		<b>
+		
+		0.00
+		</b>
+		</div>
+		</div> 
+			<!-- deductions -->
+		<div class="row marginBottomFourty TotalAmount" >
+		<div class="col-md-5">
+		<b style="font-size: 17px">Total Amount</b>
+		</div>
+		<div class="col-md-1"><b>:</b></div>
+		<div  class="col-md-5 AlignRight">
+		<b  style="font-size: 17px">
+		
+		
+		
+		
+		<span class="usaFormat2">363825.0</span>
+		
+	
+		
+		</b>
+		</div>
+		</div>
+		
+		</div>
+		</div>
+			
+
+
+</form>
+
+
+<!-- Table to display the items -->
+		<div id="divForItem" class="divForItem backgroundBG"><br>
+		
+			<table class="colorTblCss" style=" margin-bottom: 10px;">
+				<tr>
+					<th >Sl No</th>
+					<th >Quality</th>
+					<th >Design</th>
+					<th >selvedge</th>
+					<th>Quantity  </th>
+					<th>Price </th>
+					<th>Net Amount </th>
+					<th >UOM</th>
+					<th >Total Amount</th>
+					<th >Warp Details</th>
+					<th >Weft Details</th>
+					<th >Sizing Details</th>
+					<th >Weaving Details</th>
+					<th>Costing Number</th>
+					
+					<th >Action</th>
+					</tr>
+					
+					
+					
+						<tr>
+						<td class="txtLeftAlign">1</td>
+						<td class="txtLeftAlign">
+						
+						
+							63"/165X100/60X60
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+						
+						
+						
+						</td>
+						<td class="txtLeftAlign">
+						
+							64295
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+						</td>
+						<td class="txtLeftAlign">
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+						</td>
+						<td class="indianFormat3 txtRightAlign">5500.0</td>
+						<td class="indianFormat2 txtRightAlign">63.0</td>
+						<td class="indianFormat2 txtRightAlign">346500.0</td>
+						<td class="txtLeftAlign">MTR</td>
+                        
+						<td class="indianFormat2 txtRightAlign">363825.0</td>
+						
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						
+								<td>
+                        	
+                        	
+                           
+                        	<a
+								href="/iTexRAMTest/salesorder/edit/salesOrderItem?salesOrderId=489&orderItemId=1129&buyerId=10&sortMasterId=1&consigneeId=10"><img
+									src="/iTexRAMTest/resources/images/edit.png"
+									class="" title="Edit"/></a>
+									
+
+							<a href="/iTexRAMTest/salesorder/deleteSalesOrderItem?salesOrderId=489&salesOrderItemId=1129&buyerId=10" 
+							onclick="return confirmdelete(event)">
+			                  <img src="/iTexRAMTest/resources/pageImg/delete.JPG" class="" title="Delete"/>
+			                  </a>
+			                  
+			                  </td>					
+						</tr>
+						
+						
+						
+						
+						
+						
+					
+					
+					
+				
+				
+					
+			</table>
+		
+		</div>
+		
+		
+		<!-- 	for addition table -->
+		
+		<div class="row">
+		<div class="col-md-6 paddingZero" >
+		<div class="contentBorderDiv"  style="padding: 0px 0px;">
+		
+		<form method="post" id="formForAddition" name="formForAddition">
+		<input name='add' id="add"  style="width: 120px;pointer-events: none;background-color:#2C476D;color:white;padding-left: 15px"
+		value="Additions" style="background-color: #cbaa54"/>
+		
+		<input type="hidden" id="salesOrderId" name="orderId"
+							value="489" /> 
+		<input type="hidden" id="salesOrderItemId" name="orderItemId" value="" />
+				
+				
+		 <input type="hidden" id="buyerId" name="buyerId" value="10" />
+				
+
+		
+
+							
+	<input type="hidden" id="salesOrderAdditionsDeductionsId" name="salesOrderAdditionsDeductionsId" value="" />
+						
+		
+		<div class="row " style="padding-top: 10px">
+		
+		<div class="col-md-2"> 
+						<label class="lblTxt fontFamily">Type<sup class="mandatory">*</sup></label>
+						<select  name="addedType" id="addedType" class="fontFamily addedType" required title="Please Select Type">
+						<option value="">Select Type </option>
+						<option value="1" >Addition</option>
+						<option value="2" >Discount</option>	
+					</select>
+		
+			<label for="addedType" class="error"></label>
+			
+		</div>
+		<div class="col-md-3"> 
+								<label class="lblTxt fontFamily">Ledger<sup class="mandatory">*</sup></label>
+		
+						<select  name="accountLedgerId" id="accountLedgerId" class="fontFamily accountLedgerId">
+						<option value="">Select  </option>
+								
+								
+									<option value="1519"
+										>
+										ROUND OFF</option>
+								
+									<option value="4379"
+										>
+										GIRDHARLAL & SONS</option>
+								
+									<option value="4403"
+										>
+										DISCOUNT</option>
+								
+									<option value="4404"
+										>
+										BROKERAGE</option>
+								
+									<option value="4405"
+										>
+										OTHER PURCHASE</option>
+								
+									<option value="4441"
+										>
+										FREIGHT</option>
+								
+						
+					</select>
+		
+			<label for="accountLedgerId" class="error"></label>
+			
+		</div>
+		<div class="col-md-4">
+		<label class="lblTxt fontFamily">Value<sup class="mandatory">*</sup></label>
+		<input  type="number" id="addedValue" name="addedValue" min="0" value=""
+					 class="txtBox fontFamily" /> 
+					<label for="addedValue" class="error"></label></div>
+	
+		<div class="col-md-3 AlignRight" style="margin-top: 28px;">
+		
+		
+		
+			<button id="addition" style="width: 100px" class="greenBtn fontFamily" >Add  </button>
+		
+		
+		
+		</div>
+		</form>
+		</div>
+		
+			<div class="row " >
+			<div class="col-md-12">
+		<!-- table for additions -->
+		<div id="div2" style="width: 100%; overflow-x: auto;">
+			<table class="colorTblCss" style=" margin-bottom: 30px;">
+				<tr>
+					<th >Sl No</th>
+					<th>Ledger  </th>
+					<th>Value </th>
+					
+					<th >Action </th>
+					
+					</tr>
+					
+					
+				
+					<tr>
+						<td colspan="5" style="color: red;">No Record Found</td>
+					</tr>
+				
+					
+			</table>
+		
+		</div>
+		
+		
+		</div>
+		</div>
+		
+		
+		
+		</div>
+		
+	
+		</div>
+		
+		
+		
+		
+		
+		
+	</div>
+	  
+		<div id="loading2"
+			style="display: none; width: 69px; height: 89px; position: absolute; top: 50%; left: 50%; padding: 2px;">
+			<img
+				src="/iTexRAMTest/resources/images/loading.gif"
+				alt="" />
+		</div>
+
+	
+</body>
+</html>
+
+
+<script type="text/javascript">
+	var formvalidate = 0;
+
+	$().ready(
+					function() {
+						 if ( false) {
+					
+							 //getonHandQty();
+							 gstCalculation();
+							 getSelforders();
+							 fabricTypeChanges();
+							 
+						}
+						$('.cgsts').hide();
+						$('.igsts').hide();
+						$('.orderNoDiv').hide();
+						
+						
+						$("#forms")
+						.validate(
+								{
+									rules : {
+										buyerId : "required",
+										consigneeId:"required",
+										warehouseId : "required",
+										orderDate : "required",
+									},
+									messages : {
+										buyerId : "Please Select  Customer",
+										consigneeId:"Please Select  Ship To",
+										warehouseId : "Please Select  Warehouse",
+										orderDate : "Please Select  Order Date"
+									}
+								});
+					
+						$("#itemForms")
+						.validate(
+								{
+									rules : {
+										productId : "required",
+										customerProductName : "required",
+										orderedQuantity:"required",
+										orderQuantityUom : "required",
+										price	: "required",
+									},
+									messages : {
+										productId : "Please Select  Product",
+										customerProductName : "Please Enter Customer  Product Name",
+										orderedQuantity:"Please Enter Quantity",
+										orderQuantityUom : "Please Select  Uom",
+										price  :	"Please Enter Price"
+									}
+								});
+						
+						$("#formForAddition")
+						.validate(
+								{
+									rules : {
+										accountLedgerId : "required",
+										addedValue	: "required",
+									},
+									messages : {
+										accountLedgerId : "Please Select  Ledger",
+										addedValue  :	"Please Enter Value"
+									}
+								});
+						
+						
+						
+						
+		
+						$("#promiseDate")
+								.datepicker(
+										{
+											showOn : "button",
+											buttonImage : "/iTexRAMTest/resources/images/cal.JPG",
+											buttonImageOnly : true,
+											buttonText : "Select date",
+											changeMonth : true,
+											changeYear : true,
+											dateFormat : 'mm/dd/yy',
+										});
+
+						$("#orderDate")
+						.datepicker(
+								{
+									showOn : "button",
+									buttonImage : "/iTexRAMTest/resources/images/cal.JPG",
+									buttonImageOnly : true,
+									buttonText : "Select date",
+									changeMonth : true,
+									changeYear : true,
+									dateFormat : 'dd/mm/yy',
+									
+								});
+						
+						
+						$("#deliveryDate")
+						.datepicker(
+								{
+									showOn : "button",
+									buttonImage : "/iTexRAMTest/resources/images/cal.JPG",
+									buttonImageOnly : true,
+									buttonText : "Select date",
+									changeMonth : true,
+									changeYear : true,
+									dateFormat : 'dd/mm/yy',									
+									
+									
+								});
+						
+						$("#poDate")
+						.datepicker(
+								{
+									showOn : "button",
+									buttonImage : "/iTexRAMTest/resources/images/cal.JPG",
+									buttonImageOnly : true,
+									buttonText : "Select date",
+									changeMonth : true,
+									changeYear : true,
+									dateFormat : 'dd/mm/yy',
+								
+								});
+
+				$('#saveSalesOrder')
+						.click(
+								function() {
+									if($("#forms").valid()){
+										$("#saveSalesOrder").hide();
+										var form = document.getElementById("forms");
+										var salesOrderId = $('#salesOrderId').val();
+										var buyerId=$('#buyerId').val();
+										form.action = "/iTexRAMTest/salesorder/saveSalesOrderNew?buyerId="+buyerId+"";
+										form.submit();
+									}else{
+										 $("#saveSalesOrder").show();
+									}
+								});
+					var onButtonClickLoad = $('.alert').is(':visible');
+					var url = window.location.href;
+					if(document.getElementById('buyerId').value != "" && !onButtonClickLoad && !url.includes('salesOrderAdditions') && !url.includes('salesOrderItem')){
+						var buyerId = document.getElementById('buyerId').value;	
+						var salesOrderId = document.getElementById('salesOrderId').value;
+						/* var parentOrderId =  document.getElementById('parentOrderId').value;
+						if(parentOrderId != undefined && parentOrderId != ""){
+							showNotes(parentOrderId, salesOrderId, buyerId, 'BackOrderNotes',true);
+						}else{
+							showNotes(0, salesOrderId, buyerId, 'OrderNotes',true);
+						}	 */					
+					}
+					
+					});
+ 
+	
+	 /* addition save  */
+	
+	$('#addition')
+	.click(
+			function() {
+				
+				if($("#formForAddition").valid()){
+					$("#addition").hide();
+				var formForAddition = document.getElementById("formForAddition");
+				var salesOrderId = $('#salesOrderId').val();
+				formForAddition.action = "/iTexRAMTest/salesorder/updateOrderAdditions?isAdd=1";
+				formForAddition.submit();
+				}else{
+					$("#addition").show();
+				}
+			});
+	
+	 
+	 
+	 
+	$('#approve')
+	.click(
+			function() {
+				
+				var formForApproval = document.getElementById("formForApproval");
+				var salesOrderId = $('#salesOrderId').val();
+				formForApproval.action = "/iTexRAMTest/salesordernew/saveSalesOrderApprove";
+				formForApproval.submit();
+				
+			});
+				
+	/* item save  */
+	$('#saveSalesOrderItem')
+			.click(
+					function() {
+						
+						if($("#itemForms").valid()){
+							$("#saveSalesOrderItem").hide();
+						var itemForms = document.getElementById("itemForms");
+						var salesOrderId = $('#salesOrderId').val();
+						itemForms.action = "/iTexRAMTest/salesorder/updateSalesItem?orderId="
+								+ salesOrderId + "&itemUpdate=1";
+						itemForms.submit();
+						}else{
+							 $("#saveSalesOrderItem").show();
+						}
+					});
+
+	
+	function getNetAmount(indexval)
+	{
+		
+		
+		var orderedQuantityElement = document.getElementById("orderedQuantity");
+	    var orderedQuantity = parseFloat(orderedQuantityElement.value);
+	    if(!isNaN(orderedQuantity)){
+	    orderedQuantity = orderedQuantity.toFixed(2);
+	    orderedQuantityElement.value = orderedQuantity;
+	    }else{
+	    	orderedQuantity = 0;
+	    }
+	    
+	    
+	    var priceElement = document.getElementById("price");
+	    var price = parseFloat(priceElement.value);
+	    if(!isNaN(price)){
+	    	price = price.toFixed(2);
+	    	priceElement.value = price;
+	    }else{
+	    	 price = 0;
+	    }
+	    
+	    
+	    var netAmount = (orderedQuantity * price).toFixed(2);
+	    $('#netAmount').val(netAmount);
+	    
+	    var orders= $('#orders').val();
+	    var orderqty= $('#orderqty').val();
+	    var genqty= $('#genqty').val();
+	    var balance=orderqty-genqty;
+	    if(!isNaN(orderedQuantity)&&!isNaN(balance) && !orders==""){
+	    if(orderedQuantity>balance){
+	    	alert("Quanity is more than avilable");
+	    }
+	    }
+	    gstCalculation();
+	    getNoofPieces();
+	}
+	function getProductName(select){
+		
+		var selectElement = document.getElementById("productId");
+	    var customerProductName = selectElement.options[selectElement.selectedIndex].text;
+	    var selectedValue = selectElement.value;
+	    
+	    if (selectedValue === "") {
+	  	    $('#customerProductName').val('');
+	      } else {
+	    
+	  	    $('#customerProductName').val(customerProductName);
+
+	      }
+	}
+	
+	
+	
+	
+	
+	 function getUOM() {
+		
+		 var productId = document.getElementById('productId').value;	
+		 $
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/salesordernew/getUOM',
+				type : 'post',
+				data : {								
+					'productId' : productId,
+				},
+			success : function(response) {
+			
+			  
+			       $('#orderQuantityUom').val(response.uomId).trigger("chosen:updated"); 
+			
+              
+			},
+			error : function(response) {
+					console.log(response);
+				}
+			});
+	}
+	
+	
+	
+	function getCustomerDetails() {
+		var buyerId = document.getElementById('buyerId').value;	 		 
+			$
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/salesordernew/getCustomerDetails',
+				type : 'post',
+				data : {								
+					'buyerId' : buyerId,
+				},
+			success : function(response) {
+				var shipToId;
+				var wareHouseIdByCustomer;
+				var html = '<option value="">Select ship To</option>';
+			              response.consigneeDetails.forEach(function(element) { 
+			            	  html += '<option value="' +element[0] + '">'
+								+ element[1]+ '</option>';	
+								
+								  if (response.consigneeDetails.length === 1) {
+									  shipToId=element[0];
+								  }
+			       });	
+			   if (response.consigneeDetails.length === 1) {
+				   $('#consigneeId').html(html);
+				   $('#consigneeId').val(shipToId).trigger("chosen:updated"); 
+				   
+				   
+				   
+				  /*  showShippingAddress(); */
+				   
+			  
+				   
+			   }else{
+				   $('#consigneeId').html(html);
+			       $('#consigneeId').val('').trigger("chosen:updated"); 
+			   }
+
+			    
+				var html1 = '<option value="">Select ship To</option>';
+	              response.warehouseDetails.forEach(function(element) { 
+	            	  html1 += '<option value="' +element[0] + '">'
+						+ element[1]+ '</option>';	
+						
+						  if (response.warehouseDetails.length === 1) {
+							  wareHouseIdByCustomer=element[0];
+						  }
+	       });	
+	   if (response.warehouseDetails.length === 1) {
+		   $('#warehouseId').html(html1);
+		   $('#warehouseId').val(wareHouseIdByCustomer).trigger("chosen:updated"); 
+	   }else{
+		   $('#warehouseId').html(html1);
+	       $('#warehouseId').val('').trigger("chosen:updated"); 
+	   }
+	   
+	   
+	    if (response.transportationId > 0) {
+		   $('#transportationId').val(response.transportationId).trigger("chosen:updated"); 
+	   }else{
+		   $('#transportationId').val('').trigger("chosen:updated"); 
+	   } 
+	   
+	   if (response.paymentTermsId > 0) {
+		   
+		   $("#termsOfpaymentId").prop("disabled", true);
+		   
+		   $('#termsOfpaymentId').val(response.paymentTermsId).trigger("chosen:updated"); 
+		   $('#paymentTermsId').val(response.paymentTermsId);
+	   }else{
+		   $("#termsOfpaymentId").prop("disabled", false);
+		   $('#termsOfpaymentId').val('').trigger("chosen:updated");
+	   }
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   showNotes(0, 0, buyerId, 'CustomerNotes',true);	   
+		},
+			error : function(response) {
+					console.log(response);
+				}
+			});
+		}
+	
+	
+
+
+	  // Function to handle changes in quantityToShip input
+	  function checkQuantity() {
+		  var orderedQuantity = parseFloat(document.getElementById('orderedQuantity').value);
+          var quantityToShip = parseFloat(document.getElementById('quantityToShip').value);
+
+          if (quantityToShip > orderedQuantity) {
+              // Show SweetAlert
+              Swal.fire({
+                 icon: 'warning',
+
+      	        title: 'Warning',
+      	        text: 'Quantity to ship is Greater than Order quantity.Do you want to Continue? ' ,
+                  showCancelButton: true,
+                  confirmButtonText: 'OK',
+                  cancelButtonText: 'Cancel',
+                  
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                  } else {
+                      document.getElementById('quantityToShip').value = '';
+                  }
+              });
+          } 
+      }
+	  
+	 /*  $().ready(
+				function() {
+					 var salesOrderId = document.getElementById('salesOrderId').value;
+					
+					
+					 if (salesOrderId > 0) {
+					var table = document.querySelector('.colorTblCss');
+					var rows = table.getElementsByTagName('tr');
+					var numberOfRows = rows.length;
+			console.log(numberOfRows);
+					
+					if (numberOfRows < 4) {
+				        var divElement = document.getElementById('divForItem');
+				        divElement.style.height = '260px';
+				    }else{
+				    	 var divElement = document.getElementById('divForItem');
+					        divElement.style.height = '260px';
+				    }
+					 }
+				}); */
+	  
+	  
+	  
+	  function getPickStaus() {
+	        var checkbox = document.getElementById('pick');
+	        var readyToPickInput = document.getElementById('readyToPick');
+
+	        if (checkbox.checked) {
+	            readyToPickInput.value = 'true';
+	        } else {
+	            readyToPickInput.value = 'false';
+	        }
+	    }
+	  
+
+	  
+	  function getPriceType() {
+			
+			 var productId = document.getElementById('productId').value;
+			 var warehouseId = document.getElementById('warehouseId').value;
+			 var buyerId = document.getElementById('buyerId').value;
+			 var orderDate =document.getElementById('orderDate').value;
+			 $
+				.ajax({
+					dataType : 'json',
+					url : '/iTexRAMTest/salesordernew/getPriceType',
+					type : 'post',
+					data : {								
+						'productId' : productId,
+						 'warehouseId' : warehouseId,
+						 'buyerId' : buyerId,
+						  'orderDate' : orderDate,
+					},
+				success : function(response) {
+				
+				  if(response.specialPrice == null){
+					  $('#price').val('');
+				  }else{
+					  $('#price').val(response.specialPrice);
+					  getNetAmount(0);
+				  }
+				       
+	              
+				},
+				error : function(response) {
+						console.log(response);
+					}
+				});
+			 
+			
+		}
+	  
+	  
+
+	  
+	  
+	  function validateDates() {
+	        var orderDate = new Date(document.getElementById("orderDate").value);
+	        var promiseDateInput = document.getElementById("promiseDate");
+	        if(promiseDateInput!=null){
+	        var promiseDateValue = promiseDateInput.value;
+	        }
+	      var promiseDate = new Date(promiseDateValue);
+
+        if (promiseDate < orderDate) {
+            alert("Promised date cannot be less than order date.");
+            promiseDateInput.value = "";
+        }
+	  }
+	  
+	  $(document).ready(function(){
+			$('.usaFormat2').each(function() {
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-US', {
+	                	maximumFractionDigits: 2,
+	                	minimumFractionDigits: 2,
+	                    currency: 'USD'
+	                }).format(a);
+	                $(this).html(i);
+	            }
+	        });
+		});
+	  
+	  function confirmdelete(event) {
+		    event.preventDefault();
+
+		    const href = event.currentTarget?.href;
+
+		    if (!href) {
+		        console.error('Error: href is null or undefined');
+		        return;
+		    }
+
+		    Swal.fire({
+		        title: 'Are you sure you want to delete this?',
+		        text: '',
+		        icon: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        confirmButtonText: 'Yes, delete it!'
+		    }).then((result) => {
+		        if (result.isConfirmed) {
+		            window.location.href = href;
+		        }
+		    });
+		}
+	  function getonHandQty() {
+			
+			 var productId = document.getElementById('productId').value;
+			   var wareHouseId = document.getElementById('warehouseId').value;
+			   var salesOrderId = document.getElementById('salesOrderId').value;
+			 $
+				.ajax({
+					dataType : 'json',
+					url : '/iTexRAMTest/salesordernew/getonHandQty',
+					type : 'post',
+					data : {								
+						'productId' : productId,
+						'wareHouseId' : wareHouseId,
+						'salesOrderId' : salesOrderId,
+					},
+				success : function(response) {
+				if(response.onHandQty > 0){
+				       var formattedQty = response.onHandQty.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+// 				        $('#onhandQty').text(formattedQty);
+				        
+				        var onOrderQtyHtml = '<a href="#"  onclick="navigateToProductInquiryReport()">' + formattedQty + '</a>';
+				        $('#onhandQty').html(onOrderQtyHtml);
+
+				        
+				        
+				        
+				}else{
+					$('#onhandQty').text('0.0'); 
+				}
+				
+				
+				 if(response.availableQty > 0){
+				       var formatedavailableQty = response.availableQty.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+				        $('#availableQty').text(formatedavailableQty);
+				}else{
+					$('#availableQty').text('0.0'); 
+				} 
+				
+				 
+				 if(response.OnOrderQty > 0){
+				       var formatedOnOrderQty = response.OnOrderQty.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+				        var onOrderQtyHtml = '<a href="#"  onclick="navigateToPurchaseOrderReport()">' + formatedOnOrderQty + '</a>';
+				        $('#onOrderQty').html(onOrderQtyHtml);
+					}else{
+						$('#onOrderQty').text('0.0'); 
+					} 
+				
+			
+				
+				 if(response.backOrderQty > 0){
+				       var formatedbackOrderQty = response.backOrderQty.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+				        $('#backOrderQty').text(formatedbackOrderQty);
+				        var backOrderQtyHtml = '<a href="#"  onclick="navigateToSalesOrderStatusItemWiseReport()">' + formatedbackOrderQty + '</a>';
+				        $('#backOrderQty').html(backOrderQtyHtml);
+				        
+				        
+				}else{
+					$('#backOrderQty').text('0.0'); 
+				} 
+				
+				
+				
+	              
+				},
+				error : function(response) {
+						console.log(response);
+					}
+				});
+		}
+	  function showShippingAddress() {
+			var consigneeId = document.getElementById('consigneeId').value;	 		 
+				$
+				.ajax({
+					dataType : 'json',
+					url : '/iTexRAMTest/salesordernew/getShippingAddress',
+					type : 'post',
+					data : {								
+						'consigneeId' : consigneeId,
+					},
+					success: function(response) {
+						
+			            if (response.shippingAddressForOrder && response.shippingAddressForOrder.length > 0) {
+
+			            	var shippingAddress = response.shippingAddressForOrder[0]; // Get the first element
+			                var addressText = shippingAddress[0] + "<br>" +
+			                                  shippingAddress[1] + ", " +
+			                                  shippingAddress[2] + " " +
+			                                  shippingAddress[3];
+			                $('#shipToAddress').html(addressText);
+			            }else{
+			            	 $('#shipToAddress').html('');
+			            }
+			                
+			                
+			                
+			        },
+			        error: function(response) {
+			            console.log(response);
+			        }
+			    });
+			}
+
+	  
+	  $()
+	  .ready(function() {
+	  			/*  $("#buyerId_chosen").on("keyup", function(e){
+	  					chosenKeyPressed(e,$("#buyerId").attr("id"),1);
+	  					
+	  				}); */
+	  			 
+	  		
+	  		});
+	  
+	  
+
+	/*   function chosenKeyPressed(event,id,flag){
+			var buyerId = $('#buyerId').val();
+				var text= $("#"+id).next('.chosen-container').find('.chosen-search').find('input').val();
+				
+				 if (text.length >= 3) {
+				
+				
+				 if(event.keyCode!=40 && event.keyCode!=38 && event.keyCode!=13 && event.keyCode!=9){
+				  
+				  $.ajax({
+						url : "/iTexRAMTest/buyer/getCustomerDetails",
+						dataType : 'json',
+						type : "GET",
+						data : {
+							'text' : text,
+							'flag':flag,
+							'buyerId' : buyerId
+						},
+						contentType : "application/json;charset=utf-8",
+						async:false,
+						success : function(data) {
+							var status="";
+							
+							if(flag==1){
+							$("#"+id).empty();
+							if(data.customerDetails.length>0){
+								$("#"+id).append('<option value="">Select</option>');
+							 data.customerDetails.forEach(function(element) {
+							if(element[1]!=null){
+								$("#"+id).append('<option value='+element[0]+ '>'+element[1]+ '</option>');
+							}
+							
+							 });
+							}else{
+								$("#"+id).append('<option value "">Start Typing</option>');
+							}
+							}
+						}
+					 });
+				  
+				  $("#"+id).trigger("chosen:updated");
+				  $("#"+id).next('.chosen-container').find('.chosen-search').find('input').val(text); 
+				 }
+				 
+				 }
+			 } */
+	  function navigateToPurchaseOrderReport(){
+		  
+		  productId=$('#productId').val();
+		    
+		    var url = "/iTexRAMTest/purchaseorder/poStatusItemWiseReport?productId=" + productId + "&poStatus=Printed,Ordered";
+		    window.open(url, '_blank');
+	  }
+	  function navigateToProductInquiryReport(){
+		  productId=$('#productId').val();
+		    var url = "/iTexRAMTest/lot/inventoryavailablereport?productId=" + productId + " &groupOrLotWise=2 ";
+		    window.open(url, '_blank'); 
+	  }
+	 function navigateToSalesOrderStatusItemWiseReport(){
+		 productId=$('#productId').val();
+		    var url = "/iTexRAMTest/salesordernew/salesOrderStatusItemWiseReport?productId=" + productId + "&orderStatus=Ordered,ReadyToPick,PendingApproval";
+		    window.open(url, '_blank'); 
+	 }
+	 
+	 
+	 function getroutedetails(contractTypeId) {
+		 	$
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/salesorder/getRouteDetails',
+				type : 'get',
+				data : {								
+					'contractTypeId' : contractTypeId
+				},
+			
+			success : function(response) {	
+				var html = '<option value="">Select </option>';
+		          response.contractOrderRoutes.forEach(function(element) { /* console.log(element[0]); */
+	              html += '<option value="' +element[0] + '">'
+						+ element[1]+ '</option>'; 		 													 
+	     });   
+	       $('#contractOrderRouteId').html(html);
+	       $('#contractOrderRouteId').val('').trigger("chosen:updated");             
+		
+			},
+			error : function(response) {
+					console.log(response);
+				}
+			}); 
+		}
+	 
+	
+		   function fabricTypeChanges() {
+		        var selectedValue = $('#isFinishedProduct').val();
+		        var finishedQualitytValue=$('#finishedQualitytValue').val();
+		        var sortQualitytValue=$('#sortQualitytValue').val();
+		        
+		        // Show the extra div only if the selected value is "2" (Grey)
+		        /* if (selectedValue == "2") {
+		            $('#finishedDiv').show();
+		        } else {
+		            $('#finishedDiv').hide();
+		        } */
+		        
+		        
+		        
+		        
+		        
+		      //  $('#buyerProductName_'+x).val('').trigger("chosen:updated");
+				if(selectedValue=="1")
+				{
+					$('#finishedDiv').show();
+					var element = document.getElementById('finishedQuality');
+				    element.setAttribute('required', true);
+					
+				 	$
+					.ajax({
+						dataType : 'json',
+						url : '/iTexRAMTest/salesorder/getfinishedsortDetails',
+						type : 'post',
+						data : {								
+							'value' : selectedValue,
+							'isExport':2
+						},
+					success : function(response) {	
+					 
+					var html = '<option value="">Select Quality </option>';
+				    response.sortMasters.forEach(function(element) { 
+			           html += '<option value="' +element[0] + '">'
+			           +element[2]+ '</option>'; 		 													 
+			       }); 	
+				  
+			         $('#finishedQuality').html(html);
+			         if(finishedQualitytValue!="" && finishedQualitytValue!=null){
+			        	 $('#finishedQuality').val(finishedQualitytValue).trigger("chosen:updated");   
+			         }else{
+			        	 $('#finishedQuality').val('').trigger("chosen:updated");    
+			         }
+			         
+					},
+					error : function(response) {
+							console.log(response);
+						}
+					}); 
+				}
+				if(selectedValue=="2")
+				{
+					 $('#finishedDiv').hide();
+					 var element = document.getElementById('finishedQuality');
+					    element.removeAttribute('required');
+				 	$
+					.ajax({
+						dataType : 'json',
+						url : '/iTexRAMTest/salesorder/getfinishedsortDetails',
+						type : 'post',
+						data : {								
+							'value' : selectedValue,
+							'isExport':2
+						},
+					success : function(response) {	
+					 
+						var html = '<option value="">Select Quality </option>';
+				          response.sortMasters.forEach(function(element) { /* console.log(element[0]); */
+			                html += '<option value="' +element[0] + '">' +element[2]+ '</option>'; 														 
+			       }); 	
+			             
+			         $('#sortMasterId').html(html);
+			         if(sortQualitytValue!="" && sortQualitytValue!=null){
+			        	 $('#sortMasterId').val(sortQualitytValue).trigger("chosen:updated"); 
+			         }else{
+			        	 $('#sortMasterId').val('').trigger("chosen:updated"); 
+			         }
+			          
+			        
+					},
+					error : function(response) {
+							console.log(response);
+						}
+					}); 
+				}
+		    }
+		    
+		    
+		    
+	
+		    
+		    
+		
+	 
+	    
+	  function gstCalculation(){
+		  var sortMasterId = $('#sortMasterId').val();
+	    	var buyerId=$('#buyerId').val();
+	    	var clientStateId=$('#clientStateId').val();
+	    	var netAmount=0.00;
+	    	netAmount=Number($('#netAmount').val());
+	    	$.ajax({
+	    		dataType:'json',
+	    		url:'/iTexRAMTest/salesorder/getGstPercent',
+	    		type: 'post',
+	    		data: {
+	    			'sortmasterid':sortMasterId,	
+	    			'buyerId':buyerId,
+	    			'clientStateId':clientStateId
+	    		},
+	    		success: function(response){
+	    			var cgstAmt=0.00;
+	    			var sgstAmt=0.00;
+	    			var igstAmt=0.00;
+	    			if (netAmount!=null){
+	    				if(response.commonStateFlag==1){
+	    					$('.cgsts').show();
+	    					$('.igsts').hide();
+	    					cgstAmt=((netAmount*(response.cgstPercent/100))).toFixed(2);
+	    					sgstAmt=((netAmount*(response.sgstPercent/100))).toFixed(2);
+	    					$('#cgstPercent').val(response.cgstPercent);
+	    					$('#sgstPercent').val(response.sgstPercent);
+	    					if(cgstAmt!=null){
+	    						$('#cgstAmount').val(cgstAmt);
+	    						var total1 = (netAmount + Number(cgstAmt));
+	    						$('#totalAmount').val(total1);
+	    						netAmount=total1;
+	    						//$('#totalAmount').val((netAmount+Number(cgstAmt)).toFixed(2))
+	    					}
+	    					if(sgstAmt!=null){
+	    						$('#sgstAmount').val(sgstAmt);
+	    						var total2 = (netAmount + Number(sgstAmt));
+	    						$('#totalAmount').val(total2);
+	    						//$('#totalAmount').val((netAmount+Number(sgstAmt)).toFixed(2))
+	    					}
+	    				}else if(response.commonStateFlag==0){
+	    					$('.cgsts').hide();
+	    					$('.igsts').show();
+	    					igstAmt=((netAmount*((isNaN(response.igsttPercent)?0.00:response.igsttPercent)/100))).toFixed(2);
+	    					$('#igstPercent').val(response.igsttPercent);
+	    					if(igstAmt!=null){
+	    						$('#igstAmount').val(igstAmt);
+	    						$('#totalAmount').val(netAmount+Number(igstAmt))
+	    					}
+	    				}
+	    				
+	    			}
+	    			
+	    			/* if(response.qualitycode){
+	    				document.getElementById("buyerProductName").value = response.qualitycode;
+	    			}else{
+	    				document.getElementById("buyerProductName").value="";
+	    			} */
+	    		},
+	    		error: function(response){
+	    			console.log(response)
+	    		}
+	    		
+	    	});
+	  }
+	    
+	  function getBuyerProduct(){
+		  var sortMasterId = $('#sortMasterId').val();
+	    	$.ajax({
+	    		dataType:'json',
+	    		url:'/iTexRAMTest/salesorder/getBuyerProduct',
+	    		type: 'post',
+	    		data: {
+	    			'sortmasterid':sortMasterId
+	    		},
+	    		success: function(response){
+	    			if(response.qualitycode){
+	    				/* document.getElementById("buyerProductName").value = response.qualitycode; */
+	    			}else{
+	    				document.getElementById("buyerProductName").value="";
+	    			}
+	    		},
+	    		error: function(response){
+	    			console.log(response)
+	    		}
+	    		
+	    	});
+	  }
+	  
+	  function getSelforders(qualityflag){
+		  var sortMasterId = $('#sortMasterId').val();
+	    	var buyerId=$('#buyerId').val();
+	    	var contractRouteId=$('#contractOrderRouteId').val();
+	    	var designMasterId=$('#designMasterId').val();
+	    	var selvedgeId=$('#selvedgeId').val();	    	
+	    	var salesOrderId=$('#salesOrderId').val();
+	    	var netAmount=0.00;
+	    	var selfOrderItemId=$('#selfOrderItemIdValue').val();
+	    	netAmount=Number($('#netAmount').val());
+	    	$.ajax({
+	    		dataType:'json',
+	    		url:'/iTexRAMTest/salesorder/getSelforders',
+	    		type: 'post',
+	    		data: {
+	    			'sortmasterid':sortMasterId,	
+	    			'contractRouteId':contractRouteId,
+	    			'buyerId':buyerId,
+	    			'designMasterId':designMasterId,
+	    			'selvedgeId':selvedgeId,
+	    			'salesOrderId':salesOrderId
+	    		},
+	    		success: function(response){
+	    			
+	    			if(response.designMaster!=null && qualityflag==1){
+	    			var html = '<option value="">Select Design</option>';
+				    response.designMaster.forEach(function(element) { 
+			           html += '<option value="' +element[0] + '">'
+			           + element[1]+ '</option>'; 		 													 
+			       }); 	
+				    $('#designMasterId').html(html);
+					$('#designMasterId').val('').trigger("chosen:updated");  
+	    			}
+	    			if ((response.showInWarehouse!=null && response.showInWarehouse==1) &&(response.isselfbuyer!=null && response.isselfbuyer==0)){
+	    				if((sortMasterId!="")  ||  (sortMasterId!="" && designMasterId!="") ||  (sortMasterId!="" && designMasterId!="" && selvedgeId!="")){
+	    				
+	    				
+	    				$('.orderNoDiv').show();	
+	    			var html = '<option value="">Select</option>';
+				    response.salesOrderItemDetails.forEach(function(element) { 
+			           html += '<option value="' +element[0] + '">'
+			           + element[1]+ '</option>'; 		 													 
+			       }); 	
+				    $('#orders').html(html);
+				    if(selfOrderItemId!="" && selfOrderItemId!=null){
+				    	$('#orders').val(selfOrderItemId).trigger("chosen:updated");  
+				    }else{
+				    	$('#orders').val('').trigger("chosen:updated");  
+				    }
+			          
+			         
+			         
+	    			}
+	    			else{
+	    				$('.orderNoDiv').hide();	
+	    			}
+	    			
+	    			}
+	    			
+	    		},
+	    		error: function(response){
+	    			console.log(response)
+	    		}
+	    		
+	    	});
+	  }
+	  
+	  
+	  
+	  
+	  function gstGenratedQuentity(){
+		  var orderItemId = $('#orders').val();
+		  
+	    	$.ajax({
+	    		dataType:'json',
+	    		url:'/iTexRAMTest/salesorder/gstGenratedQuentity',
+	    		type: 'post',
+	    		data: {
+	    			'orderItemId':orderItemId	
+	    			
+	    		},
+	    		success: function(response){
+	    			var orderQty=0.00;
+	    			var genratedQty=0.00;
+	    			var balanceQty=0.00;
+	    			response.usedSelfBalanceQty.forEach(function(element){
+	    				orderQty=element[1];
+	    				genratedQty=element[0];
+	    				balanceQty=element[2];
+	    				$('#orderqty').val(orderQty);
+	    				$('#genqty').val(genratedQty);
+	    			});
+	    			
+	    			var orderedQuantityElement = document.getElementById("orderedQuantity");
+	    		    var orderedQuantity = parseFloat(orderedQuantityElement.value);
+	    			 var orderqty= $('#orderqty').val();
+	    			    var genqty= $('#genqty').val();
+	    			    /* var balance=orderqty-genqty; */
+	    			    if(!isNaN(orderedQuantity)&&!isNaN(balanceQty)){
+	    			    if(orderedQuantity>balanceQty){
+	    			    	alert("Quanity is more than avilable");
+	    			    }
+	    			    }
+	    			
+	    		},
+	    		error: function(response){
+	    			console.log(response)
+	    		}
+	    		
+	    	});
+	  }
+	  
+	  function getNoofPieces(){
+		  var orderqty = $('#orderedQuantity').val();
+		  var pieceLength = $('#pieceLength').val();
+		  
+		  if(orderqty!=null && pieceLength!=null){
+			  $('#totalPiece').val(Math.round(orderqty/pieceLength));
+		  }
+		  
+	  }
+	  
+	  
+	  function getSortQuality(sortMasterId) {
+		  
+	        var sortQualitytValue=$('#sortQualitytValue').val();
+
+			$
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/salesorder/getGreySortQuality',
+				type : 'post',
+				data : {								
+					'sortmasterId' : sortMasterId
+				},
+			success : function(response) {	
+			 
+				var html = '<option value="">Select</option>';
+		          response.sortMasters.forEach(function(element) { /* console.log(element[0]); */
+	                html += '<option value="' +element[0] + '">'
+	                + element[2] +'</option>';  		 													 
+	       }); 	
+	             
+	        
+	         
+	         $('#sortMasterId').html(html);
+	         if(sortQualitytValue!="" && sortQualitytValue!=null){
+	        	 $('#sortMasterId').val(sortQualitytValue).trigger("chosen:updated"); 
+	         }else{
+	        	 $('#sortMasterId').val('').trigger("chosen:updated"); 
+	         }
+        
+	        
+			},
+			error : function(response) {
+					console.log(response);
+				}
+			}); 
+			
+		}
+	  
+	  
+	  function getBuyerDetails(id){
+		 	$
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/salesorder/getbuyerdetails',
+				type : 'post',
+				data : {								
+					'buyerId' : id
+				},
+			success : function(response) {	
+			document.getElementById("buyerStateid").value = response.buyerStateId;
+			dispFunc();
+			
+			var html = '<option value="">Select Ship To </option>';
+	          response.consigneelist.forEach(function(element) { 
+              html += '<option value="' +element[0] + '">'
+					+ element[1]+ '</option>'; 		 													 
+              }); 	
+              $('#consigneeId').html(html);
+              $('#consigneeId').val('').trigger("chosen:updated");
+		    
+			
+			
+			},
+			error : function(response) {
+					console.log(response);
+				}
+			}); 
+		}
+	  
+	  function dispFunc() {	
+			var compId = document.getElementById("companyStateid").value;
+			var buyId = document.getElementById("buyerStateid").value;
+			var gstTypee;
+			if(buyId == compId) 
+			{
+				var html = '<option value="">Select Type </option>';
+	           	 		 html += '<option value="2">CGST/SGST</option>';															 
+	                      $('#gstType').html(html);
+	     				  $('#gstType').val(2).trigger("chosen:updated");   
+	     				 gstTypee=2;
+				 }
+			 else
+			{			 
+				 var html = '<option value="">Select Color </option>';
+	   	 		 html += '<option value="1">IGST</option>';															 
+	                      $('#gstType').html(html);
+						  $('#gstType').val(1).trigger("chosen:updated");  
+						  gstTypee=1;
+				 } 
+			$('#gstType1').val(gstTypee);
+			getgst();
+	 	} 
+		
+	  function getgst(){
+			 var gst = document.getElementById("gstType").value;
+			 if (gst == 1) {
+					$('.igst').show();
+					$('.cgst').hide(); 
+				}  if (gst == 2) {
+					$('.igst').hide();
+					$('.cgst').show(); 
+					
+				}  
+		}
+	  
+	  document.getElementById('buyerId').addEventListener('change', function() {
+		    document.getElementById('hiddenBuyerId').value = this.value;
+		});
+</script>
+
+	

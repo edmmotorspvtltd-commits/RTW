@@ -1,0 +1,277 @@
+<!-- Button Animation Styles - Include this in all pages -->
+<style>
+    /* ========== BUTTON BASE ANIMATION ========== */
+    .btn,
+    button,
+    .btn-add,
+    .btn-delete,
+    .btn-primary,
+    .btn-secondary,
+    .btn-success,
+    .btn-danger,
+    .btn-info,
+    .btn-view,
+    .btn-create,
+    .btn-cancel,
+    .btn-login,
+    .btn-logout,
+    .btn-back,
+    .btn-reset,
+    .btn-refresh,
+    .add-item-btn,
+    .back-btn,
+    .logout-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+
+    /* ========== HOVER EFFECTS ========== */
+    .btn:hover,
+    button:hover,
+    .btn-add:hover,
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-success:hover,
+    .btn-danger:hover,
+    .btn-info:hover,
+    .btn-view:hover,
+    .btn-create:hover,
+    .btn-login:hover,
+    .btn-logout:hover,
+    .btn-back:hover,
+    .btn-reset:hover,
+    .btn-refresh:hover,
+    .add-item-btn:hover,
+    .back-btn:hover,
+    .logout-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* ========== ACTIVE/CLICK EFFECTS ========== */
+    .btn:active,
+    button:active,
+    .btn-add:active,
+    .btn-primary:active,
+    .btn-secondary:active,
+    .btn-success:active,
+    .btn-danger:active,
+    .btn-info:active,
+    .btn-view:active,
+    .btn-create:active,
+    .btn-cancel:active,
+    .btn-login:active,
+    .btn-logout:active,
+    .btn-back:active,
+    .btn-reset:active,
+    .btn-refresh:active,
+    .add-item-btn:active,
+    .back-btn:active,
+    .logout-btn:active {
+        transform: translateY(0px) scale(0.98) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* ========== RIPPLE EFFECT ========== */
+    .btn::after,
+    button::after,
+    .btn-add::after,
+    .btn-primary::after,
+    .btn-secondary::after,
+    .btn-success::after,
+    .btn-danger::after,
+    .btn-info::after,
+    .add-item-btn::after,
+    .btn-login::after,
+    .btn-reset::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.4);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1) translate(-50%, -50%);
+        transform-origin: 50% 50%;
+    }
+
+    .btn:focus:not(:active)::after,
+    button:focus:not(:active)::after,
+    .btn-primary:focus:not(:active)::after,
+    .btn-secondary:focus:not(:active)::after,
+    .btn-success:focus:not(:active)::after,
+    .add-item-btn:focus:not(:active)::after,
+    .btn-login:focus:not(:active)::after {
+        animation: ripple 0.6s ease-out;
+    }
+
+    @keyframes ripple {
+        0% {
+            transform: scale(0) translate(-50%, -50%);
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(40) translate(-50%, -50%);
+            opacity: 0;
+        }
+    }
+
+    /* ========== PRIMARY BUTTON GLOW ========== */
+    .btn-primary:hover,
+    .btn-success:hover,
+    .add-item-btn:hover {
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.35) !important;
+    }
+
+    /* ========== DANGER BUTTON GLOW ========== */
+    .btn-danger:hover,
+    .btn-cancel:hover,
+    .btn-delete:hover {
+        box-shadow: 0 8px 25px rgba(244, 67, 54, 0.35) !important;
+    }
+
+    /* ========== INFO BUTTON GLOW ========== */
+    .btn-info:hover,
+    .btn-secondary:hover,
+    .btn-view:hover {
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.35) !important;
+    }
+
+    /* ========== ADD BUTTON BOUNCE ========== */
+    .btn-add:hover,
+    .add-item-btn:hover {
+        animation: bounce 0.3s ease;
+    }
+
+    @keyframes bounce {
+
+        0%,
+        100% {
+            transform: translateY(-2px);
+        }
+
+        50% {
+            transform: translateY(-6px);
+        }
+    }
+
+    /* ========== DELETE BUTTON SHAKE ON HOVER ========== */
+    .btn-delete:hover,
+    .btn-cancel:hover {
+        animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-3px);
+        }
+
+        75% {
+            transform: translateX(3px);
+        }
+    }
+
+    /* ========== PULSE FOR IMPORTANT BUTTONS ========== */
+    .btn-login,
+    .btn-reset {
+        animation: pulse-subtle 2s infinite;
+    }
+
+    @keyframes pulse-subtle {
+
+        0%,
+        100% {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        50% {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    .btn-login:hover,
+    .btn-reset:hover {
+        animation: none;
+    }
+
+    /* ========== ICON SPIN ON REFRESH BUTTON ========== */
+    .btn-refresh:hover {
+        animation: none;
+    }
+
+    .btn-refresh:active {
+        animation: spin-once 0.5s ease;
+    }
+
+    @keyframes spin-once {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ========== DISABLED STATE ========== */
+    .btn:disabled,
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+        animation: none !important;
+    }
+
+    /* ========== LOADING STATE ========== */
+    .btn.loading,
+    button.loading {
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+    .btn.loading::before,
+    button.loading::before {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ========== FOCUS OUTLINE ========== */
+    .btn:focus,
+    button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.3) !important;
+    }
+
+    .btn-primary:focus {
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3) !important;
+    }
+
+    .btn-danger:focus {
+        box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.3) !important;
+    }
+</style>

@@ -1,0 +1,4706 @@
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Sort Master INFO</title>
+<meta http-equiv="Content-Type" content="text/html; charset = utf-8">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="/iTexRAMTest/resources/images/favicon.ico"
+	rel="shortcut icon" type="image/x-icon" />
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/moment.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/moment-with-locales.js"></script>
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/validate.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/bootstrapnew.min.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/loader.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/bootstrap-datetimepicker.min.js"></script>
+
+<script
+	src="/iTexRAMTest/resources/js/jquery-ui.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/fabric_spec_form.js"></script>
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/domestic_fabric_spec.js"></script>
+<link rel="stylesheet"
+	href="/iTexRAMTest/resources/css/jquery-ui.css">
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/bootstrap.min.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/style.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/menu.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/loginPage.css"
+	rel="Stylesheet" />
+
+<link type="text/css"
+	href="/iTexRAMTest/resources/css/bootstrap-datetimepicker.min.css"
+	rel="Stylesheet" />
+<link rel="stylesheet"
+	href="/iTexRAMTest/resources/css/chosen.min.css">
+<script
+	src="/iTexRAMTest/resources/js/chosen.jquery.min.js"></script>
+	
+		
+	<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/datevalidation.js"></script>
+	<script type="text/javascript"
+	src="/iTexRAMTest/resources/js/JsBarcode.all.min.js"></script>
+
+		<input type="hidden" value="1" id="editAccess"/>
+	<input type="hidden" value="1" id="addAccess"/>
+	<input type="hidden" value="yes" id="dynamiceMenuEnabled"/>
+	<input type="hidden" value="1" id="deleteAccess"/>
+<input type="hidden" id="fromFinancialDate" value="2025-04-01 00:00:00.0" />
+<input type="hidden" id="editModeDateLock" value="0" />
+<input type="hidden" id="prevDateSelectionRange" value="0" />
+
+<script>
+
+
+	$(document)
+	.ready(function() {
+	$( "select" ).addClass( "livesearch" );
+	$(".livesearch").chosen({max_selected_options:Infinity,search_contains: true});
+	$.validator.setDefaults({ ignore: ":hidden:not(select)" });
+	 $(".livesearch-deselect").chosen({allow_single_deselect:true});
+	 $('input[type="number"]').attr('onkeypress', ' return (event.charCode == 8 || event.charCode == 0) ? null : ((event.charCode >= 48 && event.charCode <= 57) || event.charCode==46)');
+	 try{
+			if('yes'== $("#dynamiceMenuEnabled").val())
+			checkAddEditAccess();
+		}catch(err){
+			
+		}
+	
+	});
+	 function checkAddEditAccess(){
+			
+			if($("#addAccess").val()==0){
+				$('.skyBlueBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Add")){
+						obj.style.display='none';
+					}
+				});
+			}
+			
+			if($("#editAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("images/edit.png") || obj.src.trim().includes("images/close.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				$('.greenBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Save")||compareValues(obj.value,"Submit")||compareValues(obj.value,"Update")){
+						obj.style.display='none';
+					}
+				});
+				 
+				
+				$('a').each(function(index,anchorTag) {
+				    
+				    if(compareValues(anchorTag.innerHTML,"Edit")){
+				    	anchorTag.style.display='none';
+				    }
+				});
+				
+				
+			}
+		
+			
+			
+			if($("#deleteAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("pageImg/delete.JPG") || obj.src.trim().includes("images/delete.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				 
+				
+				
+			}
+			
+		
+		} 
+		
+		function compareValues(val1,val2){
+			return val1.trim().toUpperCase() === val2.trim().toUpperCase();
+		}
+	
+	function getConfirmation(num){
+    	if(num == 2){
+       var retVal  =  confirm("Do you want to Cancel ?");
+    	}
+    	if(num == 1){
+    		var retVal  =  confirm("Do you want to Go Back ?");
+    	}
+       if( retVal == true ){
+    	   history.go(-1);
+           return false;
+       }
+    }
+	
+	 $(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+	
+	 
+	 $(function() {
+		 $('.txtBox').on('blur',function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    });
+		    
+		   /*  $('textarea').on('blur', function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    }); */
+		});
+	 function getDecimalValue(value)
+	{
+		 actual = Math.trunc(value); 
+		 return Number((value-actual).toFixed(2));
+	}
+	 $(document).ready(function(){
+			$('.indianFormat2').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 2,
+	                	minimumFractionDigits: 2,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		 $(document).ready(function(){
+			$('.indianFormat4').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 4,
+	                	minimumFractionDigits: 4,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		$(document).ready(function(){
+			$('.indianFormat3').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 3,
+	                	minimumFractionDigits: 3,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		
+		$(document).ready(function(){
+			$('.indianFormat0').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 0,
+	                	minimumFractionDigits: 0,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 
+		$(document).ready(function(){
+			$('.indianFormat1').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 1,
+	                	minimumFractionDigits: 1,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 function numberFormater(amount,divId,appendP,maximumFractionDigits_var,minimumFractionDigits_var){
+			var convertedVal = 0;
+			if($.isNumeric(amount)){
+				convertedVal =	amount.toLocaleString('en-IN', {
+			    maximumFractionDigits: maximumFractionDigits_var,minimumFractionDigits: minimumFractionDigits_var
+			});
+			}
+			document.getElementById(divId).innerHTML = convertedVal;
+		}
+	 function checkNumberValue(checkNumber){
+		 	if(checkNumber!=null){
+		 		return $.isNumeric(parseFloat(checkNumber)) ? parseFloat(checkNumber) : 0;	
+		 	}else{
+		 		return 0;
+		 	}
+			
+		} 
+	 
+	 function getDecimalValue(inputId,noOfDecimals){
+		 var value=$(inputId).val();
+		 if($.isNumeric(value)){
+			 value=decimalRound(value,noOfDecimals);
+		 }
+		 $(inputId).val(value);
+		}
+	 
+	 function decimalRound(num,scale){
+			if($.isNumeric(num)){
+				if(!("" + num).includes("e")) {
+				    return +(Math.round(num + "e+" + scale)  + "e-" + scale);
+				  } else {
+				    var arr = ("" + num).split("e");
+				    var sig = ""
+				    if(+arr[1] + scale > 0) {
+				      sig = "+";
+				    }
+				    return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
+				  }
+		 	}else{
+		 		return parseFloat(0).toFixed(scale);
+		 	}
+		} 
+	 function decimalRoundoff(num)
+	 {
+		
+		 if(num!=null)
+		 {
+			 if(Math.round((parseFloat(num)%0.2)*100) %2 !=0)
+		    	{
+				 return num=num+0.01;
+		    	}
+			 else{
+				 return num;
+			 }
+		 }
+		 else {
+			 return 0;
+		 }
+	 }
+	 
+	 (function waitForDatePicker() {
+		 
+		    var attempts = 0;
+		    var maxAttempts = 50;
+
+		    var interval = setInterval(function () {
+		        attempts++;
+
+		        var entryFields = $(".entry-date");
+		        var editFields = $(".edit-date");
+
+		        if (entryFields.length === 0 && editFields.length === 0) {
+		            if (attempts >= maxAttempts) clearInterval(interval);
+		            return;
+		        }
+
+		        var allReady = true;
+		        $(".entry-date, .edit-date").each(function () {
+		            if (!$(this).data("datepicker")) {
+		                allReady = false;
+		            }
+		        });
+
+		        if (!allReady) {
+		            if (attempts >= maxAttempts) clearInterval(interval);
+		            return;
+		        }
+
+		     // ENTRY MODE: allow last N days up to today
+		        $(".entry-date").each(function () {
+		            var f = $(this);
+		            var prevDateSelectionRange = parseInt($("#prevDateSelectionRange").val(), 10); // Convert to integer
+		            if (isNaN(prevDateSelectionRange)) { // Fallback if null/undefined/invalid
+		                prevDateSelectionRange = 0;
+		            }
+
+		            f.datepicker("option", {
+		                minDate: -prevDateSelectionRange,  // N days before today
+		                maxDate: 0                         // today
+		            });
+
+		            if (!f.val()) {
+		                f.datepicker("setDate", new Date());
+		            }
+		        });
+
+
+		        // EDIT MODE: lock date
+		        $(".edit-date").each(function () {
+		            var f = $(this);
+
+		            f.prop("readonly", true);
+
+		            f.datepicker("option", "beforeShow", function () {
+		                return false;
+		            });
+
+		            var t = setInterval(function () {
+		                var btn = f.next(".ui-datepicker-trigger");
+		                if (btn.length > 0) {
+		                    btn.css("pointer-events", "none");
+		                    btn.css("opacity", "0.5");
+		                    clearInterval(t);
+		                }
+		            }, 50);
+		        });
+
+		        clearInterval(interval);
+		    }, 100);
+
+		})();	 
+	</script>
+
+<script type="text/javascript"
+	src="/iTexRAMTest/resources/css/nicEdit.js"></script>
+<script type="text/javascript">
+bkLib.onDomLoaded(function() {	
+	new nicEditor().panelInstance('sortDrawing1');
+	new nicEditor().panelInstance('pegPlan1');
+	//new nicEditor({maxHeight : 100}).panelInstance('sortDrawing1');
+});
+</script>
+
+<style type="text/css">
+
+.spec {
+	margin: 0;
+	padding: 0;
+	background-color: #00B0F1;
+	text-align: center;
+	border: 1px solid green;
+}
+
+.spec1 a {
+	text-decoration: none;
+	color: white;
+}
+
+.spec1 th:hover {
+	background-color: #00B0F1;
+	display: block;
+	color: black;
+}
+
+.colorTblCss1 {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.colorTblCss11 td, .colorTblCss1 th {
+	border: 1px solid #ddd;
+}
+
+.colorTblCss1 tr:nth-child(even) {
+	background: #CCC
+}
+
+.colorTblCss1 tr:nth-child(odd) {
+	background: #FFF
+}
+
+.colorTblCss1 td {
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-right: 5px;
+	padding-left: 5px;
+	text-align: center;
+	font-family: 'Avenir ltStd';
+	font-weight: bold;
+	font-size: 11pt;
+	border: 1px solid #4b7f75;
+	color: #6d6d6d;
+}
+
+.colorTblCss1 tr:nth-child(even) {
+	background-color: #efefef !important;
+}
+
+.colorTblCss1 tr:hover {
+	background-color: #ddd;
+}
+
+.colorTblCss1 th {
+	padding-top: 8px;
+	padding-bottom: 8px;
+	text-align: center;
+	background-color: #394240;
+	color: white;
+	font-family: 'Avenir a';
+	font-weight: bold;
+	font-size: 10pt;
+	text-transform: uppercase;
+}
+
+.txtBox1 {
+	border-radius: 3px;
+	border: 1px solid #2b2b2b;
+	background-color: transparent !important;
+	font-size: 11.5pt !important;
+	margin: 15px 0px 5px 0px;
+	font-family: 'Avenir ltStd' !important;
+	color: #787878 !important;
+	font-weight: bold !important;
+}
+
+.new-table {
+	border-collapse: collapse;
+	margin: 15px 0;
+	min-width: 100px;
+	border-radius: 5px 5px 0 0;
+	overflow: hidden;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+	text-align: center;
+}
+
+.new-table th {
+	background-color: #394240;
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	padding: 12px 15px;
+	border: 1px solid black;
+}
+
+.new-table td {
+	padding: 4px 2px;
+	color: black;
+	border: 1px solid black;
+	text-align: center;
+}
+
+.new-table tbody tr {
+	border-bottom: 1px solid lightgrey;
+}
+
+.new-table tbody tr:nth-of-type(even) {
+	background-color: #efefef;
+}
+
+.new-table tbody tr:nth-of-type {
+	border-bottom-color: #394240;
+}
+
+.new-table input {
+	width: 40px;
+}
+</style>
+<script>
+var n=0;
+var formvalidate = 0;
+$()
+		.ready(
+				function() {
+					
+					var quality = document.getElementById("qualityDetails");
+					quality.addEventListener("keypress", function(event) {
+     			 if (event.key === "Enter") {
+       				 alert("New Line is disabled");
+       				 event.preventDefault();
+    			  }
+   				 });
+					
+					
+					$('#greyTable').hide();
+					
+					
+					
+					
+					
+					if(true)
+					{
+						$('.selvedgemeta').hide();
+						$('.selvedgenometa').show();
+					}
+					else
+					{
+						$('.selvedgenometa').hide();
+						$('.selvedgemeta').show();
+					}
+					
+					
+					$(function() {
+						  $('#actGlm').on('input', function() {
+						    this.value = this.value
+						      .replace(/[^\d.]/g, '')             // numbers and decimals only
+						      .replace(/(^[\d]{2})[\d]/g, '$1')   // not more than 2 digits at the beginning
+						      .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
+						      .replace(/(\.[\d]{3})./g, '$1');    // not more than 3 digits after decimal
+						  });
+						});
+					$(function() {
+						  $('#actGsm').on('input', function() {
+						    this.value = this.value
+						      .replace(/[^\d.]/g, '')             // numbers and decimals only
+						      .replace(/(^[\d]{2})[\d]/g, '$1')   // not more than 2 digits at the beginning
+						      .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
+						      .replace(/(\.[\d]{3})./g, '$1');    // not more than 3 digits after decimal
+						  });
+						});
+					
+					$("#MyForms").validate({
+						rules : {
+	
+							sortNumber : "required",
+							qualityDetails : "required",
+							sheddingMechanismId : "required",
+							reed : {
+								required: true,
+								number:true
+							},
+							denting : {
+								required: true,
+								number:true
+							},
+							width: {
+								required: true,
+								number:true
+							},
+							threadOrGala : {
+								required: true,
+								number:true
+							},
+							pickInsert: {
+								number:true
+							},
+							totalEnds :"required",
+							glm :"required",
+							gsm :"required",
+							composition :"required",
+							reedSpace : "required",
+							fabricType : "required",
+							totalPicks :  {
+								required : true,
+								number:true
+							},
+
+							loomType : "required",
+							warpCount : "required",
+							isExportOrder : "required",
+							weftCount : "required",
+							hsnCode: "required",
+							hsnDescription: "required",
+	                       
+							
+			
+						},
+						messages : {
+							sortNumber : 'Please Enter SortNumber/Name ',
+							qualityDetails : 'Please Enter Quality Details ',
+							sheddingMechanismId : 'Please Select  Weave',
+							fabricType : 'Please Select  Fabric Type',
+							reed : {
+								required: 'Please Enter Reed',
+								number:'Please Enter Valid Number'
+							},
+							denting : {
+								required: 'Please Enter Denting',
+								number:'Please Enter Valid Number'
+							},
+							width : {
+								required: 'Please Enter Width',
+								number:'Please Enter Valid Number'
+							},
+							threadOrGala : {
+								required: 'Please Enter Extra Width',
+								number:'Please Enter Valid Number'
+							},
+							pickInsert: {
+								number: 'Please Enter Valid Number'
+							},
+							totalEnds :'Please Enter Ends With Selvedge',
+							glm :'Please Enter CAL GLM With Shrinkage',
+							gsm :'Please Enter CAL GSM With Shrinkage',
+							composition : 'Please Enter Composition',
+							reedSpace  : 'Please Enter Reed Space',
+							totalPicks :{
+								required : 'Please Enter Picks',
+								number: 'Please Enter Valid Number'
+							},
+							loomType : 'Please Select  LoomType',
+							warpCount : 'Please Enter Warp Count',
+							isExportOrder : 'Please Select Create For',
+							weftCount : 'Please Enter Weft Count',
+							hsnCode : 'Please Enter HSN Code',
+							hsnDescription : 'Please Enter HSN Description',
+                         	
+							
+							 	}
+					});		
+					
+					 
+					$('#save')
+							.click(function() {
+								var sortDraw = new nicEditors.findEditor('sortDrawing1');
+								document.getElementById("sortDrawing1").value = sortDraw.getContent();
+								 
+								var pegPl = new nicEditors.findEditor('pegPlan1');
+								document.getElementById("pegPlan1").value = pegPl.getContent();
+								$('.pattern').each(function () {
+						            $(this).rules("add", {
+						                required: true,
+						                messages: {
+						                   required: 'Please Enter Pattern'
+						                  }
+						            });
+						        });
+								$('.itemId').each(function () {
+						            $(this).rules("add", {
+						                required: true,
+						                messages: {
+						                   required: 'Please Select Material'
+						                  }
+						            });
+						        });
+								$('.beamTypeId').each(function () {
+						            $(this).rules("add", {
+						                required: true,
+						                messages: {
+						                   required: 'Please Select Beam Type'
+						                  }
+						            });
+						        });
+								$('.wastePerShrink').each(function () {
+						            $(this).rules("add", {
+						                required: true,
+						                messages: {
+						                   required: 'Please Enter Wastage/shrinkage'
+						                  }
+						            });
+						        });
+								
+											$("#MyForms").valid();
+										if ($("#MyForms").valid() == true) {
+											
+											document.getElementById('save').style.display = 'none';
+											document
+													.getElementById('loading2').style.display = 'block';
+
+											formvalidate = 1;
+											document.getElementById("save").style.display = "none";
+											var sortMasterId = $(
+													'#sortMasterId').val();
+											var qualityDetails = document
+											.getElementById("qualityDetails").value;
+											var reedSpace = document.getElementById("reedSpace").value;
+											
+											var sortNumber = document.getElementById("sortNumber").value;
+											$
+													.ajax({
+														dataType : 'json',
+														type : "GET",
+														url : "/iTexRAMTest/sort/checkSortNumber",
+														data : {
+															'sortMasterId' : sortMasterId,
+															'sortNumber':sortNumber,
+															'quality' : qualityDetails,
+															'reedSpace' :reedSpace
+														},
+														success : function(
+																response) {
+
+															if (response.checksortnumber > 0) {
+																$(
+																		'#ajaxerror')
+																		.html(
+																				'Sort Number / Quality'
+																						+ " "
+																						+ 'Already Exist');
+																document
+																		.getElementById("mastajxerr").style.display = "block";
+																 /* document
+																.getElementById("mastajxerrb").style.display = "none";  */
+																
+																document
+																		.getElementById("save").style.display = "inline-block";
+																document
+																		.getElementById('loading2').style.display = 'none';
+																return false;
+															} else {
+																var form = document
+																		.getElementById("MyForms");
+									
+																	form.action = "/iTexRAMTest/sort/addSortMaster";
+																	form
+																			.submit();
+														
+
+															}
+														},
+														error : function(e) {
+															alert('Error: '
+																	+ e);
+														}
+													});
+											
+											
+											
+											
+											
+											
+											
+
+										/* 	document.getElementById('save').style.display = 'none';
+											document.getElementById('loading2').style.display = 'block';
+											formvalidate = 1;
+											document.getElementById("save").style.display = "none";
+											var sortMasterId= document.getElementById("sortMasterId").value;
+											var form = document.getElementById("MyForms");
+											form.action = "/iTexRAMTest/sort/addSortMaster";
+											form.submit(); */
+										}
+										 
+
+									}); 
+					
+					
+					
+					
+					
+					
+					jQuery(document).delegate('a.add-record', 'click', function(e) {
+						e.preventDefault();  
+						$(".greySortMasterId").chosen('destroy');
+						$(".greyWeave").chosen('destroy');
+					    var content = jQuery('#sampleRow tr'),
+					    size = jQuery('#greyDetails >tr').length,
+					    element = null,    
+					    element = content.clone();
+					   	element.attr('id', 'row_'+size);
+					    element.find('.delete-record').attr('data-id', size);
+					    element.find('.view-record').attr('data-id', size);
+					    element.appendTo('#greyDetails');
+					   
+					    element.find('.greySortMasterId').attr('name','finishedGreyQualityDetails['+size+']'+'.greySortMasterId');
+					    element.find('.greySortNumber').attr('name','finishedGreyQualityDetails['+size+']'+'.sortNumber');
+					    element.find('.greyConsumptionPercentage').attr('name','finishedGreyQualityDetails['+size+']'+'.consumptionPercentage');
+					    element.find('.greyGsm').attr('name','finishedGreyQualityDetails['+size+']'+'.gsm');
+					    element.find('.greyWidth').attr('name','finishedGreyQualityDetails['+size+']'+'.width');
+					    element.find('.greyWeave').attr('name','finishedGreyQualityDetails['+size+']'+'.weave');
+					    
+					    element.find('.greySortMasterId').attr('id','greySortMasterId_'+size);
+					    element.find('.greySortNumber').attr('id','sortNumber_'+size);
+					    element.find('.greyConsumptionPercentage').attr('id','consumptionPercentage_'+size);
+					    element.find('.greyGsm').attr('id','gsm_'+size);
+					    element.find('.greyWarpWeft').attr('id','warpWeft_'+size);
+					    element.find('.greyWidth').attr('id','width_'+size);
+					    element.find('.greyWeave').attr('id','weave_'+size);
+					    element.find('.greySortMasterId').attr('onchange','checkPiece('+size+')');
+					    
+					    element.find('.greySortMasterError').attr('for','greySortMasterId_'+size);
+					    element.find('.perError').attr('for','consumptionPercentage_'+size);
+					    
+					    element.find('.greySortMasterId').attr('class','txtBox marginInInde greySortMasterId consQuality');
+					    
+					    element.find('.greyConsumptionPercentage').attr('class','txtBox fontFamily greyConsumptionPercentage consPer');
+					    
+					    getGreyQuality(size);
+						$(".greySortMasterId").chosen();
+						$(".greyWeave").chosen();
+					    
+					 });
+					
+					
+					
+					jQuery(document).delegate('img.delete-record', 'click', function(e) {
+						e.preventDefault();    
+					    var didConfirm = confirm("Are you sure You want to Remove");
+					    if (didConfirm == true) {
+					    	var id = jQuery(this).attr('data-id');
+					    	$('#consumptionPercentage_'+id).val('');
+					    	$('#row_'+id).empty();
+					      	$('#row_'+id).remove();
+					    	$('#greyDetails tr').each(function(index) {
+					    		$(this).attr('id', 'row_'+index);
+					    		$(this).find('.greySortMasterId').attr('name','finishedGreyQualityDetails['+index+']'+'.greySortMasterId');
+					    		$(this).find('.greySortNumber').attr('name','finishedGreyQualityDetails['+index+']'+'.sortNumber');
+					    		$(this).find('.greyConsumptionPercentage').attr('name','finishedGreyQualityDetails['+index+']'+'.consumptionPercentage');
+					    		$(this).find('.greyGsm').attr('name','finishedGreyQualityDetails['+index+']'+'.gsm');
+					    		$(this).find('.greyWidth').attr('name','finishedGreyQualityDetails['+index+']'+'.width');
+					    		$(this).find('.greyWeave').attr('name','finishedGreyQualityDetails['+index+']'+'.weave');
+					    		$(this).find('.greySortMasterId').attr('id','greySortMasterId_'+index);
+							    $(this).find('.greySortNumber').attr('id','sortNumber_'+index);
+							    $(this).find('.greyConsumptionPercentage').attr('id','consumptionPercentage_'+index);
+							    $(this).find('.greyGsm').attr('id','gsm_'+index);
+							    $(this).find('.greyGsm').attr('id','warpWeft_'+index);
+							    $(this).find('.greyWidth').attr('id','width_'+index);
+							    $(this).find('.greyWeave').attr('id','weave_'+index);
+							    
+							    
+					      		$(this).find('.delete-record').attr('data-id', index);
+					      		$(this).find('.view-record').attr('data-id', index);
+					      		
+					    	});
+					    	
+					    	return true;
+					  	} else {
+					    	return false;
+					  	}
+					});
+					
+					
+					
+					
+					
+						
+						
+					
+					});
+	var full=0;
+	function add() {
+		//function addFullDiv() {
+			var FullDivValue = parseInt(document.getElementById("CompleteDiv").value); 
+			FullDivValue++;
+			full=FullDivValue+1;
+			var d=0;
+			$(".Chose").chosen('destroy');
+			$('.fabricCountId').chosen('destroy');
+			$('.yarnTypeId').chosen('destroy');
+			$(".inc").append('<div class="contentBorderDiv colorTbl1" >'
+					+'<div class="row marginBottomFourty">'
+					+'<div class="col-md-5 paddingZero"></div>'
+					+'	<div class="col-md-5 paddingZero">'
+					+'		<h3>'
+					+'			Warp'
+					+'			Details - '+full+''
+					+'		</h3>'
+					+'	</div>'
+					+'	<div class="col-md-2 paddingZero">'
+					+'			<input type="button" id="addWrap" name="addWarp" value="Add " class="skyBlueBtn fontFamily" onclick="add()" />'
+					+'	</div>'
+					+'</div>'
+			+'<div class="container" style="width: 100%;" >'
+			+'		<table id="warptab'+FullDivValue+'" class="colorTblCss1" >'
+			+'			<tr >'
+			+'<th style="width: 15%;">Pattern</th>'
+			+'<th style="width: 15%;">Count</th>'
+			+'<th style="width: 15%;">Type</th>'
+			+'<th style="width: 15%;">Shrinkage</th>'
+			+'<th style="width: 15%;">Total Ends</th>'
+			+'<th style="width: 15%;">GRMS/Mtrs</th>'
+			+'<th style="width: 5%;">Add</th>'
+			+'<th style="width: 5%;">Remove</th>'
+			+'			</tr>'
+			+'				<tr>'
+			+'<td>'
+			+'<input type="number" id="pattern_warp_'+FullDivValue+'_'+d+'" name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].pattern"'
+			+'class="txtBox fontFamily pattern" style="width: 150px;"  />'
+			+'<label for="pattern_warp_'+FullDivValue+'_'+d+'" class="error"></label></td>'
+			+'<td><select class="txtBox marginInInde fabricCountId" id="fabricCountId_warp_'+FullDivValue+'_'+d+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].fabricCountId">'
+			+'	<option>Select</option>'
+			+'	'
+			+'		<option value="1">61.0</option>'
+			+'	'
+			+'		<option value="2">32.0</option>'
+			+'	'
+			+'		<option value="3">21.0</option>'
+			+'	'
+			+'		<option value="4">51.0</option>'
+			+'	'
+			+'		<option value="5">20.0</option>'
+			+'	'
+			+'		<option value="6">10.0</option>'
+			+'	'
+			+'		<option value="7">63.0</option>'
+			+'	'
+			+'		<option value="8">40.0</option>'
+			+'	'
+			+'		<option value="9">97.0</option>'
+			+'	'
+			+'		<option value="10">41.0</option>'
+			+'	'
+			+'		<option value="11">31.0</option>'
+			+'	'
+			+'		<option value="12">80.0</option>'
+			+'	'
+			+'		<option value="13">42.0</option>'
+			+'	'
+			+'		<option value="14">220.0</option>'
+			+'	'
+			+'		<option value="15">75.0</option>'
+			+'	'
+			+'		<option value="16">150.0</option>'
+			+'	'
+			+'		<option value="17">30.0</option>'
+			+'	'
+			+'		<option value="18">34.0</option>'
+			+'	'
+			+'		<option value="19">33.0</option>'
+			+'	'
+			+'		<option value="20">76.0</option>'
+			+'	'
+			+'		<option value="21">62.0</option>'
+			+'	'
+			+'		<option value="22">16.0</option>'
+			+'	'
+			+'		<option value="23">90.0</option>'
+			+'	'
+			+'		<option value="24">240.0</option>'
+			+'	'
+			+'		<option value="25">36.0</option>'
+			+'	'
+			+'		<option value="26">45.0</option>'
+			+'	'
+			+'		<option value="27">19.5</option>'
+			+'	'
+			+'		<option value="28">24.0</option>'
+			+'	'
+			+'		<option value="29">30.5</option>'
+			+'	'
+			+'		<option value="30">60.0</option>'
+			+'	'
+			+'</select><label for="fabricCountId_warp_'+FullDivValue+'_'+d+'" class="error">&nbsp;</label>'
+			+'</td>'
+			+'<td><select class="txtBox marginInInde yarnTypeId" id="yarnTypeId_warp_'+n+'_'+d+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].yarnTypeId">'
+			+'	<option>Select</option>'
+			+'	'
+			+'</select><label for="yarnTypeId_warp_'+FullDivValue+'_'+d+'" class="error">&nbsp;</label>'
+			+'<input type="hidden" class="txtBox marginInInde itemId"'
+			+'id="itemId_warp_'+FullDivValue+'_'+d+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].itemId" />'
+			+'</td>'
+			+'<td>'
+			+'<input type="text"'
+			+'id="wastePerShrink_warp_'+FullDivValue+'_'+d+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].wastePerShrink"'
+			+'class="txtBox fontFamily wastePerShrink" style="width: 150px;"  />'
+			+'</td>'
+			+'<td>'
+			+'<input type="text"'
+			+'id="ends_warp_'+FullDivValue+'_'+d+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].ends"'
+			+'class="txtBox fontFamily" style="width: 150px;"/>'
+			+'</td>'
+			+'<td>'
+			+'<input type="text"'
+			+'id="grmsPerMtr_warp_'+FullDivValue+'_'+d+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+d+'].grmsPerMtr"'
+			+'class="txtBox fontFamily" style="width: 150px;"   readonly="readonly"/>'
+			
+			+'<input type="hidden"'
+			+'id="grmsPerMtr1_warp1_'+FullDivValue+'_'+d+'"'
+			+'class="txtBox fontFamily" style="width: 150px;"/>'
+			
+			
+			+'</td>'
+			+'<td><a href="#"><img alt="Add" class="weftwarpRelodeEdit" id="sub_div_warp'+FullDivValue+'" onclick="fullWarpFun('+FullDivValue+');" src="/iTexRAMTest/resources/images/blue_add.png"></a></td>'
+			+'<td>&nbsp;</td>'
+			+'</tr></table></div>'
+			+ '<a href = "#" id = "Remove_'+FullDivValue+'" class = "remove_this btn btn-danger" >Remove</a>'
+			+'<div >');
+			
+			
+
+		$('.fabricCountId').chosen();
+		$('.yarnTypeId').chosen();
+
+		document.getElementById("CompleteDiv").value = parseInt(FullDivValue);
+		$(".Chose").chosen();
+
+	}
+
+	jQuery(document).on(
+					'click',
+					'.remove_this',
+					function() {
+						jQuery(this).parent().remove();
+						var i = parseInt(document.getElementById("CompleteDiv").value);
+						document.getElementById("CompleteDiv").value = parseInt(i - 1);
+						return false;
+					});
+	
+	var x;
+	
+	function warpFun(){ 
+		var totalWarpCount=document.getElementById("totalCountWarp0").value;
+		
+		totalWarpCount++;
+		if(document.getElementById("totalNoOfWarps").value == 0)
+		{
+		  x = 1;	
+		}
+		else
+		{
+			x = document.getElementById("totalNoOfWarps").value;	
+		}
+		$('.itemId').chosen('destroy');
+		
+		$('.fabricEndsPerDents').chosen('destroy');
+		
+		$("#warptab0").append('<tr>'
+				+'<td>'
+				+'	<select class="txtBox marginInInde beamTypeId" id="beamTypeId_'+n+'_'+x+'" name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].beamTypeId"'
+				+'	onchange="checkPiece1('+x+','+n+',1,this.value);" >'
+				+'	<option value="">Select Beam Type </option>'
+				+'	<option value="1">Bottom</option>'
+				+'	<option value="2">Top</option>'
+				+'	<option value="3">Bobbin</option>'
+				+'	<option value="4">Selvedge</option>'
+				+'</select><label for="beamTypeId_'+n+'_'+x+'" class="error">&nbsp;</label>'
+				
+				+'</td>'
+				
+				
+				+'<td>'
+				+'<input type="number" id="pattern_warp_'+n+'_'+x+'" name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].pattern"'
+				+'class="txtBox fontFamily pattern" style="width: 150px;" onchange="CalWarptotalEnds('+n+')" />'
+				+'<label for="pattern_warp_'+n+'_'+x+'" class="error"></label></td>'
+				
+				+'<td><input type="hidden" class="txtBox marginInInde yarnType" id="yarnTypeId_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].yarnTypeId">'
+				+'	<input type="hidden" class="txtBox marginInInde uom" id="uomId_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].uomId"> <input'
+				+'	type="hidden" class="txtBox marginInInde Count" id="fabricCountId_warp_'+n+'_'+x+'"'
+				+'name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].fabricCountId">'
+				+'	<input type="hidden" class="txtBox marginInInde Ply" id="fabricPlyId_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].fabricPlyId" />'
+				+'	<input type="hidden" class="txtBox marginInInde yarnVariety" id="yarnVarietyId_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].yarnVarietyId" /> '
+				+'	<input type="hidden" class="txtBox marginInInde noOfCounts" id="noOfCounts_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].noOfCounts" />'
+				+'	<input type="hidden" class="txtBox marginInInde ply" id="ply_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].ply" />'
+				+'	<input type="hidden" class="txtBox marginInInde yarnCode" id="yarnCode_warp_'+n+'_'+x+'"'
+				+'	name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].yarnCode" />'
+				
+				+'<input type="hidden" class="txtBox marginInInde yarnEnglishCount"'
+				+'id="englishCount_warp_'+n+'_'+x+'"'
+				+'name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].yarnEnglishCount" />'
+				
+				+'	<select class="txtBox marginInInde itemId" id="itemId_warp_'+n+'_'+x+'" name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].itemId"'
+				+'	 onchange="checkPiece1('+x+','+n+',1,this.value);">'
+				+'	<option value="">Select Material</option>'
+				+'	'
+				+'	<option value="1">61CPT</option>'
+				+'	'
+				+'	<option value="2">30C</option>'
+				+'	'
+				+'	<option value="3">20C</option>'
+				+'	'
+				+'	<option value="4">21SLB</option>'
+				+'	'
+				+'	<option value="5">51CPT</option>'
+				+'	'
+				+'	<option value="6">20 LY</option>'
+				+'	'
+				+'	<option value="7">21OE</option>'
+				+'	'
+				+'	<option value="8">32CTN </option>'
+				+'	'
+				+'	<option value="9">10 SLB</option>'
+				+'	'
+				+'	<option value="10">80/300</option>'
+				+'	'
+				+'	<option value="11">40PV</option>'
+				+'	'
+				+'	<option value="12">97 LYC</option>'
+				+'	'
+				+'	<option value="13">41 CPT</option>'
+				+'	'
+				+'	<option value="14">31SLB</option>'
+				+'	'
+				+'	<option value="15">80 DEN</option>'
+				+'	'
+				+'	<option value="16">42PV</option>'
+				+'	'
+				+'	<option value="17">220 DEN</option>'
+				+'	'
+				+'	<option value="18">97  SUPER STRETCH LYCRA</option>'
+				+'	'
+				+'	<option value="19">42 CTN</option>'
+				+'	'
+				+'	<option value="20">2/63  DEN </option>'
+				+'	'
+				+'	<option value="21">2/32  CTN </option>'
+				+'	'
+				+'	<option value="22">42 LYCRA</option>'
+				+'	'
+				+'	<option value="23">75 DEN</option>'
+				+'	'
+				+'	<option value="24">51 LYC</option>'
+				+'	'
+				+'	<option value="25">150 CATIONIC</option>'
+				+'	'
+				+'	<option value="26">30VIS</option>'
+				+'	'
+				+'	<option value="27">34 VISCOSE</option>'
+				+'	'
+				+'	<option value="28">80/1000</option>'
+				+'	'
+				+'	<option value="29">34 ZARI</option>'
+				+'	'
+				+'	<option value="30">40 VISCOSE</option>'
+				+'	'
+				+'	<option value="31">2/76  PSF </option>'
+				+'	'
+				+'	<option value="32">40 PSF</option>'
+				+'	'
+				+'	<option value="33">80 CATIONIC</option>'
+				+'	'
+				+'	<option value="34">62C</option>'
+				+'	'
+				+'	<option value="35">10OE</option>'
+				+'	'
+				+'	<option value="36">41 SLUB</option>'
+				+'	'
+				+'	<option value="37">40 TNC</option>'
+				+'	'
+				+'	<option value="38">150 BRIGHT</option>'
+				+'	'
+				+'	<option value="39">21 VISCOSE</option>'
+				+'	'
+				+'	<option value="40">2/80</option>'
+				+'	'
+				+'	<option value="41">30LYCRA</option>'
+				+'	'
+				+'	<option value="42">16SLB</option>'
+				+'	'
+				+'	<option value="43">90LYCRA</option>'
+				+'	'
+				+'	<option value="44">240LYCRA</option>'
+				+'	'
+				+'	<option value="45">21COTLIN SLUB</option>'
+				+'	'
+				+'	<option value="46">36PV HM</option>'
+				+'	'
+				+'	<option value="47">45 PV</option>'
+				+'	'
+				+'	<option value="48">2/40 PV</option>'
+				+'	'
+				+'	<option value="49">21 ZAYKA SLUB</option>'
+				+'	'
+				+'	<option value="50">150 FILATEX</option>'
+				+'	'
+				+'	<option value="51">1/61  1 NE  SLUB SLB </option>'
+				+'	'
+				+'	<option value="52">321 SWAN</option>'
+				+'	'
+				+'	<option value="53">1/24  1 SLUB  SLUB SLB </option>'
+				+'	'
+				+'	<option value="54">30.5 SLUB</option>'
+				+'	'
+				+'	<option value="55">60 PSF</option>'
+				+'	'
+				+'</select><label for="itemId_warp_'+n+'_'+x+'" class="error">&nbsp;</label>'
+				+'</td>'
+				+'<td>'
+				+'<input type="text"'
+				+'id="wastePerShrink_warp_'+n+'_'+x+'"'
+				+'name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].wastePerShrink"'
+				+'class="txtBox fontFamily wastePerShrink" style="width: 150px;" onchange="CalWarptotalEnds('+n+')" />'
+				+'</td>'
+				+'<td>'
+				+'<input type="text"'
+				+'id="ends_warp_'+n+'_'+x+'"'
+				+'name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].ends"'
+				+'class="txtBox fontFamily" style="width: 150px;" />'
+				+'</td>'
+				+'<td>'
+				+'<input type="text"'
+				+'id="grmsPerMtr_warp_'+n+'_'+x+'"'
+				+'name="sortMasterWarp['+n+'].sortMasterWarpDetails['+x+'].grmsPerMtr"'
+				+'class="txtBox fontFamily" style="width: 150px;" readonly="readonly" />'
+				
+				+'<input type="hidden"'
+				+'id="grmsPerMtr1_warp1_'+n+'_'+x+'"'
+				+'class="txtBox fontFamily" style="width: 150px;"/>'
+				
+				+'</td>'
+				+'<td><a href="#" class="warpnotRelode" onclick="warpFun();"><img alt="Add" class="sub_div_warp0"  src="/iTexRAMTest/resources/images/blue_add.png"></a></td>'
+				+'<td><a href="#" class="remove_field"><img alt="Add"  src="/iTexRAMTest/resources/images/close.png" ></a></td>'
+				+'</tr>');
+		
+			x++;
+			document.getElementById("totalNoOfWarps").value=x;
+			document.getElementById("totalCountWarp0").value=totalWarpCount;
+			$('.itemId').chosen();
+			$('.yarnTypeId').chosen();
+			$('.yarnTypeId').chosen();
+			$('.beamTypeId').chosen({max_selected_options:Infinity,search_contains: true});
+		
+			$("#warptab0").on("click",".warpnotRelode", function(e){ 						
+				e.preventDefault(); 
+				
+			});
+			
+			//var id = "#deliveryDate_"+x;
+/* 	}); */
+	var k = 0;
+	var consignees = "";
+	$("#warptab0").on("click",".remove_field", function(e){ //user click on remove text							
+		e.preventDefault(); 
+		document.getElementById("totalCountWarp0").value=totalWarpCount; 
+		$(this).parents("tr").remove();							 						 
+		CalWarptotalEnds(0);
+	});
+	
+} 
+
+var z;
+function weftFun(){
+	
+	if(document.getElementById("totalNoOfWefts").value == 0)
+	{
+	  z = 1;	
+	}
+	else
+	{
+		z = document.getElementById("totalNoOfWefts").value;	
+	}						
+	var totalWeftCount=document.getElementById("totalCountWeft0").value;
+	totalWeftCount++;
+	/* $("#sub_div_weft0").click(function(e){ //on add input button click
+		e.preventDefault(); */
+		$('.itemId').chosen('destroy');
+		$('.yarnTypeId').chosen('destroy');
+		
+	$("#wefttab0").append('<tr>'
+				+'<td>'
+				+'<input type="text" id="pattern_weft_'+n+'_'+z+'" name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].pattern"'
+				+'	class="txtBox fontFamily pattern" style="width: 150px;"  onchange="CalWefttotalEnds('+n+')"/>'
+				+'	<label for="pattern_weft_'+n+'_'+z+'" class="error"></label></td>'
+				+'<td>'
+				+'	<input type="hidden" class="txtBox marginInInde yarnType" id="yarnTypeId_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].yarnTypeId">'
+				+'	<input type="hidden" class="txtBox marginInInde uom" id="uomId_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].uomId"> <input'
+				+'	type="hidden" class="txtBox marginInInde Count" id="fabricCountId_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].fabricCountId">'
+				+'	<input type="hidden" class="txtBox marginInInde Ply" id="fabricPlyId_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].fabricPlyId" />'
+				+'	<input type="hidden" class="txtBox marginInInde yarnVariety" id="yarnVarietyId_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].yarnVarietyId" /> '
+				+'	<input type="hidden" class="txtBox marginInInde noOfCounts" id="noOfCounts_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].noOfCounts" />'
+				+'	<input type="hidden" class="txtBox marginInInde ply" id="ply_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].ply" />'
+				+'	<input type="hidden" class="txtBox marginInInde yarnCode" id="yarnCode_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].yarnCode" />'
+				
+				+'<input type="hidden" class="txtBox marginInInde yarnEnglishCount"'
+				+'id="englishCount_weft_'+n+'_'+z+'"'
+				+'name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].yarnEnglishCount" />'
+				
+				+'	<select class="txtBox marginInInde itemId" id="itemId_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].itemId"'
+				+'	  onchange="checkPiece1('+z+','+n+',2,this.value);"  >'
+				+'		<option value="">Select Material</option>'
+				+'		'
+				+'			<option value="1">61CPT</option>'
+				+'		'
+				+'			<option value="2">30C</option>'
+				+'		'
+				+'			<option value="3">20C</option>'
+				+'		'
+				+'			<option value="4">21SLB</option>'
+				+'		'
+				+'			<option value="5">51CPT</option>'
+				+'		'
+				+'			<option value="6">20 LY</option>'
+				+'		'
+				+'			<option value="7">21OE</option>'
+				+'		'
+				+'			<option value="8">32CTN </option>'
+				+'		'
+				+'			<option value="9">10 SLB</option>'
+				+'		'
+				+'			<option value="10">80/300</option>'
+				+'		'
+				+'			<option value="11">40PV</option>'
+				+'		'
+				+'			<option value="12">97 LYC</option>'
+				+'		'
+				+'			<option value="13">41 CPT</option>'
+				+'		'
+				+'			<option value="14">31SLB</option>'
+				+'		'
+				+'			<option value="15">80 DEN</option>'
+				+'		'
+				+'			<option value="16">42PV</option>'
+				+'		'
+				+'			<option value="17">220 DEN</option>'
+				+'		'
+				+'			<option value="18">97  SUPER STRETCH LYCRA</option>'
+				+'		'
+				+'			<option value="19">42 CTN</option>'
+				+'		'
+				+'			<option value="20">2/63  DEN </option>'
+				+'		'
+				+'			<option value="21">2/32  CTN </option>'
+				+'		'
+				+'			<option value="22">42 LYCRA</option>'
+				+'		'
+				+'			<option value="23">75 DEN</option>'
+				+'		'
+				+'			<option value="24">51 LYC</option>'
+				+'		'
+				+'			<option value="25">150 CATIONIC</option>'
+				+'		'
+				+'			<option value="26">30VIS</option>'
+				+'		'
+				+'			<option value="27">34 VISCOSE</option>'
+				+'		'
+				+'			<option value="28">80/1000</option>'
+				+'		'
+				+'			<option value="29">34 ZARI</option>'
+				+'		'
+				+'			<option value="30">40 VISCOSE</option>'
+				+'		'
+				+'			<option value="31">2/76  PSF </option>'
+				+'		'
+				+'			<option value="32">40 PSF</option>'
+				+'		'
+				+'			<option value="33">80 CATIONIC</option>'
+				+'		'
+				+'			<option value="34">62C</option>'
+				+'		'
+				+'			<option value="35">10OE</option>'
+				+'		'
+				+'			<option value="36">41 SLUB</option>'
+				+'		'
+				+'			<option value="37">40 TNC</option>'
+				+'		'
+				+'			<option value="38">150 BRIGHT</option>'
+				+'		'
+				+'			<option value="39">21 VISCOSE</option>'
+				+'		'
+				+'			<option value="40">2/80</option>'
+				+'		'
+				+'			<option value="41">30LYCRA</option>'
+				+'		'
+				+'			<option value="42">16SLB</option>'
+				+'		'
+				+'			<option value="43">90LYCRA</option>'
+				+'		'
+				+'			<option value="44">240LYCRA</option>'
+				+'		'
+				+'			<option value="45">21COTLIN SLUB</option>'
+				+'		'
+				+'			<option value="46">36PV HM</option>'
+				+'		'
+				+'			<option value="47">45 PV</option>'
+				+'		'
+				+'			<option value="48">2/40 PV</option>'
+				+'		'
+				+'			<option value="49">21 ZAYKA SLUB</option>'
+				+'		'
+				+'			<option value="50">150 FILATEX</option>'
+				+'		'
+				+'			<option value="51">1/61  1 NE  SLUB SLB </option>'
+				+'		'
+				+'			<option value="52">321 SWAN</option>'
+				+'		'
+				+'			<option value="53">1/24  1 SLUB  SLUB SLB </option>'
+				+'		'
+				+'			<option value="54">30.5 SLUB</option>'
+				+'		'
+				+'			<option value="55">60 PSF</option>'
+				+'		'
+				+'	</select><label for="itemId_weft_'+n
+				+'_'+z+'" class="error">&nbsp;</label>'
+				+'</td>'
+				+'<td><input type="text" id="wastePerShrink_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].wastePerShrink"'
+				+'	class="txtBox fontFamily wastePerShrink" style="width: 150px;" onchange="CalWefttotalEnds('+n+')" /></td>'
+				+'<td><input type="text" id="picks_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].picks"'
+				+'	class="txtBox fontFamily" style="width: 150px;" /></td>'
+				+'<td>'
+				+'<input type="text" id="grmsPerMtr_weft_'+n+'_'+z+'"'
+				+'	name="sortMasterWeft['+n+'].sortMasterWeftDetails['+z+'].grmsPerMtr"'
+				+'	class="txtBox fontFamily" style="width: 150px;"  readonly="readonly"/>'
+				
+				+'<input type="hidden" id="grmsPerMtr1_weft1_'+n+'_'+z+'"'
+				+'	class="txtBox fontFamily" style="width: 150px;"/>'
+				
+				+'<input type="hidden" id="glmgrmsPerMtr_weft_'+n+'_'+z+'"/>'
+				
+				+'</td>'
+				+'<td><a href="#" class="weftnotRelode" onclick="weftFun();"><img alt="Add" id="sub_div_weft0"  src="/iTexRAMTest/resources/images/blue_add.png"></a></td>'
+				+'<td><a href="#" class="remove_field"><img alt="Add"  src="/iTexRAMTest/resources/images/close.png" ></a></td>'
+			+'</tr>');
+	
+			z++;
+			document.getElementById("totalCountWeft0").value=totalWeftCount;
+			document.getElementById("totalNoOfWefts").value=z;
+			/* document.getElementById("totalCountWeft0").value=totalWeftCount; */
+			$('.itemId').chosen();
+			$('.yarnTypeId').chosen();
+			
+			$("#wefttab0").on("click",".weftnotRelode", function(e){ 						
+				e.preventDefault();  
+				
+			});
+			
+			//var id = "#deliveryDate_"+x;
+	/* }); */
+	var k = 0;
+	var consignees = "";
+	$("#wefttab0").on("click",".remove_field", function(e){ //user click on remove text							
+		e.preventDefault();  
+		/* document.getElementById("noOfCounts_warp_0_").value=totalWeftCount; */
+		$(this).parents("tr").remove();							 						 
+		CalWefttotalEnds(0);
+	});
+
+}
+
+var y=0;
+function fullWarpFun(FullDivValue){	
+	
+	if(y==0)
+	{
+	      y = 1;
+	}
+	else
+	{
+		y = y;
+	}
+	/* $('#sub_div_warp'+ FullDivValue+'').click(function(e){ //on add input button click
+		e.preventDefault(); */
+
+	$('#warptab'+ FullDivValue +'').append('<tr>'
+			+'<td>'
+			+'<input type="text" id="pattern_warp_'+FullDivValue+'_'+y+'" name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].pattern"'
+			+'class="txtBox fontFamily pattern" style="width: 150px;"  />'
+			+'<label for="pattern_warp_'+FullDivValue+'_'+y+'" class="error"></label></td>'
+			+'<td><select class="txtBox marginInInde fabricCountId" id="fabricCountId_warp_'+FullDivValue+'_'+y+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].fabricCountId">'
+			+'	<option>Select</option>'
+			+'	'
+			+'		<option value="1">61.0</option>'
+			+'	'
+			+'		<option value="2">32.0</option>'
+			+'	'
+			+'		<option value="3">21.0</option>'
+			+'	'
+			+'		<option value="4">51.0</option>'
+			+'	'
+			+'		<option value="5">20.0</option>'
+			+'	'
+			+'		<option value="6">10.0</option>'
+			+'	'
+			+'		<option value="7">63.0</option>'
+			+'	'
+			+'		<option value="8">40.0</option>'
+			+'	'
+			+'		<option value="9">97.0</option>'
+			+'	'
+			+'		<option value="10">41.0</option>'
+			+'	'
+			+'		<option value="11">31.0</option>'
+			+'	'
+			+'		<option value="12">80.0</option>'
+			+'	'
+			+'		<option value="13">42.0</option>'
+			+'	'
+			+'		<option value="14">220.0</option>'
+			+'	'
+			+'		<option value="15">75.0</option>'
+			+'	'
+			+'		<option value="16">150.0</option>'
+			+'	'
+			+'		<option value="17">30.0</option>'
+			+'	'
+			+'		<option value="18">34.0</option>'
+			+'	'
+			+'		<option value="19">33.0</option>'
+			+'	'
+			+'		<option value="20">76.0</option>'
+			+'	'
+			+'		<option value="21">62.0</option>'
+			+'	'
+			+'		<option value="22">16.0</option>'
+			+'	'
+			+'		<option value="23">90.0</option>'
+			+'	'
+			+'		<option value="24">240.0</option>'
+			+'	'
+			+'		<option value="25">36.0</option>'
+			+'	'
+			+'		<option value="26">45.0</option>'
+			+'	'
+			+'		<option value="27">19.5</option>'
+			+'	'
+			+'		<option value="28">24.0</option>'
+			+'	'
+			+'		<option value="29">30.5</option>'
+			+'	'
+			+'		<option value="30">60.0</option>'
+			+'	'
+			+'</select><label for="fabricCountId_warp_'+FullDivValue+'_'+y+'" class="error">&nbsp;</label>'
+			+'</td>'
+			+'<td><select class="txtBox marginInInde yarnTypeId" id="yarnTypeId_warp_'+FullDivValue+'_'+y+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].yarnTypeId">'
+			+'	<option value="">Select</option>'
+			+'	'
+			+'</select><label for="yarnTypeId_warp_'+FullDivValue+'_'+y+'" class="error">&nbsp;</label>'
+			+'<input type="hidden" class="txtBox marginInInde itemId"'
+			+'id="itemId_warp_'+FullDivValue+'_'+y+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].itemId" />'
+			+'</td>'
+			+'<td>'
+			+'<input type="text"'
+			+'id="wastePerShrink_warp_'+FullDivValue+'_'+y+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].wastePerShrink"'
+			+'class="txtBox fontFamily" style="width: 150px;"  />'
+			+'</td>'
+			+'<td>'
+			+'<input type="text"'
+			+'id="ends_warp_'+FullDivValue+'_'+y+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].ends"'
+			+'class="txtBox fontFamily" style="width: 150px;"  />'
+			+'</td>'
+			+'<td>'
+			+'<input type="text"'
+			+'id="grmsPerMtr_warp_'+FullDivValue+'_'+y+'"'
+			+'name="sortMasterWarp['+FullDivValue+'].sortMasterWarpDetails['+y+'].grmsPerMtr"'
+			+'class="txtBox fontFamily" style="width: 150px;"  />'
+			
+			+'<input type="hidden"'
+			+'id="grmsPerMtr1_warp1_'+FullDivValue+'_'+y+'"'
+			+'class="txtBox fontFamily" style="width: 150px;"/>'
+			
+			+'</td>'
+			+'<td>< a href="#" class="weftwarpRelodeEdit" onclick="fullWarpFun('+FullDivValue+')"><img alt="Add" id="sub_div_warp'+FullDivValue+'"  src="/iTexRAMTest/resources/images/blue_add.png"></a> </td>'
+			+'<td><a href="#" class="remove_field"><img alt="Add"  src="/iTexRAMTest/resources/images/close.png" ></a> </td>'
+			+ '</tr>');
+			y++;
+
+					$('.fabricCountId').chosen();
+					$('.yarnTypeId').chosen();
+			/* 	}); */
+	
+			
+			 $("#warptab").on("click",".weftwarpRelodeEdit", function(e){ 						
+				e.preventDefault();  
+				
+			}); 
+			
+			
+$('#warptab' + FullDivValue + '').on("click", ".remove_field",
+		function(e) { //user click on remove text							
+			e.preventDefault();
+			$(this).parents("tr").remove();
+
+		});
+}
+	
+function getItemId(id,no,isWeft,elem){
+	var itemId;
+	if(elem!=0)
+	{
+		itemId=elem;
+	}else
+	{
+		if(isWeft==1)
+		{
+			var ele=document.getElementById("itemId_warp_"+no+"_"+id+"");
+			itemId=ele.options[ele.selectedIndex].value;
+		}
+		if(isWeft==2)
+		{
+			var ele=document.getElementById("itemId_weft_"+no+"_"+id+"");
+			itemId=ele.options[ele.selectedIndex].value;
+		}
+		
+	}
+	
+	$.ajax({
+		
+		dataType : 'json',
+		url : path+'/fabricmaster/getItemDetailsById',
+		type : 'POST',
+		data : {								
+			'itemId' : itemId
+		},
+		async: false,
+	success : function(response) {	
+		/* console.log(response);  */
+		response.itemdetails.forEach(function(element) {
+		if(isWeft==1){
+			document.getElementById("uomId_warp_"+no+"_"+id+"").value=element[1];
+			document.getElementById("fabricCountId_warp_"+no+"_"+id+"").value=element[2];
+			document.getElementById("fabricPlyId_warp_"+no+"_"+id+"").value=element[3];
+			document.getElementById("yarnTypeId_warp_"+no+"_"+id+"").value=element[0];
+			document.getElementById("yarnVarietyId_warp_"+no+"_"+id+"").value=element[4];
+			document.getElementById("noOfCounts_warp_"+no+"_"+id+"").value=element[5];
+			document.getElementById("ply_warp_"+no+"_"+id+"").value=element[6];
+			document.getElementById("yarnCode_warp_"+no+"_"+id+"").value=element[7];
+			document.getElementById("englishCount_warp_"+no+"_"+id+"").value=element[8];
+			CalWarptotalEnds(no);
+		} else {
+			document.getElementById("uomId_weft_"+no+"_"+id+"").value=element[1];
+			document.getElementById("fabricCountId_weft_"+no+"_"+id+"").value=element[2];
+			document.getElementById("fabricPlyId_weft_"+no+"_"+id+"").value=element[3];
+			document.getElementById("yarnTypeId_weft_"+no+"_"+id+"").value=element[0];
+			document.getElementById("yarnVarietyId_weft_"+no+"_"+id+"").value=element[4];
+			document.getElementById("noOfCounts_weft_"+no+"_"+id+"").value=element[5];
+			document.getElementById("ply_weft_"+no+"_"+id+"").value=element[6];
+			document.getElementById("yarnCode_weft_"+no+"_"+id+"").value=element[7];
+			document.getElementById("englishCount_weft_"+no+"_"+id+"").value=element[8];
+			CalWefttotalEnds(no);
+		}
+		
+	});
+	
+    },
+	error : function(response) {
+			console.log(response);
+		}
+	});
+	
+}
+
+function getQualityDetails(fabricType){
+	if(fabricType==1){
+		$('#greyTable').show();
+		getGreyQuality("0");
+		
+	}else{
+		$('#greyTable').hide();
+	}
+	
+}
+
+
+
+function getGreyQuality(index){	
+	var fabricType=2;
+	$.ajax({
+		dataType : 'json',
+		url : '/iTexRAMTest/sort/getGreyQuality',
+		type : 'POST',
+		data : {								
+			'fabricType' : fabricType
+		},
+	success : function(response) {	
+		if(response.sortList.length>0){
+			var html = '<option value="">Select Quality </option>';
+			    response.sortList.forEach(function(element) { 
+			          html += '<option value="' +element[0] + '">'
+							+ element[1]+ '</option>';
+								
+			       });	
+			       $('#greySortMasterId_'+index).html(html);
+			       $('#greySortMasterId_'+index).val('').trigger("chosen:updated");
+		}else{
+			 alert("Grey Quality Not found");
+		}
+		
+		if(response.weaveList.length>0){
+			var html = '<option value="">Select Weave </option>';
+			    response.weaveList.forEach(function(element) { 
+			          html += '<option value="' +element[0] + '">'
+							+ element[1]+ '</option>';
+								
+			       });	
+			       $('#weave_'+index).html(html);
+			       $('#weave_'+index).val('').trigger("chosen:updated");
+		}else{
+			 alert("Weave Not found");
+		}
+		
+		
+    },
+	error : function(response) {
+			console.log(response);
+			 alert("Grey Quality Not found");
+		}
+	});
+}
+
+function greyDetails(greySortMasterId,index){
+	$.ajax({
+		dataType : 'json',
+		url : '/iTexRAMTest/sort/getGreyDetails',
+		type : 'POST',
+		data : {								
+			'greySortMasterId' : greySortMasterId
+		},
+	success : function(response) {	
+		$('#sortNumber_'+index).val(response.sortNumber);
+		$('#gsm_'+index).val(response.gsm);
+		$('#warpWeft_'+index).val(response.warpWeft);
+		$('#width_'+index).val(response.width);
+		$('#weave_'+index).val(response.weave).trigger('chosen:updated');
+	},
+	error : function(response) {
+			console.log(response);
+		}
+	});
+}
+
+
+function checkPiece(val){
+
+		var colorCount=0;
+		var i=0;
+		var colorId=0;
+		var mycolid=document.getElementById("greySortMasterId_"+val).value;
+	/* 	 size = jQuery('#greyDetails >tr').length */
+		var count=/* document.getElementById("productCountDiv0").value */jQuery('#greyDetails >tr').length;
+		if(parseInt(count)==0){
+			count=parseInt(count)+1;
+		}
+		
+		while(parseInt(i)<(parseInt(count))){
+			 if((document.getElementById("greySortMasterId_"+i))==null || (document.getElementById("greySortMasterId_"+i))=="")
+				{
+				 colorId=0;
+				}
+			 else
+				{
+				 if((document.getElementById("greySortMasterId_"+i).value)==null || (document.getElementById("greySortMasterId_"+i).value)=="")
+					{
+					 colorId=0;
+					}else{
+						var colorId = document.getElementById("greySortMasterId_"+i).value;
+						if(parseInt(colorId)==parseInt(mycolid)){
+							if(parseInt(colorCount)!=0){
+								alert("Grey Quality already present,please select other Quality");
+								document.getElementById("greySortMasterId_"+val).selectedIndex = "";
+								$('#greySortMasterId_'+val).chosen('destroy');
+							 	$('#greySortMasterId_'+val).chosen();
+							 	
+							 	document.getElementById("sortNumber_"+val).value = "";
+							 	document.getElementById("warpWeft_"+val).value = "";
+							 	document.getElementById("width_"+val).value = "";
+							 	/* document.getElementById("weave_"+val).value = ""; */
+							 	 document.getElementById("gsm_"+val).value = "";
+							    $('#weave_'+val).val('').trigger("chosen:updated");    
+							}
+							else{
+								var greyid = document.getElementById("greySortMasterId_"+i).value;
+								greyDetails(greyid,i);
+							}
+							colorCount++;
+						}
+						}
+							
+						}
+			 i++;
+				}
+			
+			
+			
+		}   
+
+function deleterow1(index,warpId){
+	
+	 var deletewarpids=$('#deletewarpids').val();
+	 
+	 if(deletewarpids==""){
+		 
+		 deletewarpids=warpId;
+		 
+	 }
+	 else{
+		 
+		 deletewarpids=deletewarpids+","+warpId;
+	 }
+	
+	 $('#deletewarpids').val(deletewarpids);
+	 
+	 
+		 $('#row1_'+index).empty(); 
+		$('#row1_'+index).remove();
+		CalWarptotalEnds(0);
+}
+
+
+function deleterow2(index,weftId){
+	
+	 var deleteweftids=$('#deleteweftids').val();
+	 
+	 if(deleteweftids==""){
+		 
+		 deleteweftids=weftId;
+		 
+	 }
+	 else{
+		 
+		 deleteweftids=deleteweftids+","+weftId;
+	 }
+	
+	 $('#deleteweftids').val(deleteweftids);
+	 
+	 
+		 $('#row2_'+index).empty(); 
+		$('#row2_'+index).remove();
+		CalWefttotalEnds(0);
+	
+}
+
+
+
+
+
+
+ function checkPiece1(val1,val,type,value){
+	 if(type==1){
+		 var value=document.getElementById("itemId_warp_"+val+"_"+val1+"").value;
+			var colorCount=0;
+			var i=0;
+			var colorId=0;
+			var mycolid=document.getElementById("itemId_warp_"+val+"_"+val1+"").value;
+			var mybeamType=document.getElementById("beamTypeId_"+val+"_"+val1+"").value;
+			var count=document.getElementById("totalNoOfWarps").value;
+			if(parseInt(count)==0){
+				count=parseInt(count)+1;
+			}
+			
+			while(parseInt(i)<(parseInt(count))){
+				 if((document.getElementById("itemId_warp_"+val+"_"+i+""))==null || (document.getElementById("itemId_warp_"+val+"_"+i+""))=="")
+					{
+					 colorId=0;
+					}
+				 else
+					{
+					 if((document.getElementById("itemId_warp_"+val+"_"+i+"").value)==null || (document.getElementById("itemId_warp_"+val+"_"+i+"").value)=="")
+						{
+						 colorId=0;
+						}else{
+							var colorId = document.getElementById("itemId_warp_"+val+"_"+i+"").value;
+							var beamTypeId = document.getElementById("beamTypeId_"+val+"_"+i+"").value;
+							if(parseInt(colorId)==parseInt(mycolid)){
+								if(parseInt(mybeamType)==parseInt(beamTypeId)){
+								if(parseInt(colorCount)!=0){
+								
+									alert("Count already present,please select other Count");
+									
+									 $('#itemId_warp_'+val+'_'+i+'').val('').trigger("chosen:updated"); 
+									}
+			 
+								
+								else{
+									
+									getItemId(val1,val,1,value);
+								
+								}
+								colorCount++;
+							}
+							}
+						}	
+							}
+				 i++;
+					}
+	 }
+	 
+	 else{
+		 
+		 var colorCount=0;
+			var i=0;
+			var colorId=0;
+			var mycolid=document.getElementById("itemId_weft_"+val+"_"+val1+"").value;
+			var count=document.getElementById("totalNoOfWefts").value;
+			if(parseInt(count)==0){
+				count=parseInt(count)+1;
+			}
+			
+			while(parseInt(i)<(parseInt(count))){
+				 if((document.getElementById("itemId_weft_"+val+"_"+i+""))==null || (document.getElementById("itemId_weft_"+val+"_"+i+""))=="")
+					{
+					 colorId=0;
+					}
+				 else
+					{
+					 if((document.getElementById("itemId_weft_"+val+"_"+i+"").value)==null || (document.getElementById("itemId_weft_"+val+"_"+i+"").value)=="")
+						{
+						 colorId=0;
+						}else{
+							var colorId = document.getElementById("itemId_weft_"+val+"_"+i+"").value;
+							if(parseInt(colorId)==parseInt(mycolid)){
+								if(parseInt(colorCount)!=0){
+									alert("Count already present,please select other Count");
+									
+									 $('#itemId_weft_'+val+'_'+i+'').val('').trigger("chosen:updated"); 
+									 
+			 
+								}
+								else{
+									getItemId(val1,val,2,value);
+								}
+								colorCount++;
+							}
+							}
+								
+							}
+				 i++;
+					}
+		 
+	 }
+
+
+			
+			
+			
+		}   
+
+
+
+</script>
+
+</head>
+<body>
+	
+	
+
+
+<nav class="navbar navbar-default headerColor" role="navigation">
+<script type="text/javascript">
+ 
+
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ru7nwa3ncs");
+
+</script>
+	<div class="navbar-header menuItemsCss">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+			data-target="#example-navbar-collapse">
+			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
+			<span class="icon-bar"></span> <span class="icon-bar"></span>
+		</button>
+		<img
+			src="/iTexRAMTest/resources/images/i2tex_logo.png"
+			class="logo" /></div>
+			
+			 
+			 <div class="col-sm-2" style="margin-top: 20px;margin-left: 5px;">
+				
+				<select style="margin-left: -80px;!important" id="clientId"
+						name="clientId" onchange="setCompanyAndFinYearToSession()">
+						<option value="">Select
+							Company
+						</option>
+						
+							<option value="1"
+								selected="selected">RAMRATAN TECHNO WEAVE</option>
+						
+					</select> 
+				
+			
+					</div>
+					
+					
+					
+				
+				
+				
+							
+							
+							
+				<div class="col-sm-1" style="margin-top: 20px;">
+					<label class="LoginLblTxt fontFamily">25-26</label>
+					
+				</div>
+				
+				
+				
+	
+
+	
+	<div class="collapse navbar-collapse" id="example-navbar-collapse">
+		<div class="img-with-text">
+			<a href="/iTexRAMTest/lgn/logoutUser"> <img
+				src="/iTexRAMTest/resources/images/logout.png"
+				width="50px"
+				style="float: right; margin-top: 17px; margin-right: 33px;"
+				title="Logout"></a>
+		</div>
+			<ul class='nav navbar-nav menuAlignment'><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>ACCOUNT MASTER<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/buyermlist?buyerTypeStr=2&pageNum=1'>Domestic Buyer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/getvendorgrouplist?pageNum=1'>Vendor Group</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/vendorlist?pageNum=1'>Vendor</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/commonConsigneeMlist?pageNum=1'>Consignee</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/insuranceList'>INSURANCE</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/godownlocationlist?pageNum=1'>Godown Location</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/stocktype'>Stock Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/displayvendorprefix?pageNum=1'>Vendor Prefix</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/agentmlist?pageNum=1'>Agent</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/termsandconditionsmlist?pageNum=1'>Terms & Condition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/paymenttermsmlist?pageNum=1'>Payment Terms</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/sourcingByList?pageNum=1'>Sourcing By</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/transportationMlist?pageNum=1'>Transportation</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/showRateMasterList'>Rate</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnExcess'>YARN ADJUST ENTRY</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/orderTargetList?pageNum=1'>Sales Target</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/selvedgeMasterlist?pageNum=1'>Selvedge Master</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>QUICK ACCCESS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/productionnew/jobPendingReport?pageNum=1'>Job Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/warpPendingReport?pageNum=1'>Warp Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/report/sizingPlanReport'>Sizing Pending Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/beaminwardreport?pageNum=1'>BEAM OUTWARD PENDING REPORT</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>APPROVAL<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/store/editinspection'>Yarn Inspected Edit</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/approval/displayjobworkapproval?isReset=0'>Po-Fabric Processing Jw</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/approval/domesticSalesOrderApprovalAdd?state=1&productionFor=2'>So-Domestic</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>DOMESTIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticpackinglist?pageNum=1'>Challan List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticinvoicelist?flow=invoice&pageNum=1'>Invoice List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itempurchaserequisitionlist?prStatus=0'>Item Purchase Requisition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itempolist?pageNum=1'>Item PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/iteminwardlist?pageNum=1&isOpeningBalance=0'>Item Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemtransferlist?pageNum=1'>Item Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemoutwardlist?pageNum=1'>Item Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/item/itemreturnlist?pageNum=1'>Item Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/domesticinvoicelist?flow=jw&pageNum=1'>Trading Job Invoice</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/domesticsalesorderlist?state=1&moveToProduction=0'>Sales Order </a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkweavingcontractlistnew'>Job work Weaving Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/getsizingsetlistnew?pageNum=1'>Sizing Plan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnRequiredlist?pageNum=1'>Yarn Required</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/sortmasterlist?pageNum=1'>Sort Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/buyerProductQuality'>Buyer Quality Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/orderList?pageNum=1'>Order List</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN MASTER<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/fabricmaster/fabriccountlist?pageNum=1'>Count</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/fabricmaster/fabricplylist?pageNum=1'>Ply</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/uommlist?pageNum=1'>UOM</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/millMasterlist?pageNum=1'>Mill Master</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/yarnvarietylist?pageNum=1'>Yarn Variety</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/getyarntypelist?pageNum=1'>Yarn Type</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/getyarnlist?pageNum=1'>YARN LIST</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/mt/tpmlist?pageNum=1'>TPM</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=1'>Yarn Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/displayyarnpO?pageNum=1'>Yarn PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=0'>Yarn Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/salesorder/yarncontractlist?pageNum=1'>Yarn Sales Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarnsalescontractlist?pageNum=1'>Yarn Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarninvoicelist?pageNum=1&eInvoice=1'>Yarn sales Invoice</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/domesticsalesorder/yarnSalesReturn?pageNum=1'>Yarn Sales Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/displayStockTransferNewLIST?pageNum=1&itemType=1'>Stock Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN ISSUE<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/sort/sizingsetjobworklist?pageNum=1&state=1'>Sizing Yarn Issue</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/jobworkweftcontractlist'>Job work Weaving Weft Issue</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/reWindingIssueListStockTypeWise?pageNum=1&&state=1'>Yarn Issue To Rewinding</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/getyarnissuetorewindinglist?pageNum=1'>Yarn Issued To Winding List</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN RETURN(TRADING)<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/yarnreceivefrpartytoloclist'>Party To Location</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/jobworkrewindingreceivelist?pageNum=1'>Winding Jobwork Receive</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/returningYarn'>Yarn Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/yarnExcess'>YARN ADJUST ENTRY</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamBalanceAtWeaverList'>Beam Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beaminwardlist'>Beam Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamoutwardlist?productionType=0'>Beam Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/beamreceivefromweaver1'>Beam Receive From Weaver</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/store/jobworkweftbottomreceivelist?pageNum=1'>Bottom Receive Outside</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/karainwardlist?pageNum=1'>Kara Inward</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/displayfabricpO?pageNum=1'>Fabric PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInwardListpage?isOpeningBalance=0'>Fabric Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/purchaseFabricReturnList'>Purchase Fabric Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=1&fabricType=2'>Factory Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=0&fabricType=1'>Job work Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/balePackingList?state=2'>Bale Packing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/clothchallanList?state=2&pageNum=1&fromdate=&pageNum=1&todate=&sortMasterId=&orderId=&clothChallanId=&buyername=&buyerId=&slipno=&balepackingid='>Cloth Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/gradelist?pageNum=1'>Grade</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/fabricOpenBalanceInwardListpage?isOpeningBalance=1'>Fabric Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/salesReturnList?pageNum=1'>Sales Retrun</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PROCESS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/mt/designMaster?pageNum=1'>Design Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkprocesscontractlist?statusType=1'>Jobwork Process Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/jobworkprocesspiecedetailslist?pageNum=1'>Jobwork Process Contract Issue</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/finshedfabricreceiveList?isOpeningBalance=0'>Jobwork Finished Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/processReturnList?pageNum=1'>Process Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/sort/srsortmasterlist?isexport=1&pageNum=1'>Quality</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MARKETING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexRAMTest/production/productDevelopment'>Product Development List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/production/pegPlanDesignList?pageNum=1'>Peg Plan Design</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/costinglist?pageNum=1'>Costing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/productionfabricsamplesstatuslist?pageNum=1'>Production Fabric Samples Status</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/costingreport'>Costing Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/pur/othersamplestatuslist?pageNum=1'>Other Sample Status</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/cost/ocrRepotList'>OCR Report</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/complaint/complaintReport?pageUse=1'>Complaint Register</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>REPORTS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/sostatus?state=1&productionFor=2'>Sales Order Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/salesorderstatusview?productionFor=2&listType=1'>Domestic Order Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/contractCompletedReport?pageNum=1'>Contract Completed Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/jobContractStatusReportNew1?pageNum=1'>Job Contract Detail Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/qualityWiseJobworkStatus?pageNum=1'>Job Contract Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/soosstatus?state=1&productionFor=2'>SO OS</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/orderstatusview'>SALES ORDER STATUS REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/report/dailyReportsview'>Daily Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/storesstockinwardreportlist'>Stock Inward Yarn Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/getOBCBReport'>Yarn Opening And Closing Balance Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/yarnPoStatusReport'>Yarn PO Status</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/yarnInvoiceReport?pageNum=1'>Yarn Invoice Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/domesticsalesorder/YarnSalesReturnReport?pageNum=1'>Yarn Sales Return Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarnEntryInOutReport?pageNum=1'>YARN IN OUT REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/locationWiseYarnStock'>Location Wise Yarn Stock</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/report/sizingPlanReport?pageNum=1'>SIZING PLAN REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/sizingReconcilationReport?pageNum=1'>Pending Set Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/qualityWiseSizingSetIssueReport?pageNum=1'>Quality Wise Sizing Set Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/dailysizingSetIssueReport?pageNum=1'>Daily Sizing Set Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarntoweftregisterreportlist?issueType=1'>Yarn To Sizing Register Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/beaminwardreport?pageNum=1'>BEAM OUTWARD PENDING REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/beaminwardagainstjobcontract'>BEAM INWARD AGAINST JOB CONTRACT REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/beamOutwardDetailReport?reportType=0'>BEAM OUTWARD REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/warpPendingReport?pageNum=1'>Warp Pending Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/jobPendingReport?pageNum=1'>Job Pending Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/SizingReconciliationReportList?pageNum=1'>Sizing Reconciliation Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WINDING <b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/warpbottomreport'>Bottom Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingissueandreceivereport?pageNum=1'>Rewinding Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingreceivereport?pageNum=1'>Rewinding Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingproductionreportlist?pageNum=1'>Rewinding Production Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingreceivependingreport?pageNum=1'>REWINDING RECEIVE PENDING REPORT</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/windinginoutreport'>Winding Issue and Receive Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/rewindingEntryInOutReport'>REWINDING YARN ENTRY WISE IN-OUT REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/store/fabricobcbreport?state=1'>Fabric OBCB Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/commonStockReport'>Common Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/purchasestatusviewNew'>Fabric PO Status (PURCHASE) Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/fabricpostatusjobworkNew?state=1'>Fabric PO Status (JOBWORK) Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/fabricinwardreport?listType=1'>Jobwork Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/fabricinwardreport?listType=3'>Purchase Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/fabricoutwardRePort?pageNum=1'>Fabric Outward Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/piecebalestock'>Piece And Bale Stock Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/fabricinventory?state=1'>Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/qualitywiseinventoryfabric?state=3'>Quality Wise Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/domesticsalesorder/fabricInOutRpt'>Fabric In Out Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/YAndNReport?isCompleted=0&state=8'>Piecewise Available Details Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/productionnew/YAndNReport?isCompleted=1'>PieceWise Dispatched Details Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/pendingBaleReport?pageNum=1'>PENDING BALE REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PROCESS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/salesfinishedorderstatusview?productionFor=2&listType=1'>Domestic Order Status (FINISHED)</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/processJobworkRepotList?'>Process Reconciliation Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/salesorder/processJobworkDetailedRepotList?'>Process Jobwork RECO Detailed Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/pur/processingjobworkissuechallanreport?pageNum=1'>Processing Challan Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WEAVER REPORTS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/weftissuereport'>Weft Issue Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/weavingReconcilationRpt?isExport=1'>Weaving Reconciliation Summary Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/store/wefiReconcilation'>Weaving Reconciliation Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/production/yarnStockReport'>Yarn Stock Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MARKETING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexRAMTest/salesorder/approvalDashboard?pageNum=1'>Approval Dashboard</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/complaint/complaintReportList?pageUse=1'>Complaint Register Report</a></li><li class='divider'></li><li ><a href='/iTexRAMTest/sort/jobweavinginventoryreport?groupType=3'>JOB WEAVING INVENTORY REPORT</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexRAMTest/report/selfsovsactualso?pageNum=1'>SELF SO V/S ACTUAL SO REPORT</a></li><li class='divider'></li></ul></li></ul>
+	</div>
+</nav>
+
+
+
+<div class="container">
+	
+	
+	
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerr" style="display: none">
+		<a href="#" class="close"  onclick="$('#mastajxerr').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerror"></span>
+	</div>
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerrb" style="display: none">
+		<a href="#" class="close" onclick="$('#mastajxerrb').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerrorb"></span>
+	</div>
+	<div class="alert alert-info alert-dismissable fade in"
+		id="status1" style="display: none">
+		<a href="#" class="close"  onclick="$('#status1').hide();" aria-label="close">&times;</a>
+		<strong >Info! </strong> <span id="info"></span>
+	</div>
+</div>
+	
+	<script type="text/javascript">
+	$(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+</script>
+
+<style>
+.dropdown-menu1 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	
+}
+
+.dropdown-menu1 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu1>li>a {
+	display: block;
+	padding: 0px 80px;
+	clear: both;
+	font-weight: 400;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu {
+	display: block;
+	position: relative;
+	height: 30px;
+}
+
+.dropdown-submenu:hover .dropdown-menu1 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: 5px;
+	background-color: #1d1d1d;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu1 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+
+.glyphicon glyphicon-play {
+	width: 20px;
+	height: 20px;
+}
+
+.dropdown-menu2 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	height: auto;
+}
+
+.dropdown-menu2 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu2>li>a {
+	display: block;
+	padding: 2px 10px;
+	clear: both;
+	font-weight: 400;
+	line-height: 1.42857143;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu:hover .dropdown-menu2 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: -45px;
+	background-color: #6f1c17;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu2 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+</style>
+<script type="text/javascript">
+	function setCompanyAndFinYearToSession() {
+		var companyId = $('#clientId').val();
+		var finYearId = $('#financialYearId').val();
+		var url      = location.href;
+		$.ajax({
+			dataType : 'json',
+			type : "Post",
+			url : "/iTexRAMTest/fas/updatesession",
+			data : {
+				'companyId' : companyId,
+				'finYearId' : finYearId,
+				'pathName' : url
+			},
+			success : function(response) {
+				location.href=response.path;
+				
+			}
+
+		});
+
+	}
+</script>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<ul class="breadcrumb fontFamily">
+					<li><a
+						href="/iTexRAMTest/sort/sortmasterlist">
+							Sort Master List</a></li>
+					<li>Sort Master INFO</li>
+				</ul>
+			</div>
+			<div class="col-md-4">
+				<div class="col-md-12" style="padding-right: 0px;">
+					<a href="javascript:getConfirmation(1)"><img
+						src="/iTexRAMTest/resources/images/back.png"
+						title="Back" style="float: right; width: 40px;"></a>
+				</div>
+			</div>
+
+		</div>
+		<table class="colorTblCss1" style="width: 100%; table-layout: fixed;">
+			<tr>
+				<th>Sort Master INFO</th>
+			</tr>
+		</table>
+		<div style="display: none;">
+			<table id="sampleRow">
+				<tr>
+					<td><select id="" name=""
+						class="txtBox marginInInde greySortMasterId"></select> <label
+						for="" class="error greySortMasterError">&nbsp;</label></td>
+					<td><input type="text" id="" name=""
+						class="txtBox fontFamily greySortNumber" readonly="readonly" /></td>
+					<td><input type="number" id="" name=""
+						class="txtBox fontFamily greyConsumptionPercentage"
+						style="width: 120px;" /> <label for="" class="error perError">&nbsp;</label></td>
+					<td><input type="text" id="" name=""
+						class="txtBox fontFamily greyGsm" readonly="readonly" /></td>
+					<!-- <td><input type="text" id="" name=""
+						class="txtBox fontFamily greyWarpWeft" readonly="readonly" /></td> -->
+					<td><input type="text" id="" name=""
+						class="txtBox fontFamily greyWidth" readonly="readonly" /></td>
+					<td><select class="txtBox marginInInde greyWeave" id=""
+						name="">
+					</select></td>
+					<td><a href="" class="add-record"><img data-added="0"
+							src="/iTexRAMTest/resources/images/blue_add.png"></a><img
+						alt="Remove" class="delete-record" data-id="0"
+						src="/iTexRAMTest/resources/images/close.png"></td>
+				</tr>
+			</table>
+
+		</div>
+
+		<form method="POST" id="MyForms" name="forms"
+			enctype="multipart/form-data">
+			<input type="hidden" id="logcmp" name="logcmp"value="Trading-1-c-27" class="txtBox fontFamily" />
+			
+			<div class="contentBorderDiv">
+				<input type="hidden" id="accountLedgerId" name="accountLedgerId"
+					value="" /> <input type="hidden"
+					id="glmWeftWithoutWastage" name="glmWeftWithoutWastage"
+					value="0" /> <input type="hidden"
+					id="sortMasterId" name="sortMasterId"
+					value="" /> <input type="hidden"
+					id="isQualityEditable" name="isQualityEditable"
+					value="0" /> 
+					
+					<input type="hidden" id="showWeftPattern"  value="1" />
+					<input type="hidden"
+					id="colourMasterId" name="colourMasterId"
+					value="" /> <input type="hidden"
+					id="buyerSortNumber" name="buyerSortNumber"
+					value="" /> <input type="hidden"
+					id="createdDate" name="createdDate" value="" /> <input
+					type="hidden" id="warpweft" name="warpweft"
+					value="" /> <input type="hidden"
+					id="IncludePicsInsertInQuality" name="IncludePicsInsertInQuality"
+					value="" /> <input type="hidden"
+					id="deletewarpids" name="deletewarpids" value="" /> <input
+					type="hidden" id="deleteweftids" name="deleteweftids" value="" />
+
+				<input type="hidden" id="widthInInches" name="widthInInches"
+					value="" /> <input type="hidden"
+					id="IsIncludeSizePickUpInWarpGLM"
+					name="IsIncludeSizePickUpInWarpGLM"
+					value="1" /> <input type="hidden"
+					id="isTradOrFactory" name="isTradOrFactory"
+					value="0" /> <input type="hidden"
+					id="clientId" name="clientId" value="1" /> <input
+					type="hidden" id="financialYearId" name="financialYearId"
+					value="" />
+
+                    <input type="hidden" id="designchangesmetavalue1" name="designchangesmetavalue1"
+					value="0" />
+				
+				<div class="row ">
+					<div class="col-md-3">
+						<div class="col-md-4 paddingZero">
+							<label class="lblTxt fontFamily">Fabric Type<sup
+								class="mandatory">*</sup></label>
+						</div>
+						
+						<div class="col-md-8">
+							<select class="txtBox marginInInde isFinishedProduct"
+								id="fabricType" name="fabricType"
+								onchange="getQualityDetails(this.value)">
+								<option value="">Select</option>
+								<option value="1"
+									>Finished</option>
+								<option value="2"
+									>Grey</option>
+							</select><label for="fabricType" class="error">&nbsp;</label>
+						</div>
+						
+						
+					</div>
+					<div class="col-md-3">
+
+						<div class="col-md-4 paddingZero">
+						
+							<label class="lblTxt fontFamily">Sort No<sup
+							class="mandatory">*</sup></label>
+						
+						
+						</div>
+						<div class="col-md-8">
+							
+								
+								
+									<input type="text" id="sortNumber" name="sortNumber" onchange="qualityValidation();"
+										class="txtBox fontFamily" value="" />
+								
+							
+
+							
+							<label style="color: red;" id="numerror">&nbsp;</label>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="col-md-4 paddingZero">
+						
+							<label class="lblTxt fontFamily">Quality Details<sup
+								class="mandatory">*</sup></label>
+						
+						
+						</div>
+						<div class="col-md-8">
+						
+								
+								<textarea rows="4" class="fontFamily" name="qualityDetails" onchange="qualityValidation();"
+								id="qualityDetails"></textarea>
+								
+							<!-- 		<input type="text" id="qualityDetails" 
+									class="txtBox fontFamily" value=""/> -->
+							<label style="color: red;" id="numerror">&nbsp;</label>
+						</div>
+					</div>
+
+
+					<div class="col-md-3">
+						<div class="col-md-4 paddingZero">
+							<label class="lblTxt fontFamily">Weave<sup
+								class="mandatory">*</sup></label>
+						</div>
+						<div class="col-md-8">
+							
+								<select class="txtBox marginInInde" id="sheddingMechanismId"
+									name="sheddingMechanismId" onchange="getquality(0);">
+									<option value="">Select</option>
+									'
+								<option value="1"
+											>DOBBY</option>
+									'
+								<option value="2"
+											>TWILL</option>
+									'
+								<option value="3"
+											>PLAIN</option>
+									'
+								<option value="4"
+											>SATIN</option>
+									'
+								<option value="5"
+											>CORD</option>
+									'
+								<option value="6"
+											>MATTY</option>
+									'
+								<option value="7"
+											>2/2 TWILL</option>
+									'
+								<option value="8"
+											>2/2 MATTY</option>
+									
+								</select>
+								<label for="sheddingMechanismId" class="error"></label>
+							
+							
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row ">
+					<div class="col-md-3">
+						<div class="col-md-4 paddingZero">
+							<label class="lblTxt fontFamily">Create For<sup
+								class="mandatory">*</sup></label>
+						</div>
+						<div class="col-md-8">
+							<select class="txtBox marginInInde" id="isExportOrder"
+								name="isExportOrder">
+								<option value="">Select</option>
+								<option value="0"
+									>Domestic</option>
+								<option value="1"
+									>Export</option>
+
+								<option value="2"
+									>Both</option>
+							</select><label for="isExportOrder" class="error">&nbsp;</label>
+						</div>
+					</div>
+				
+
+	          
+					
+					
+					<div class="col-md-3"></div>
+				</div>
+
+
+				<!-- ------------------- -->
+
+
+
+				<div class="contentBorderDiv">
+					<!-- ------------------- -->
+
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Reed<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="reed" name="reed"
+									onchange="CalFinalReed();" class="txtBox fontFamily"
+									value="" /> <label style="color: red;"
+									id="numerror">&nbsp;</label>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-2 paddingZero">
+								<label class="lblTxt fontFamily">Denting<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-3">
+								<input type="text" id="denting" name="denting"
+									onchange="CalFinalReed();" class="txtBox fontFamily"
+									value="" /> <label style="color: red;"
+									id="numerror">&nbsp;</label>
+							</div>
+							
+							<div class="col-md-2 paddingZero">
+								<label class="lblTxt fontFamily">Multi-Dents</label>
+							</div>
+							<div class="col-md-5">
+								<input type="text" id="multiDents" name="multiDents" class="txtBox fontFamily"
+									value="" /> <label style="color: red;"
+									id="numerror">&nbsp;</label>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Final Reed</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="finalReed" name="finalReed"
+									class="txtBox fontFamily" value=""
+									 />
+							</div>
+						</div>
+					</div>
+
+
+					<!-- ------------------- -->
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Width(Inches)<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="width" name="width"
+									class="txtBox fontFamily" value=""
+									onchange="getwidth(this.value);CalreedSpace();" />
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Extra Width<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="threadOrGala" name="threadOrGala"
+									onchange="CalreedSpace();" class="txtBox fontFamily"
+									value="" /> <input type="hidden"
+									name="reedSpaceT" id="reedSpaceT"
+									value="0"> <input
+									type="hidden" name="selvedgeWidthType" id="selvedgeWidthType"
+									value="0">
+							</div>
+						</div>
+						<div class="col-md-4">
+
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Reed Space<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="reedSpace" name="reedSpace"
+									class="txtBox fontFamily" value=""
+									 /> <label style="color: red;"
+									id="numerror">&nbsp;</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Total Ends</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="ends" name="ends"
+									class="txtBox fontFamily" value="" />
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Picks<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="totalPicks" name="totalPicks"
+									onchange="CalWefttotalEnds(0)" class="txtBox fontFamily"
+									value="" /> <label style="color: red;"
+									id="numerror">&nbsp;</label>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Pick Insert</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="pickInsert" name="pickInsert"
+									onchange="CalWefttotalEnds(0)" class="txtBox fontFamily"
+									value="" /> <label style="color: red;"
+									id="numerror">&nbsp;</label>
+							</div>
+						</div>
+
+					</div>
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+							
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Width (CM)<!-- <sup class="mandatory">*</sup> --></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="widthInCms" name="widthInCms"
+									class="txtBox fontFamily" value=""
+									readonly="readonly" />
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Composition<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="composition" name="composition"
+									class="txtBox fontFamily" value="" />
+								<label style="color: red;" id="numerror">&nbsp;</label>
+							</div>
+						</div>
+						<div class="col-md-4">
+							
+
+
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Size Pick Up </label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="sizePickUp" name="sizePickUp"
+									class="txtBox fontFamily" value=""
+									onchange="CalTotalEnds()" /> <label class="" for="">&nbsp;</label>
+
+							</div>
+
+						</div>
+
+					</div>
+
+
+					<div class="row marginBottomFourty">
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Loom Type<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<select id="loomType" name="loomType" class="txtBox fontFamily">
+									<option value="">Select</option>
+									
+										<option value="1"
+											>AIRJET</option>
+									
+										<option value="2"
+											>RAPPIER</option>
+									
+								</select> <label for="loomType" class="error">&nbsp;</label>
+							</div>
+
+						</div>
+
+						<div class="col-md-4">
+
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Selvedge</label>
+							</div>
+							<div class="col-md-8">
+								<select class="txtBox marginInInde selvedgeId" id="selvedgeId"
+									name="selvedgeId" onchange="getsalvagedetails(this.value)">
+									<option value="">Select</option>
+									
+										<option value="1"
+											>21ST CENTURY FABRICS 100% GIZA MADE IN JAPAN (YING YANG)</option>
+									
+										<option value="2"
+											>21ST CENTURY FABRICS 100% COTTON 100-100 SHAHZADA LAWN</option>
+									
+										<option value="3"
+											>60 SUPERFINE ORGANIC COTTON LINEN TISSOT LEA</option>
+									
+										<option value="4"
+											>BENZ-053-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="5"
+											>BENZ-055-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="6"
+											>BENZ-180-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="7"
+											>BENZ-181-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="8"
+											>BENZ-182- FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="9"
+											>BENZ-183-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="10"
+											>100% COTTON - 70*70 LEA SLUB - ARMANI</option>
+									
+										<option value="11"
+											>100% COTTON 30*30 LEA SLUB - CASA MATTY</option>
+									
+										<option value="12"
+											>100% COTTON 90*90 LEA SLUB - TESLA</option>
+									
+										<option value="13"
+											>100% COTTON 80*80 LEA SLUB - JAGUAR</option>
+									
+										<option value="14"
+											>100% COTTON 60*60 LEA SLUB - FERARI</option>
+									
+										<option value="15"
+											>21ST CENTURY FABRIC</option>
+									
+										<option value="16"
+											>EXCELLENT</option>
+									
+										<option value="17"
+											>MAGNUM GIZA</option>
+									
+										<option value="18"
+											>KRIPLON</option>
+									
+										<option value="19"
+											>21ST CENTURY FABRICS 80 X80 GIZA (LA TESSUTI)</option>
+									
+										<option value="20"
+											>THE EXCLUSIVE GIZA COLLECTION (POSH)</option>
+									
+										<option value="21"
+											>21ST CENTURY FABRIC 100% COTTON DORIA SHIRTING (ITALIC REMI)</option>
+									
+										<option value="22"
+											>PREMIUM COTTON FABRIC GIZA X GIZA GUARANTEED</option>
+									
+										<option value="23"
+											>BENZ-185-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="24"
+											>BENZ-1810-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="25"
+											>BENZ-184-FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="26"
+											>80*80 GIZA COTTON PREMIUM FABRICS</option>
+									
+										<option value="27"
+											>80*80 GIZA JAQUARD FABRIC</option>
+									
+										<option value="28"
+											>THE PREMIUM GIZA BELGIUM WAFFLE</option>
+									
+										<option value="29"
+											>VOLVO GIZA MADE BY 60 COTTON FEEL</option>
+									
+										<option value="30"
+											>DYNORA - 101</option>
+									
+										<option value="31"
+											>DYNORA - 102</option>
+									
+										<option value="32"
+											>DYNORA - 103</option>
+									
+										<option value="33"
+											>DYNORA - 104</option>
+									
+										<option value="34"
+											>100% SUPERFINE ITALIAN FINISH PREMIUM GIZA COTTON</option>
+									
+										<option value="35"
+											>PRADA GIZA</option>
+									
+										<option value="36"
+											>TUSCANY</option>
+									
+										<option value="37"
+											>WHITE ROSE MILLS</option>
+									
+										<option value="38"
+											>BENZ - 211 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="39"
+											>BENZ - 212 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="40"
+											>BENZ - 213 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="41"
+											>BENZ - 183 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="42"
+											>BENZ - 184 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="43"
+											>BENZ - 191  FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="44"
+											>BENZ - 287 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="45"
+											>BENZ - 290 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="46"
+											>BENZ - 291  FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="47"
+											>BENZ - 193 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="48"
+											>BENZ - 186 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="49"
+											>BENZ - 192 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="50"
+											>BENZ - 209 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="51"
+											>BENZ - 210 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="52"
+											>BENZ - 214 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="53"
+											>BENZ - 288  FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="54"
+											>BENZ - 289 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="55"
+											>BENZ - 292 FINEST GIZA COTTON LUXURY ITALINO CLOTHING</option>
+									
+										<option value="56"
+											>JAQUARD BUTTA</option>
+									
+										<option value="57"
+											>SIYARAMS 60*60</option>
+									
+								</select><label for="selvedgeId" class="error">&nbsp;</label>
+							</div>
+
+
+						</div>
+
+						<div class="col-md-4 selvedgenometa">
+
+							<div class="col-md-2 paddingZero">
+								<label class="lblTxt fontFamily">Dents</label>
+							</div>
+							<div class="col-md-3">
+								
+									<input type="text" id="dents"
+										 name="dents"
+										class="txtBox fontFamily" value="0"
+										onchange="getselvedgeEnds()" />
+								
+								
+
+							</div>
+
+							<div class="col-md-2 paddingZero">
+								<label class="lblTxt fontFamily">S Width</label>
+							</div>
+							<div class="col-md-2 paddingZero">
+								
+									<input type="text" id="selvedgeWidth"
+										name="selvedgeWidth"
+										class="txtBox fontFamily" value="0"
+										onchange="getselvedgeEnds()" />
+								
+								
+							</div>
+
+
+
+						</div>
+						<div class="col-md-4 selvedgemeta">
+
+							<div class="col-md-2 paddingZero">
+								<label class="lblTxt fontFamily">S.Dents</label>
+							</div>
+							<div class="col-md-3">
+								
+									<input type="text" id="mdents"
+										
+										class="txtBox fontFamily" value="0"
+										onchange="getselvedgeMeta()" />
+								
+								
+
+							</div>
+
+							<div class="col-md-2 paddingZero">
+								<label class="lblTxt fontFamily">Extra Ends</label>
+							</div>
+							<div class="col-md-2 paddingZero">
+								
+									<input type="text" id="mselvedgeWidth"
+										
+										onchange="getselvedgeMeta()" class="txtBox fontFamily"
+										value="0" />
+								
+								
+							</div>
+						</div>
+
+					</div>
+
+					<div class="row marginBottomFourty">
+
+						<div class="col-md-4 selvedgenometa">
+							<div class="col-md-4 paddingZero">
+
+								<label class="lblTxt fontFamily">Ends per Dent</label>
+							</div>
+							<div class="col-md-8">
+								
+									<input type="text" id="endsPerDents"
+										name="endsPerDents"
+										class="txtBox fontFamily" value="0"
+										onchange="getselvedgeEnds()" />
+								
+								
+
+
+							</div>
+						</div>
+						<div class="col-md-4 selvedgemeta">
+							<div class="col-md-4 paddingZero">
+
+								<label class="lblTxt fontFamily">Selvedge</label>
+							</div>
+							<div class="col-md-8">
+								
+									<input type="text" id="mendsPerDents"
+										
+										class="txtBox fontFamily" value="0"
+										onchange="getselvedgeMeta()" />
+								
+								
+
+
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Selvedge Ends</label>
+							</div>
+							<div class="col-md-8">
+								
+									<input type="text" id="selvedgeEnds" name="selvedgeEnds"
+										class="txtBox fontFamily" value="0"
+										onchange="getselvedgeEnds()" />
+									<input type="hidden" id="totalSelvedge" name="totalSelvedge"
+										class="txtBox fontFamily" value="0" />
+								
+								
+
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Ends With Selvedge<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="totalEnds" name="totalEnds"
+									class="txtBox fontFamily" value="" />
+							</div>
+						</div>
+					</div>
+
+					<div class="row marginBottomFourty">
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Beam Type</label>
+							</div>
+							<div class="col-md-8">
+								<select class="txtBox marginInInde beamType" id="beamType"
+									name="beamType">
+									<option value="">Select</option>
+									<option value="1"
+										>Single</option>
+									<option value="2"
+										>Double</option>
+								</select><label for="beamType" class="error">&nbsp;</label>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Selvedge Drawing</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="selvedgeDrawing" name="selvedgeDrawing"
+									class="txtBox fontFamily" value="" />
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">PaperTube Size</label>
+							</div>
+							<div class="col-md-8">
+								<select class="txtBox marginInInde" id="paperTubeSizeId"
+									name="paperTubeSizeId">
+									<option value="">Select</option>
+									
+								</select> <label for="paperTubeSizeMs" class="error"></label>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Total Warp Patterns</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="totalWarpPattern" name="totalWarpPattern"
+									class="txtBox fontFamily"
+									value="" readonly="readonly" />
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Total Weft Patterns</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="totalWeftPattern" name="totalWeftPattern"
+									class="txtBox fontFamily"
+									value="" readonly="readonly" />
+							</div>
+						</div>
+						<div class="col-md-4">
+
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Total Warp Grms/Mtr</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="totalWarpGrmsPerMtr"
+									name="totalWarpGrmsPerMtr" class="txtBox fontFamily"
+									value="" readonly="readonly" />
+
+								<input type="hidden" id="totalWarpGrmsPerMtr1"
+									value=""
+									class="txtBox fontFamily" />
+
+
+							</div>
+						</div>
+
+					</div>
+					<div class="row marginBottomFourty">
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Total Weft Grms/Mtr</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="totalWeftGrmsPerMtr"
+									name="totalWeftGrmsPerMtr" class="txtBox fontFamily"
+									value="" readonly="readonly" />
+								<input type="hidden" id="totalWeftGrmsPerMtr1"
+									value=""
+									class="txtBox fontFamily" /> <input type="hidden"
+									id="totalglmWeftGrmsPerMtr" class="txtBox fontFamily" />
+
+							</div>
+
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">CAL GLM with Shrinkage<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="glm" name="glm" class="txtBox fontFamily"
+									value="" readonly="readonly" />
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">CAL GSM with Shrinkage<sup
+									class="mandatory">*</sup></label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="gsm" name="gsm" class="txtBox fontFamily"
+									value="" readonly="readonly" />
+
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row marginBottomFourty">
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">CAL GLM Without
+									Shrinkage</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="gsmWithoutWastage"
+									name="gsmWithoutWastage" readonly="readonly"
+									class="txtBox fontFamily"
+									value="" />
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">CAL GSM Without
+									Shrinkage</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="glmWithoutWastage"
+									name="glmWithoutWastage" readonly="readonly"
+									class="txtBox fontFamily"
+									value="" />
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Master Quality</label>
+							</div>
+							<div class="col-md-8">
+								<select class="txtBox marginInInde" id="masterQuality"
+									name="masterQuality">
+									<option value="">Select</option>
+									
+										<option value="1"
+											>63"/165X100/60X60</option>
+									
+										<option value="4"
+											>63"/144X84/60X50</option>
+									
+										<option value="5"
+											>63"/165*80/60*50</option>
+									
+										<option value="8"
+											>38"/84*84/60*60</option>
+									
+										<option value="49"
+											>63"/96X68/40X30VIS</option>
+									
+										<option value="79"
+											>64RS/120X76/80DX40C</option>
+									
+										<option value="80"
+											>64RS/72/2X92/80DX40C</option>
+									
+										<option value="81"
+											>64RS/120X90/80DX40C</option>
+									
+										<option value="82"
+											>63"/96X60/42PVX2/40PVX2/80</option>
+									
+										<option value="83"
+											>70RS/52X52/21SLBX21SLB</option>
+									
+										<option value="84"
+											>62"/52X48/20X20</option>
+									
+										<option value="85"
+											>63"/165X102/60X60 DOBBY</option>
+									
+										<option value="86"
+											>63"/160X100/60X60+2/80</option>
+									
+										<option value="87"
+											>63RS/72/4X76/80DENX40CPT</option>
+									
+										<option value="88"
+											>63"/180X96/60X60+40TENCEL</option>
+									
+										<option value="91"
+											>63"/128X80/50CX60C+40SLUB</option>
+									
+										<option value="92"
+											>63"/160X84/60X60+20</option>
+									
+										<option value="93"
+											>63"/160X72/60X40V</option>
+									
+										<option value="94"
+											>63"/160X88/60X60+40V</option>
+									
+										<option value="95"
+											>63"/160X72/60X40+20SLUB</option>
+									
+										<option value="96"
+											>63"/160X80X/60X40V</option>
+									
+										<option value="97"
+											>63"/160X68/60X40+20</option>
+									
+										<option value="98"
+											>63"/160X80/60X30TEN</option>
+									
+										<option value="99"
+											>69"/96X72/60+ZARIX60</option>
+									
+										<option value="100"
+											>63"/160X100/60X60+150COM</option>
+									
+										<option value="102"
+											>63"/112X68/50+150X50</option>
+									
+										<option value="103"
+											>63RS/72/4X72/80DEVX40CPT</option>
+									
+										<option value="104"
+											>68.30RS/102X72/61X61</option>
+									
+										<option value="107"
+											>63"/48X44/21ZX21Z+21C</option>
+									
+										<option value="108"
+											>67RS/52X48/321SWANX321SWAN</option>
+									
+										<option value="109"
+											>40RS/108X84/40PVX80/300</option>
+									
+										<option value="110"
+											>66.5RS/126X72/60X60</option>
+									
+										<option value="111"
+											>67RS/170X102/60X60</option>
+									
+										<option value="113"
+											>63/108X72/50X50C+20SLB</option>
+									
+										<option value="114"
+											>63/108X76/50X50COTTON+30SLUB</option>
+									
+										<option value="116"
+											>63/108X80/50X50C+30C</option>
+									
+										<option value="117"
+											>63"/108X80/51CX51C+30C</option>
+									
+										<option value="118"
+											>63/180X102/60X60C</option>
+									
+										<option value="119"
+											>63/180X102/60X61C</option>
+									
+										<option value="120"
+											>63/180X102/61X61C</option>
+									
+										<option value="121"
+											>63/180X102/61X60C</option>
+									
+										<option value="122"
+											>82RS/102X88/42PVX97LYCRA</option>
+									
+										<option value="123"
+											>68RS/162X120/61X61</option>
+									
+										<option value="124"
+											>63"/52X52/24SLBX24SLB</option>
+									
+										<option value="125"
+											>63"/80X64/24SLBX24SLB</option>
+									
+										<option value="126"
+											>82RS/76X70/30.5SLBX40+97LYC</option>
+									
+										<option value="127"
+											>84RS/108X84/45PVX97 LYC</option>
+									
+										<option value="128"
+											>82RS/140X96/60PSFX97LYC</option>
+									
+										<option value="129"
+											>63"/64X62/31SLB+2/80DNRX31SLB</option>
+									
+										<option value="130"
+											>63"/80X70/60C+ZARIX60C</option>
+									
+										<option value="131"
+											>63"/102X70/40CX40TEN</option>
+									
+										<option value="132"
+											>63RS/72X72/2/80X32</option>
+									
+										<option value="133"
+											>82RS/102X80/42PVX97LYC</option>
+									
+										<option value="134"
+											>69RS/108X76/40CX40T</option>
+									
+										<option value="135"
+											>78RS/102X60/41X220</option>
+									
+										<option value="136"
+											>67RS/136X88/50X50</option>
+									
+										<option value="137"
+											>67RS/136X124/50X50</option>
+									
+								</select> <label for="sortMasters" class="error"></label>
+							</div>
+
+
+						</div>
+					</div>
+
+
+					<div class="row marginBottomFourty">
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">ACT GLM</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="actGlm" name="actGlm"
+									class="txtBox fontFamily" value="" /> <label
+									class="" for="">&nbsp;</label>
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">ACT GSM</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="actGsm" name="actGsm"
+									class="txtBox fontFamily" value="" /> <label
+									class="" for="">&nbsp;</label>
+
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">On Loom</label>
+							</div>
+							<div class="col-md-8">
+								<input type="text" id="onLoom" name="onLoom"
+									class="txtBox fontFamily" value="" /> <label
+									class="" for="">&nbsp;</label>
+							</div>
+						</div>
+
+					</div>
+
+
+
+
+
+
+
+
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Drawing</label>
+							</div>
+							<div class="col-md-8">
+								<textarea id="sortDrawing1" class="txtBox fontFamily"
+									name="sortDrawing" style="width: 280px; height: 100px;"></textarea>
+								<label class="" for="">&nbsp;</label>
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Peg Plan</label>
+							</div>
+							<div class="col-md-8">
+								<textarea rows="3" cols="28" id="pegPlan1"
+									class="txtBox fontFamily" name="pegPlan"></textarea>
+								<label class="" for="">&nbsp;</label>
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Display Quality</label>
+							</div>
+							<div class="col-md-8">
+								
+									<textarea rows="3" cols="28" id="printOnBill"
+										class="txtBox fontFamily" name="printOnBill"></textarea>
+								
+								
+							</div>
+						</div>
+
+					</div>
+
+					<div class="row marginBottomFourty">
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">is MasterQuality</label>
+							</div>
+							<div class="col-md-8">
+								
+								
+									<div class="col-md-8">
+										<input type="checkbox" name="isMasterQuality" id="isActive"
+											value="1" style="margin-top: 12px;" />
+									</div>
+								
+								<label style="color: red;" id="buttaerror">&nbsp;</label>
+
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Remark</label>
+							</div>
+							<div class="col-md-8 paddingZero">
+								<textarea name="remark" id="remark" class="txtBox fontFamily"
+									rows="3" cols="28"></textarea>
+							</div>
+
+
+						</div>
+
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">isActive</label>
+							</div>
+							<div class="col-md-8">
+
+
+								<div class="col-md-8">
+									
+										<input type="checkbox" name="isActive2" id="isActive2"
+											style="margin-top: 12px;" checked="checked">
+									
+									
+								</div>
+
+								<label style="color: red;" id="buttaerror">&nbsp;</label>
+
+							</div>
+						</div>
+
+
+					</div>
+					<br>
+					<div class="row marginBottomFourty">
+					
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Design Paper Image</label>
+							</div>
+							<div class="col-md-8">
+								<input type="file" name="files" class="txtBox fontFamily" />
+								<br>
+								
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero">
+								<label class="lblTxt fontFamily">Fabric Image</label>
+							</div>
+							<div class="col-md-8">
+								<input type="file" name="fabricFiles" class="txtBox fontFamily" />
+								<br>
+								
+							</div>
+						</div>
+						
+						<div class="col-md-4">
+							<div class="col-md-4 paddingZero"> <label class="lblTxt fontFamily">L2L</label></div>
+							<div class="col-md-8">
+								<input type="number" id="l2l" name="l2l" class="txtBox fontFamily indianFormat2" value=""/>
+							</div>
+						</div>
+						
+						
+						
+					</div>
+					
+                    					
+					
+					
+					
+					
+					
+					<!-- <<<<<<<<<<>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<>>>>>>>>>>>>>><<<<<<<<<------------------- -->
+					
+						<div class="contentBorderDiv colorTbl" style="padding-top: 15px;">
+							<div class="row ">
+								<div class="col-md-5 paddingZero"></div>
+								<div class="col-md-5 paddingZero">
+									<h3>
+										Warp
+										Details
+										<sup class="mandatory">*</sup>
+									</h3>
+								</div>
+
+								
+							</div>
+							<div id="error" class="error" align="center"></div>
+
+							<input type="hidden" id="CompleteDiv" name="CompleteDiv"
+								value="0" />
+
+
+
+							<div class="container " style="width: 100%;">
+								<div class="row" style="width: 100%;">
+									<table id="warptab0" class="colorTblCss1">
+										<tr>
+											
+											<th style="width: 16%;">Beam Type <sup class="mandatory">*</sup></label></th>
+											
+											<th style="width: 15%;">Pattern</th>
+											<th style="width: 15%;">Material</th>
+											<th style="width: 14%;">Shrinkage</th>
+											<th style="width: 14%;">Total Ends</th>
+											<th style="width: 14%;">GRMS/Mtrs</th>
+											<th style="width: 5%;">Add</th>
+											<th style="width: 7%;">Remove</th>
+										</tr>
+
+
+										<tr>
+										
+										<td><input type="hidden" id="totalNoOfWarps" name="totalNoOfWarps" value="0"> 
+										<input type="hidden" id="totalCountWarp0" name="totalCountWarp0" value="1"> 
+										
+										<select class="txtBox marginInInde beamTypeId" id="beamTypeId_0_0" 
+										name="sortMasterWarp[0].sortMasterWarpDetails[0].beamTypeId" onchange="checkPiece1(0,0,1,this.value);" />
+											<option value="">Select Beam Type</option>
+											<option value="1" />Bottom</option>
+											<option value="2" />Top</option>
+											<option value="3" />Bobbin</option>
+											<option value="4" />Selvedge</option>
+										</select><label for="beamTypeId_0_0" class="error">&nbsp;</label></td>
+										
+									<td><input type="hidden" id="totalNoOfWarps"
+												name="totalNoOfWarps" value="0"> <input
+												type="hidden" id="totalCountWarp0" name="totalCountWarp0"
+												value="1"> <input type="number" id="pattern_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].pattern"
+												class="txtBox fontFamily pattern" style="width: 150px;"
+												onchange="CalWarptotalEnds(0)" /> <label
+												for="pattern_warp_0_0" class="error"></label></td>
+											<td><input type="hidden"
+												class="txtBox marginInInde yarnType"
+												id="yarnTypeId_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].yarnTypeId">
+												<input type="hidden" class="txtBox marginInInde uom"
+												id="uomId_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].uomId">
+												<input type="hidden" class="txtBox marginInInde Count"
+												id="fabricCountId_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].fabricCountId">
+												<input type="hidden" class="txtBox marginInInde Ply"
+												id="fabricPlyId_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].fabricPlyId" />
+												<input type="hidden" class="txtBox marginInInde yarnVariety"
+												id="yarnVarietyId_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].yarnVarietyId" />
+												<input type="hidden" class="txtBox marginInInde noOfCounts"
+												id="noOfCounts_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].noOfCounts" />
+												<input type="hidden" class="txtBox marginInInde ply"
+												id="ply_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].ply" /> <input
+												type="hidden" class="txtBox marginInInde yarnCode"
+												id="yarnCode_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].yarnCode" />
+
+												<input type="hidden"
+												class="txtBox marginInInde yarnEnglishCount"
+												id="englishCount_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].yarnEnglishCount" />
+
+												<select class="txtBox marginInInde itemId"
+												id="itemId_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].itemId"
+												onchange="checkPiece1(0,0,1,this.value);">
+													<option value="">Select
+														Material</option>
+													
+														<option value="1">61CPT</option>
+													
+														<option value="2">30C</option>
+													
+														<option value="3">20C</option>
+													
+														<option value="4">21SLB</option>
+													
+														<option value="5">51CPT</option>
+													
+														<option value="6">20 LY</option>
+													
+														<option value="7">21OE</option>
+													
+														<option value="8">32CTN </option>
+													
+														<option value="9">10 SLB</option>
+													
+														<option value="10">80/300</option>
+													
+														<option value="11">40PV</option>
+													
+														<option value="12">97 LYC</option>
+													
+														<option value="13">41 CPT</option>
+													
+														<option value="14">31SLB</option>
+													
+														<option value="15">80 DEN</option>
+													
+														<option value="16">42PV</option>
+													
+														<option value="17">220 DEN</option>
+													
+														<option value="18">97  SUPER STRETCH LYCRA</option>
+													
+														<option value="19">42 CTN</option>
+													
+														<option value="20">2/63  DEN </option>
+													
+														<option value="21">2/32  CTN </option>
+													
+														<option value="22">42 LYCRA</option>
+													
+														<option value="23">75 DEN</option>
+													
+														<option value="24">51 LYC</option>
+													
+														<option value="25">150 CATIONIC</option>
+													
+														<option value="26">30VIS</option>
+													
+														<option value="27">34 VISCOSE</option>
+													
+														<option value="28">80/1000</option>
+													
+														<option value="29">34 ZARI</option>
+													
+														<option value="30">40 VISCOSE</option>
+													
+														<option value="31">2/76  PSF </option>
+													
+														<option value="32">40 PSF</option>
+													
+														<option value="33">80 CATIONIC</option>
+													
+														<option value="34">62C</option>
+													
+														<option value="35">10OE</option>
+													
+														<option value="36">41 SLUB</option>
+													
+														<option value="37">40 TNC</option>
+													
+														<option value="38">150 BRIGHT</option>
+													
+														<option value="39">21 VISCOSE</option>
+													
+														<option value="40">2/80</option>
+													
+														<option value="41">30LYCRA</option>
+													
+														<option value="42">16SLB</option>
+													
+														<option value="43">90LYCRA</option>
+													
+														<option value="44">240LYCRA</option>
+													
+														<option value="45">21COTLIN SLUB</option>
+													
+														<option value="46">36PV HM</option>
+													
+														<option value="47">45 PV</option>
+													
+														<option value="48">2/40 PV</option>
+													
+														<option value="49">21 ZAYKA SLUB</option>
+													
+														<option value="50">150 FILATEX</option>
+													
+														<option value="51">1/61  1 NE  SLUB SLB </option>
+													
+														<option value="52">321 SWAN</option>
+													
+														<option value="53">1/24  1 SLUB  SLUB SLB </option>
+													
+														<option value="54">30.5 SLUB</option>
+													
+														<option value="55">60 PSF</option>
+													
+											</select>
+											<label for="itemId_warp_0_0" class="error">&nbsp;</label></td>
+											<td><input type="text" id="wastePerShrink_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].wastePerShrink"
+												class="txtBox fontFamily wastePerShrink"
+												style="width: 150px;" onchange="CalWarptotalEnds(0)" /></td>
+											<td><input type="text" id="ends_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].ends"
+												class="txtBox fontFamily" style="width: 150px;"
+												 /></td>
+											<td><input type="text" id="grmsPerMtr_warp_0_0"
+												name="sortMasterWarp[0].sortMasterWarpDetails[0].grmsPerMtr"
+												class="txtBox fontFamily" style="width: 150px;"
+												readonly="readonly" /> <input type="hidden"
+												id="grmsPerMtr1_warp1_0_0" class="txtBox fontFamily"
+												style="width: 150px;" /></td>
+
+											<td><a href="#" class="warpnotRelode"
+												onclick="warpFun();"><img alt="Add"
+													class="sub_div_warp0"
+													src="/iTexRAMTest/resources/images/blue_add.png"></a></td>
+											<td>&nbsp;</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					
+
+
+					
+
+
+					
+
+					<div id="dynamic_div" class="inc"></div>
+
+					
+						<div class="contentBorderDiv colorTbl" style="padding-top: 15px;">
+							<div class="row ">
+								<div class="col-md-5 paddingZero"></div>
+								<div class="col-md-5 paddingZero">
+									<h3>
+										Weft 
+										Details
+										<sup class="mandatory">*</sup>
+									</h3>
+								</div>
+
+							</div>
+							<div id="error" class="error" align="center"></div>
+
+							<div class="container" style="width: 100%; padding-top: 15px;">
+								<table id="wefttab0" class="colorTblCss1" width="100%">
+									<tr>
+										<th style="width: 15%;">Pattern</th>
+										<th style="width: 20%;">Material</th>
+										<th style="width: 15%;">Shrinkage</th>
+										<th style="width: 15%;">Total Picks</th>
+										<th style="width: 15%;">GRMS/Mtrs</th>
+										<th style="width: 15%;">Add</th>
+										<th style="width: 15%;">Remove</th>
+									</tr>
+
+									<tr>
+										<td><input type="hidden" id="totalNoOfWefts"
+											name="totalNoOfWefts" value="0"> <input type="hidden"
+											id="totalCountWeft0" name="totalCountWeft0" value="1">
+											<input type="text" id="pattern_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].pattern"
+											class="txtBox fontFamily pattern" style="width: 150px;"
+											onchange="CalWefttotalEnds(0)" /> <label
+											for="pattern_weft_0_0" class="error"></label></td>
+										<td><input type="hidden"
+											class="txtBox marginInInde yarnType" id="yarnTypeId_weft_0_0"
+											onchange="checkPiece1(0)"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].yarnTypeId">
+											<input type="hidden" class="txtBox marginInInde uom"
+											id="uomId_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].uomId">
+											<input type="hidden" class="txtBox marginInInde Count"
+											id="fabricCountId_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].fabricCountId">
+											<input type="hidden" class="txtBox marginInInde Ply"
+											id="fabricPlyId_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].fabricPlyId" />
+											<input type="hidden" class="txtBox marginInInde yarnVariety"
+											id="yarnVarietyId_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].yarnVarietyId" />
+											<input type="hidden" class="txtBox marginInInde noOfCounts"
+											id="noOfCounts_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].noOfCounts" />
+											<input type="hidden" class="txtBox marginInInde ply"
+											id="ply_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].ply" /> <input
+											type="hidden" class="txtBox marginInInde yarnCode"
+											id="yarnCode_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].yarnCode" />
+
+											<input type="hidden"
+											class="txtBox marginInInde yarnEnglishCount"
+											id="englishCount_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].yarnEnglishCount" />
+
+
+											<select class="txtBox marginInInde itemId"
+											id="itemId_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].itemId"
+											onchange="checkPiece1(0,0,2,this.value);">
+												<option value="">Select
+													Material</option>
+												
+													<option value="1">61CPT</option>
+												
+													<option value="2">30C</option>
+												
+													<option value="3">20C</option>
+												
+													<option value="4">21SLB</option>
+												
+													<option value="5">51CPT</option>
+												
+													<option value="6">20 LY</option>
+												
+													<option value="7">21OE</option>
+												
+													<option value="8">32CTN </option>
+												
+													<option value="9">10 SLB</option>
+												
+													<option value="10">80/300</option>
+												
+													<option value="11">40PV</option>
+												
+													<option value="12">97 LYC</option>
+												
+													<option value="13">41 CPT</option>
+												
+													<option value="14">31SLB</option>
+												
+													<option value="15">80 DEN</option>
+												
+													<option value="16">42PV</option>
+												
+													<option value="17">220 DEN</option>
+												
+													<option value="18">97  SUPER STRETCH LYCRA</option>
+												
+													<option value="19">42 CTN</option>
+												
+													<option value="20">2/63  DEN </option>
+												
+													<option value="21">2/32  CTN </option>
+												
+													<option value="22">42 LYCRA</option>
+												
+													<option value="23">75 DEN</option>
+												
+													<option value="24">51 LYC</option>
+												
+													<option value="25">150 CATIONIC</option>
+												
+													<option value="26">30VIS</option>
+												
+													<option value="27">34 VISCOSE</option>
+												
+													<option value="28">80/1000</option>
+												
+													<option value="29">34 ZARI</option>
+												
+													<option value="30">40 VISCOSE</option>
+												
+													<option value="31">2/76  PSF </option>
+												
+													<option value="32">40 PSF</option>
+												
+													<option value="33">80 CATIONIC</option>
+												
+													<option value="34">62C</option>
+												
+													<option value="35">10OE</option>
+												
+													<option value="36">41 SLUB</option>
+												
+													<option value="37">40 TNC</option>
+												
+													<option value="38">150 BRIGHT</option>
+												
+													<option value="39">21 VISCOSE</option>
+												
+													<option value="40">2/80</option>
+												
+													<option value="41">30LYCRA</option>
+												
+													<option value="42">16SLB</option>
+												
+													<option value="43">90LYCRA</option>
+												
+													<option value="44">240LYCRA</option>
+												
+													<option value="45">21COTLIN SLUB</option>
+												
+													<option value="46">36PV HM</option>
+												
+													<option value="47">45 PV</option>
+												
+													<option value="48">2/40 PV</option>
+												
+													<option value="49">21 ZAYKA SLUB</option>
+												
+													<option value="50">150 FILATEX</option>
+												
+													<option value="51">1/61  1 NE  SLUB SLB </option>
+												
+													<option value="52">321 SWAN</option>
+												
+													<option value="53">1/24  1 SLUB  SLUB SLB </option>
+												
+													<option value="54">30.5 SLUB</option>
+												
+													<option value="55">60 PSF</option>
+												
+										</select><label for="itemId_weft_0_0" class="error">&nbsp;</label></td>
+										<td><input type="text" id="wastePerShrink_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].wastePerShrink"
+											class="txtBox fontFamily wastePerShrink"
+											style="width: 150px;" onchange="CalWefttotalEnds(0)" /></td>
+										<td><input type="text" id="picks_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].picks"
+											class="txtBox fontFamily" style="width: 150px;"
+											 /></td>
+										<td><input type="text" id="grmsPerMtr_weft_0_0"
+											name="sortMasterWeft[0].sortMasterWeftDetails[0].grmsPerMtr"
+											class="txtBox fontFamily" style="width: 150px;"
+											readonly="readonly" /> <input type="hidden"
+											id="grmsPerMtr1_weft1_0_0" class="txtBox fontFamily"
+											style="width: 150px;" /> <input type="hidden"
+											id="glmgrmsPerMtr_weft_0_0" /></td>
+
+										<td><a href="#" class="weftnotRelode"
+											onclick="weftFun();"><img alt="Add" id="sub_div_weft0"
+												src="/iTexRAMTest/resources/images/blue_add.png"></a></td>
+										<td>&nbsp;</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					
+
+					
+
+					
+
+
+
+					<div class="contentBorderDiv" id="greyTable">
+						<table class="colorTblCss"
+							style="margin-top: 20px; margin-bottom: 30px;">
+							<thead>
+								<tr>
+									<th>Grey Quality</th>
+									<th>Sort No</th>
+									<th>Consumption %</th>
+									<th>GSM</th>
+									<!-- <th>Warp Weft</th> -->
+									<th>Width</th>
+									<th>Weave</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="greyDetails">
+								
+									<tr id="row_0">
+										<td><select
+											class="txtBox marginInInde greySortMasterId consQuality"
+											id="greySortMasterId_0"
+											name="finishedGreyQualityDetails[0].greySortMasterId"
+											onchange="checkPiece(0)">
+										</select><label for="greySortMasterId_0"
+											class="error greySortMasterError">&nbsp;</label></td>
+										<td><input type="text" id="sortNumber_0"
+											name="finishedGreyQualityDetails[0].sortNumber"
+											class="txtBox fontFamily greySortNumber" value=""
+											readonly="readonly" /></td>
+										<td><input type="number" id="consumptionPercentage_0"
+											name="finishedGreyQualityDetails[0].consumptionPercentage"
+											class="txtBox fontFamily greyConsumptionPercentage consPer"
+											value="" style="width: 120px;" /><label
+											for="greySortMasterId_0" class="error perError">&nbsp;</label></td>
+										<td><input type="text" id="gsm_0"
+											name="finishedGreyQualityDetails[0].gsm"
+											class="txtBox fontFamily greyGsm" value=""
+											readonly="readonly" /></td>
+										<!-- 									<td><input type="text" id="warpWeft_0" name="finishedGreyQualityDetails[0].warpWeft" class="txtBox fontFamily greyWarpWeft" value="" readonly="readonly"/></td>
+ -->
+										<td><input type="text" id="width_0"
+											name="finishedGreyQualityDetails[0].width"
+											class="txtBox fontFamily greyWidth" value=""
+											readonly="readonly" /></td>
+										<td><select class="txtBox marginInInde greyWeave"
+											id="weave_0" name="finishedGreyQualityDetails[0].weave">
+												<option value="">Select</option>
+												
+													<option value="1"
+														>DOBBY</option>
+												
+													<option value="2"
+														>TWILL</option>
+												
+													<option value="3"
+														>PLAIN</option>
+												
+													<option value="4"
+														>SATIN</option>
+												
+													<option value="5"
+														>CORD</option>
+												
+													<option value="6"
+														>MATTY</option>
+												
+													<option value="7"
+														>2/2 TWILL</option>
+												
+													<option value="8"
+														>2/2 MATTY</option>
+												
+										</select></td>
+										<td><a href="" class="add-record"><img data-added="0"
+												src="/iTexRAMTest/resources/images/blue_add.png"></a></td>
+									</tr>
+								
+
+								
+
+							</tbody>
+						</table>
+					</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<div class="contentBorderDiv">
+						<table
+							style="margin-bottom: 15px; border: 0px solid black; padding-left: 60px;">
+							<tr style="margin-top: 15px; margin-bottom: 15px;">
+								<td style="width: 7%; padding-left: 10px; padding-bottom: 25px;"><label
+									class="lblTxt fontFamily">HSN Number<sup class="mandatory">*</sup></label></td>
+
+								<td style="width: 12%;"><input type="text" id="hsnCode"
+									name="hsnCode" value=""
+									class="txtBox fontFamily hsnNumber" /><label
+									style="color: red;" id="numerror">&nbsp;</label></td>
+								<td style="width: 7%; padding-bottom: 25px; padding-left: 25px;">
+									<label class="lblTxt fontFamily">IGST %</label>
+								</td>
+								<td style="width: 12%; padding-bottom: 25px;"><select
+									id="igstPercent" name="igstPercentId"
+									class="txtBox marginInInde gsti" onchange="getcgst();">
+										<option value="">SelectPercent</option>
+										
+											<option value="1"
+												>5.0</option>
+										
+											<option value="4"
+												>12.0</option>
+										
+											<option value="5"
+												>18.0</option>
+										
+											<option value="7"
+												>28.0</option>
+										
+								</select> <label for="igstPercent" class="error"></label></td>
+
+								<td style="width: 8%; padding-bottom: 25px; padding-left: 30px;"><label
+									class="lblTxt fontFamily">CGST %</label></td>
+								<td style="width: 12%; padding-bottom: 25px;"><select
+									id="cgstPercent" name="cgstPercentId"
+									class="txtBox fontFamily gstc"><option value="">Select
+											Percent</option>
+										
+											<option value="2"
+												>2.5</option>
+										
+											<option value="3"
+												>6.0</option>
+										
+											<option value="6"
+												>9.0</option>
+										
+											<option value="8"
+												>14.0</option>
+										
+								</select> <label for="cgstPercent" class="error"></label></td>
+
+								<td style="width: 8%; padding-bottom: 25px; padding-left: 30px;"><label
+									class="lblTxt fontFamily">SGST %</label></td>
+								<td style="width: 12%; padding-bottom: 25px;"><select
+									id="sgstPercent" name="sgstPercentId"
+									class="txtBox fontFamily gsts"><option value="">Select
+											Percent</option>
+										
+											<option value="2"
+												>2.5</option>
+										
+											<option value="3"
+												>6.0</option>
+										
+											<option value="6"
+												>9.0</option>
+										
+											<option value="8"
+												>14.0</option>
+										
+								</select> <label for="sgstPercent" class="error"></label></td>
+
+								<td style="width: 7%; padding-left: 30px; padding-bottom: 25px;"><label
+									class="lblTxt fontFamily">Cess %</label></td>
+
+								<td style="width: 12%;"><input type="text" id="cessPercent"
+									name="cessPercent" value=""
+									class="txtBox fontFamily cessPercent" /><label
+									style="color: red;" id="numerror">&nbsp;</label></td>
+
+
+							</tr>
+							<tr>
+								<td style="width: 7%; padding-left: 10px; padding-bottom: 25px;"><label
+									class="lblTxt fontFamily">HSN Description<sup
+										class="mandatory">*</sup></label></td>
+
+								<td style="width: 12%;"><input type="text"
+									id="hsnDescription" name="hsnDescription"
+									value=""
+									class="txtBox fontFamily hsnNumber" /><label
+									style="color: red;" id="numerror">&nbsp;</label></td>
+							</tr>
+
+						</table>
+
+					</div>
+
+
+
+
+					<div align="center" style="width: 100%; margin-bottom: 50px;">
+						
+							<input name="save" id="save" type="button"
+								value="SAVE"
+								class="greenBtn fontFamily">
+						
+						
+						<input type="button" id="Cancel" name="Cancel"
+							onclick="getConfirmation(2)" value="Cancel"
+							class="yellowBtn fontFamily" />
+					</div>
+					<div id="loading2"
+						style="display: none; width: 69px; height: 89px; position: absolute; top: 50%; left: 50%; padding: 2px;">
+						<img
+							src="/iTexRAMTest/resources/images/loading.gif"
+							alt="" />
+					</div>
+						
+
+
+    
+
+<!-- single user login -->
+
+<!-- single user login -->
+					
+		</form>
+	</div>
+</body>
+<script type="text/javascript">
+
+	function CalWarptotalEnds(val)
+	{
+		var mainTotalEnds=document.getElementById("totalEnds").value;
+		var totalPattern=0.0,grandGrms=0,ends_warp=0.0,grandGrms1=0, sizePickUp=0;
+		var warpLcount=document.getElementById("totalCountWarp"+val).value;
+
+		if(document.getElementById("sizePickUp").value=='' || document.getElementById("sizePickUp").value==null){
+			sizePickUp=0.01;
+		}else{
+			sizePickUp=parseFloat(document.getElementById("sizePickUp").value)/100;
+		}
+		
+		for(var i=0;i<warpLcount;i++)
+		{
+			if(document.getElementById("pattern_warp_"+val+"_"+i)!=null)
+			{
+				var total= document.getElementById("pattern_warp_"+val+"_"+i).value;
+				totalPattern = parseFloat(totalPattern)+parseFloat(total)
+			}	
+		}
+		for(var i=0;i<warpLcount;i++)
+		{
+			if(document.getElementById("pattern_warp_"+val+"_"+i)!=null)
+			{
+			var patterWarpValue = document.getElementById("pattern_warp_"+val+"_"+i).value;
+			var total=mainTotalEnds/totalPattern*patterWarpValue;
+			document.getElementById("ends_warp_"+val+"_"+i).value=Math.ceil(total.toFixed(2));
+			var waste=document.getElementById("wastePerShrink_warp_"+val+"_"+i).value;
+			var warpcount=document.getElementById("noOfCounts_warp_"+val+"_"+i).value;
+			var warpply=document.getElementById("ply_warp_"+val+"_"+i).value;
+			var warpply=document.getElementById("ply_warp_"+val+"_"+i).value;
+			var warpenglishcount=document.getElementById("englishCount_warp_"+val+"_"+i).value;
+			
+			
+			
+			//var grms=parseFloat(total*0.0005905/(warpcount/warpply))+parseFloat(waste/100)*parseFloat(total*0.0005905/(warpcount/warpply));
+			//var grms11=parseFloat(total*0.0005905/(warpcount/warpply))*parseFloat(total*0.0005905/(warpcount/warpply));
+			
+				var grms=parseFloat(total*0.0005905/(warpenglishcount))+parseFloat(waste/100)*parseFloat(total*0.0005905/(warpenglishcount));
+			var grms11=parseFloat(total*0.0005905/(warpenglishcount));
+		
+		
+		document.getElementById("grmsPerMtr_warp_"+val+"_"+i).value=(parseFloat(grms)).toFixed(4);
+		document.getElementById("grmsPerMtr1_warp1_"+val+"_"+i).value=(parseFloat(grms11)).toFixed(4);
+		
+			
+			}
+		}
+		for(var i=0;i<warpLcount;i++)
+		{
+			if(document.getElementById("pattern_warp_"+val+"_"+i)!=null)
+			{
+				grandGrms+=parseFloat(document.getElementById("grmsPerMtr_warp_"+val+"_"+i).value);
+				grandGrms1+=parseFloat(document.getElementById("grmsPerMtr1_warp1_"+val+"_"+i).value);
+			}	
+		}
+		
+		document.getElementById("totalWarpGrmsPerMtr").value=grandGrms.toFixed(3);
+		document.getElementById("totalWarpGrmsPerMtr1").value=grandGrms1.toFixed(3); 
+		document.getElementById("totalWarpPattern").value=totalPattern;
+		getwidth();
+		getquality(val);
+	}
+	
+	function CalWefttotalEnds(val)
+	{
+		var mainTotalEnds=document.getElementById("totalPicks").value;
+		var totalPattern=0;
+		var ends_weft=0.0;
+		var grandGrms=0;
+		var grandGrms12=0;
+		var glmWastegrandGrms=0;
+		var weftLcount=document.getElementById("totalCountWeft"+val).value;
+		for(var i=0;i<weftLcount;i++)
+		{
+			if(document.getElementById("pattern_weft_"+val+"_"+i)!=null)
+			{
+				totalPattern+=parseInt(document.getElementById("pattern_weft_"+val+"_"+i).value);
+			}
+			
+		}
+		for(var i=0;i<weftLcount;i++)
+		{
+			var pickInsert=0;
+			if(document.getElementById("pickInsert").value==''){
+				pickInsert=1;
+			}
+			else
+				{
+				pickInsert = document.getElementById("pickInsert").value;
+				}
+			if(document.getElementById("pattern_weft_"+val+"_"+i)!=null)
+			{
+			var total=mainTotalEnds/totalPattern*parseInt(document.getElementById("pattern_weft_"+val+"_"+i).value);
+			document.getElementById("picks_weft_"+val+"_"+i).value=Math.ceil(total.toFixed(2));
+			var reedspace=document.getElementById("reedSpace").value;
+			var waste=document.getElementById("wastePerShrink_weft_"+val+"_"+i).value;
+			var weftcount=document.getElementById("noOfCounts_weft_"+val+"_"+i).value;
+			var weftply=document.getElementById("ply_weft_"+val+"_"+i).value;
+			var weftenglishcount=document.getElementById("englishCount_weft_"+val+"_"+i).value;
+			
+			//var grms=parseFloat(parseFloat(reedspace*total*0.0005905/(weftcount/weftply))+parseFloat(waste/100)*parseFloat(reedspace*total*0.0005905/(weftcount/weftply)));
+			//var grms12=parseFloat(parseFloat(reedspace*total*0.0005905/(weftcount/weftply))*parseFloat(reedspace*total*0.0005905/(weftcount/weftply)));
+			
+			var grms=parseFloat(parseFloat(reedspace*total*0.0005905/(weftenglishcount))+parseFloat(waste/100)*parseFloat(reedspace*total*0.0005905/(weftenglishcount)));
+			
+			var glmGrms=0;
+			if(document.getElementById("glmWeftWithoutWastage").value==1){
+				glmGrms=parseFloat(parseFloat(reedspace*total*0.0005905/(weftenglishcount)));
+			}
+			
+			var grms12=parseFloat(parseFloat(reedspace*total*0.0005905/(weftenglishcount))); 
+			
+			if(document.getElementById("selvedgeWidthType").value==1){
+				var grmsPerMtr_weft=parseFloat(pickInsert)*parseFloat(grms); 
+				var grmsPerMtr1_weft1=parseFloat(pickInsert)*parseFloat(grms12);
+				document.getElementById("grmsPerMtr_weft_"+val+"_"+i).value=parseFloat(grmsPerMtr_weft).toFixed(4);
+				document.getElementById("grmsPerMtr1_weft1_"+val+"_"+i).value=parseFloat(grmsPerMtr1_weft1).toFixed(4);
+				
+				if(parseInt(document.getElementById("glmWeftWithoutWastage").value)==1){
+					var glmgrmsPerMtr_weft=parseFloat(pickInsert)*parseFloat(glmGrms);
+					document.getElementById("glmgrmsPerMtr_weft_"+val+"_"+i).value=parseFloat(glmgrmsPerMtr_weft).toFixed(7);
+				}
+				
+				
+			}else if(document.getElementById("selvedgeWidthType").value==0)
+				document.getElementById("grmsPerMtr_weft_"+val+"_"+i).value=grms.toFixed(4);
+				document.getElementById("grmsPerMtr1_weft1_"+val+"_"+i).value=grms12.toFixed(4);
+				
+				if(parseInt(document.getElementById("glmWeftWithoutWastage").value)==1){
+					document.getElementById("glmgrmsPerMtr_weft_"+val+"_"+i).value=parseFloat(glmGrms).toFixed(7);
+				}
+			}
+		}
+		for(var i=0;i<weftLcount;i++)
+		{
+			if(document.getElementById("pattern_weft_"+val+"_"+i)!=null)
+			{
+				grandGrms+=parseFloat(document.getElementById("grmsPerMtr_weft_"+val+"_"+i).value);
+				grandGrms12+=parseFloat(document.getElementById("grmsPerMtr1_weft1_"+val+"_"+i).value);
+				
+				if(parseInt(document.getElementById("glmWeftWithoutWastage").value)==1){
+					glmWastegrandGrms+=parseFloat(document.getElementById("glmgrmsPerMtr_weft_"+val+"_"+i).value);
+				}
+			}	
+		}
+		
+		if(document.getElementById("glmWeftWithoutWastage").value==1){
+			document.getElementById("totalglmWeftGrmsPerMtr").value=glmWastegrandGrms.toFixed(3);
+		}
+		document.getElementById("totalWeftGrmsPerMtr").value=grandGrms.toFixed(3);
+		document.getElementById("totalWeftGrmsPerMtr1").value=grandGrms12.toFixed(3); 
+		document.getElementById("totalWeftPattern").value=totalPattern;
+		getwidth();
+		getquality(val);
+	}
+	function getwidth(){
+		var val=parseFloat(document.getElementById("width").value);
+		var widthInCms=parseFloat(val)*2.54;
+		var widthInMtrs = parseFloat(val)/39.37;
+		document.getElementById("widthInCms").value=widthInCms.toFixed(3);
+		var grmWarp=parseFloat(document.getElementById("totalWarpGrmsPerMtr").value);
+		var grmWeft=parseFloat(document.getElementById("totalWeftGrmsPerMtr").value);
+		
+		var grmglmWeft=0;
+		if(parseInt(document.getElementById("glmWeftWithoutWastage").value)==1){
+			grmglmWeft=document.getElementById("totalglmWeftGrmsPerMtr").value;
+		}
+		
+		var grmWarp12=parseFloat(document.getElementById("totalWarpGrmsPerMtr1").value);
+		var grmWeft12=parseFloat(document.getElementById("totalWeftGrmsPerMtr1").value);
+		
+		if(parseInt(document.getElementById("glmWeftWithoutWastage").value)==1){
+			var glm=parseFloat(grmWarp)+parseFloat(grmglmWeft);
+			document.getElementById("glm").value=glm.toFixed(3);
+		}else{
+			var glm=parseFloat(grmWarp)+parseFloat(grmWeft);
+			document.getElementById("glm").value=glm.toFixed(3);
+		}
+		
+		var gsm=parseFloat(glm)/parseFloat(widthInMtrs);
+		document.getElementById("gsm").value=gsm.toFixed(3);
+		
+		var designchanges=(document.getElementById("designchangesmetavalue1").value);
+		if(designchanges == 1){
+		document.getElementById("finishedGsm").value=gsm.toFixed(3);
+		}
+		/* var gsm12=parseFloat(glm12/widthInCms);
+		document.getElementById("gsmWithoutWastage").value=gsm12.toFixed(3); */
+		 
+		var gsmwithoutwaste=parseFloat(grmWarp12+grmWeft12); 
+		document.getElementById("gsmWithoutWastage").value=gsmwithoutwaste.toFixed(3);
+		var glmwithoutwaste=parseFloat(gsmwithoutwaste)/parseFloat(widthInMtrs);
+		document.getElementById("glmWithoutWastage").value=glmwithoutwaste.toFixed(3);
+		
+	}
+	
+	function getFinishedGlm(){
+		var finishedWidthVal=parseFloat(document.getElementById("finishedWidth").value);
+		var finishedGsmVal=parseFloat(document.getElementById("finishedGsm").value);
+		var finishedGlmCal=(finishedWidthVal * finishedGsmVal)/39.37;
+		document.getElementById("finishedGlm").value=finishedGlmCal.toFixed(3);
+	}
+	
+	
+	
+	
+	
+	function CalFinalReed()
+	{
+		var denting=document.getElementById("denting").value;
+		var reed=document.getElementById("reed").value;
+		var finalReed=reed*denting/2;
+		document.getElementById("finalReed").value=finalReed.toFixed(2);
+		CalreedSpace();
+		
+	}
+	function CalreedSpace()
+	{
+		 
+		var reed=parseFloat(document.getElementById("reed").value);
+		var width=parseFloat(document.getElementById("width").value);
+		var finalReed=document.getElementById("finalReed").value;
+		var threadOrGala=parseFloat(document.getElementById("threadOrGala").value);
+		var reedSpace= 0;
+		var finalReed=document.getElementById("finalReed").value;
+		if(document.getElementById("reedSpaceT").value == 0)
+		{
+		    reedSpace=parseFloat(threadOrGala) +parseFloat(width);
+		}
+		else if(document.getElementById("reedSpaceT").value == 1)
+		{
+			reedSpace=parseFloat(((parseFloat(finalReed) + parseFloat(threadOrGala)) * parseFloat(width)) / parseFloat(finalReed));	
+		}		
+		document.getElementById("reedSpace").value=reedSpace.toFixed(2);
+		CalTotalEnds(); 
+	}
+	function CalTotalEnds()
+	{
+		var reedspace=document.getElementById("reedSpace").value;
+		var finalReed=document.getElementById("finalReed").value;
+		var totalEnds=parseFloat(reedspace)*parseFloat(finalReed);
+		document.getElementById("ends").value=Math.ceil(totalEnds.toFixed(2));
+		document.getElementById("totalEnds").value=Math.ceil(totalEnds.toFixed(2));
+		CalWefttotalEnds(0);
+		CalWarptotalEnds(0);
+	}
+	function getselvedgeEnds() {
+		var dents=parseFloat(document.getElementById("dents").value);
+		var endsPerDents=parseFloat(document.getElementById("endsPerDents").value);
+		var selvedgeWidthType = document.getElementById("selvedgeWidthType").value;		 
+	 	var selvedgeEnds=0;
+		var totalSelvedge = 0;
+		var totalEnds = 0;
+		var ends=parseFloat(document.getElementById("ends").value);
+	//	document.getElementById("selvedgeEnds").value=selvedgeEnds.toFixed(3);
+		if(selvedgeWidthType == 0) 
+		{    
+			selvedgeEnds = dents*endsPerDents
+		    totalSelvedge=selvedgeEnds;		
+		    document.getElementById("selvedgeEnds").value=selvedgeEnds;
+		    document.getElementById("totalSelvedge").value=totalSelvedge.toFixed(3); 
+		    totalSelvedge=parseFloat(document.getElementById("totalSelvedge").value);		
+		    totalEnds=parseFloat(ends)+parseFloat(totalSelvedge);
+		    document.getElementById("totalEnds").value=Math.ceil(totalEnds);
+		}
+		else if(selvedgeWidthType == 1)
+		{
+			 dents = Math.ceil((document.getElementById("reed").value/2/25.4)*document.getElementById("selvedgeWidth").value);
+			 document.getElementById("dents").value = dents;
+			 selvedgeEnds = parseFloat(dents)*parseFloat(endsPerDents)*2;
+			 totalSelvedge=selvedgeEnds;
+			 document.getElementById("selvedgeEnds").value=selvedgeEnds;
+			 document.getElementById("totalSelvedge").value=totalSelvedge.toFixed(3); 
+			 totalSelvedge=parseFloat(document.getElementById("totalSelvedge").value);		
+			// totalEnds = parseFloat(document.getElementById("reed").value * document.getElementById("denting").value/1.5*document.getElementById("reedSpace").value+(endsPerDents-document.getElementById("denting").value)*document.getElementById("dents").value*2)
+			 totalEnds=parseFloat(ends)+parseFloat(totalSelvedge);
+			 document.getElementById("totalEnds").value=Math.ceil(totalEnds);
+			 			
+		}
+		
+		CalWefttotalEnds(0);
+		CalWarptotalEnds(0);
+	}
+
+	function getquality(val)
+	{
+	var qty="";
+	var warpc="";
+	var weftc="";
+	var finalReed=Math.ceil(document.getElementById("finalReed").value);
+	var width=document.getElementById("width").value;
+	if(width != Math.floor(width))
+		{
+		width=document.getElementById("width").value;
+		}else{
+		 width=parseInt(document.getElementById("width").value);	
+		}
+	var picks=parseInt(document.getElementById("totalPicks").value);
+	var warpcount=parseInt(document.getElementById("totalCountWarp"+val).value);
+	var weftcount=parseInt(document.getElementById("totalCountWeft"+val).value);
+	for(var i=0;i<warpcount;i++)
+	{
+	if((document.getElementById("noOfCounts_warp_"+val+"_"+i))==null || (document.getElementById("noOfCounts_warp_"+val+"_"+i))=="")
+	{
+	warpc+="";
+	}
+	else{
+	var wacount=parseInt(document.getElementById("noOfCounts_warp_"+val+"_"+i).value);
+	var plyval=parseInt(document.getElementById("ply_warp_"+val+"_"+i).value);
+	var waycode=document.getElementById("yarnCode_warp_"+val+"_"+i).value;
+	if(i==0)
+	{
+	warpc+=""+wacount+"/"+plyval+waycode;
+	}
+	else
+	{
+	warpc+="+"+wacount+"/"+plyval+waycode;
+	}
+	}
+	}
+
+	var inserPickValue=parseInt(document.getElementById("IncludePicsInsertInQuality").value);
+	var patternWithPly="";
+
+	if(inserPickValue==0){
+	for(var j=0;j<weftcount;j++)
+	{
+
+	if((document.getElementById("noOfCounts_weft_"+val+"_"+j))==null || (document.getElementById("noOfCounts_weft_"+val+"_"+j))=="")
+	{
+	weftc+="";
+	}
+
+	else{
+	var wecount=parseInt(document.getElementById("noOfCounts_weft_"+val+"_"+j).value);
+
+	var weycode=document.getElementById("yarnCode_weft_"+val+"_"+j).value;
+	if(j==0)
+	{
+	weftc+=""+wecount+weycode;
+
+	}
+	else
+	{
+	weftc+="+"+wecount+weycode;
+	}
+	}
+
+	}
+	}else{
+	for(var j=0;j<weftcount;j++)
+	{
+
+	if((document.getElementById("noOfCounts_weft_"+val+"_"+j))==null || (document.getElementById("noOfCounts_weft_"+val+"_"+j))=="")
+	{
+	weftc+="";
+	}
+
+	else{
+	var wecount=parseInt(document.getElementById("noOfCounts_weft_"+val+"_"+j).value);
+	var plyval=parseInt(document.getElementById("ply_weft_"+val+"_"+j).value);
+	var weycode=document.getElementById("yarnCode_weft_"+val+"_"+j).value;
+	if(j==0)
+	{
+	weftc+=""+wecount+"/"+plyval+weycode;
+
+	}
+	else
+	{
+	weftc+="+"+wecount+"/"+plyval+weycode;
+	}
+	var pattern=parseInt($('#pattern_weft_'+val+'_'+j).val());
+	patternWithPly=patternWithPly+"("+pattern+"*"+plyval+")";
+
+	}
+
+
+	}
+	}
+
+
+	if(document.getElementById("showWeftPattern").value==1){
+		qty=width+'"'+' '+warpc+"X"+weftc+' '+patternWithPly+' '+finalReed+'X'+picks+' '+$('#sheddingMechanismId').children("option:selected").text();
+	}else{
+		qty=width+'"'+' '+warpc+"X"+weftc+' '+finalReed+'X'+picks+' '+$('#sheddingMechanismId').children("option:selected").text();
+	}
+	
+	if(document.getElementById("isQualityEditable").value==0)
+	{
+	document.getElementById("qualityDetails").innerHTML=qty;
+	}
+	document.getElementById("printOnBill").innerHTML=qty;
+
+	}
+	if(document.getElementById("isQualityEditable").value==1)
+	{
+   	
+   	 document.getElementById("composition").readOnly=true;
+   	document.getElementById("hsnCode").readOnly=true;
+   	document.getElementById("actGsm").readOnly=true;
+	}
+	
+		
+		function getsalvagedetails(salvageid){
+			$
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/sort/getsalvagedetails',
+				type : 'post',
+				data : {								
+					'selvedgeId' : salvageid
+				},
+			success : function(response) {	
+				document.getElementById("dents").value=response.salvagedents;
+				document.getElementById("selvedgeEnds").value=response.salvageends;
+				document.getElementById("endsPerDents").value=response.salvageEndsperdent;
+				document.getElementById("totalSelvedge").value=response.salvagetotalsel;
+				document.getElementById("selvedgeWidth").value=response.salvageWidth;
+				
+				getselvedgeEnds();
+		    },
+			error : function(response) {
+					console.log(response);
+				}
+			});
+		}
+		
+		
+		function getcgst(){		 		 
+			var igst =$('#igstPercent').children("option:selected").text();
+			 
+			$
+			.ajax({
+				dataType : 'json',
+				url : '/iTexRAMTest/mt/getcgst',
+				type : 'post',
+				data : {								
+					'igst' : igst,
+				},
+			success : function(response) {		
+			
+				 $('#cgstPercent').val(response.cgst).trigger("chosen:updated");
+				 $('#sgstPercent').val(response.cgst).trigger("chosen:updated");
+		    },
+			error : function(response) {
+					console.log(response);
+				}
+			});
+		}
+		function getselvedgeMeta() {
+			var mdents=	$('#mdents').val();
+			var mendsPerDents=$('#mendsPerDents').val();
+			var selvedgeEnds=parseFloat(mdents*mendsPerDents).toFixed(3)
+			$('#selvedgeEnds').val(selvedgeEnds);
+			var mselvedgeWidth=$('#mselvedgeWidth').val();
+			var ends=$('#ends').val();
+			$('#totalEnds').val(parseFloat(parseFloat(ends)+parseFloat(selvedgeEnds)+parseFloat(mselvedgeWidth)).toFixed(3));
+			
+		}
+
+		
+
+		function qualityValidation() {
+			var formvalidate = 0;
+			
+			
+			 if (document.getElementById('sortNumber').value.indexOf("'") != -1 || document.getElementById('qualityDetails').value.indexOf("'") != -1) {
+				    alert("Please Avoid single Quotes");
+				    
+				    var newSortNumber = $("#sortNumber").val().replace(/'/g, ''); 
+				    var newQuality = $("#qualityDetails").val().replace(/'/g, ''); 
+				    
+		            $('#sortNumber').val(newSortNumber).trigger("chosen:updated"); 
+		            $('#qualityDetails').val(newQuality).trigger("chosen:updated"); 
+				}
+			
+			let sort=document.getElementById('sortNumber').value;
+			let qualityName=document.getElementById('qualityDetails').value;
+
+			if (sort.includes('  ') ||  qualityName.includes('  ') ) {
+				alert("Please Avoid Double Spaces");
+				 newQualityName = qualityName.replace(/ +(?= )/g,'');
+				 newSortName = sort.replace(/ +(?= )/g,'');
+				 
+				  $('#sortNumber').val(newSortName).trigger("chosen:updated"); 
+		          $('#qualityDetails').val(newQualityName).trigger("chosen:updated"); 
+			}
+		
+
+		}
+		
+</script>
+</html>

@@ -1,0 +1,247 @@
+<!-- Navigation Component - Reusable across all pages -->
+<style>
+  .navbar {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #8B7355;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .navbar li {
+    margin: 0;
+  }
+
+  .navbar a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 20px;
+    color: #2C2C2C;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+  }
+
+  .navbar a:hover {
+    background: rgba(139, 115, 85, 0.1);
+    color: #8B7355;
+    border-bottom-color: #8B7355;
+  }
+
+  .navbar a.active {
+    background: #8B7355;
+    color: white;
+    border-bottom-color: #6B5745;
+  }
+
+  .navbar a .icon {
+    font-size: 16px;
+  }
+
+  /* Navigation Loading Overlay */
+  .nav-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .nav-loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav-loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #E0E0E0;
+    border-top: 4px solid #5D4037;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .nav-loading-text {
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #5D4037;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .navbar ul {
+      flex-wrap: wrap;
+    }
+
+    .navbar a {
+      padding: 12px 16px;
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .navbar ul {
+      flex-direction: column;
+    }
+
+    .navbar a {
+      padding: 14px 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+  }
+</style>
+
+<nav class="navbar">
+  <ul>
+    <li><a href="#" id="nav-dashboard" onclick="navigateTo('dashboard', 'Dashboard'); return false;">
+        <span class="icon">🏠</span> Dashboard
+      </a></li>
+
+    <li><a href="#" id="nav-enquiry" onclick="navigateTo('enquiry-form', 'Enquiry Form'); return false;">
+        <span class="icon">📝</span> New Enquiry
+      </a></li>
+
+    <li><a href="#" id="nav-pending" onclick="navigateTo('pending-enquiries', 'Pending Enquiries'); return false;">
+        <span class="icon">⏳</span> Pending Enquiries
+      </a></li>
+
+    <li><a href="#" id="nav-pending-approved"
+        onclick="navigateTo('pending-approved', 'Pending Approved'); return false;">
+        <span class="icon">✓</span> Pending Approved
+      </a></li>
+
+    <li><a href="#" id="nav-order-confirm" onclick="navigateTo('order-confirm', 'Order Confirm Data'); return false;">
+        <span class="icon">✅</span> Order Confirm
+      </a></li>
+
+    <li><a href="#" id="nav-cancelled"
+        onclick="navigateTo('cancelled-enquiries', 'Cancelled Enquiries'); return false;">
+        <span class="icon">❌</span> Cancelled
+      </a></li>
+
+    <li><a href="#" id="nav-search" onclick="navigateTo('search', 'Search'); return false;">
+        <span class="icon">🔍</span> Search
+      </a></li>
+
+    <li><a href="#" id="nav-kpi" onclick="navigateTo('kpi-dashboard', 'KPI Reports'); return false;">
+        <span class="icon">📊</span> KPI Reports
+      </a></li>
+
+    <li><a href="#" id="nav-users" onclick="navigateTo('user-management', 'Users'); return false;">
+        <span class="icon">👥</span> Users
+      </a></li>
+
+    <li><a href="#" id="nav-settings" onclick="navigateTo('settings', 'Settings'); return false;">
+        <span class="icon">⚙️</span> Settings
+      </a></li>
+
+    <li><a href="#" id="nav-audit" onclick="navigateTo('audit-log', 'Audit Log'); return false;">
+        <span class="icon">📋</span> Audit Log
+      </a></li>
+  </ul>
+</nav>
+
+<!-- Navigation Loading Overlay -->
+<div id="navLoadingOverlay" class="nav-loading-overlay">
+  <div class="nav-loading-spinner"></div>
+  <div id="navLoadingText" class="nav-loading-text">Loading...</div>
+</div>
+
+<script>
+  // Navigation function that builds URLs using parent page's webAppUrl and sessionId variables
+  function navigateTo(page, pageName) {
+    // Show loading overlay
+    showNavLoading(pageName);
+
+    // Get webAppUrl and sessionId from parent page's global variables
+    // These are defined in each page that includes Navigation.html
+    let url;
+    if (typeof webAppUrl !== 'undefined' && typeof sessionId !== 'undefined') {
+      url = webAppUrl + '?page=' + page + '&sessionId=' + sessionId;
+    } else {
+      // Fallback: try to get from localStorage
+      const storedUrl = localStorage.getItem('rtwe_webAppUrl');
+      const storedSession = localStorage.getItem('rtwe_session');
+      if (storedUrl && storedSession) {
+        url = storedUrl + '?page=' + page + '&sessionId=' + storedSession;
+      } else {
+        alert('Session expired. Please login again.');
+        return;
+      }
+    }
+
+    // Navigate to the page
+    window.location.href = url;
+  }
+
+  // Show loading animation when navigating
+  function showNavLoading(pageName) {
+    const overlay = document.getElementById('navLoadingOverlay');
+    const text = document.getElementById('navLoadingText');
+    if (overlay && text) {
+      text.textContent = 'Navigating to ' + pageName + '...';
+      overlay.classList.add('show');
+    }
+  }
+
+  // Auto-highlight active page
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page') || 'dashboard';
+
+    // Map page names to nav IDs
+    const pageMap = {
+      'dashboard': 'nav-dashboard',
+      'enquiry-form': 'nav-enquiry',
+      'pending-enquiries': 'nav-pending',
+      'pending-approved': 'nav-pending-approved',
+      'order-confirm': 'nav-order-confirm',
+      'cancelled-enquiries': 'nav-cancelled',
+      'search': 'nav-search',
+      'kpi-dashboard': 'nav-kpi',
+      'user-management': 'nav-users',
+      'settings': 'nav-settings',
+      'audit-log': 'nav-audit'
+    };
+
+    const navId = pageMap[page];
+    if (navId) {
+      const activeLink = document.getElementById(navId);
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+    }
+  })();
+</script>

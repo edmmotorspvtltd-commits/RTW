@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      max-width: 550px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      overflow: hidden;
+      border: 2px solid #d4a574;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+      padding: 25px 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .header-icon {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 13px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+
+    .success-banner {
+      background: #e8f5e9;
+      border-left: 5px solid #4caf50;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .success-banner-icon {
+      font-size: 32px;
+    }
+
+    .success-banner-text h3 {
+      color: #2e7d32;
+      font-size: 16px;
+      margin-bottom: 3px;
+      font-weight: 700;
+    }
+
+    .success-banner-text p {
+      color: #1b5e20;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .broker-info {
+      background: #fff8f0;
+      border: 2px solid #d4a574;
+      border-radius: 12px;
+      padding: 18px;
+      margin: 20px 25px;
+    }
+
+    .broker-info h3 {
+      color: #8b7355;
+      font-size: 15px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .broker-info p {
+      color: #5a4a3a;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .broker-info ul {
+      margin: 10px 0 0 20px;
+      color: #5a4a3a;
+    }
+
+    .broker-info li {
+      font-size: 12px;
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .form-section {
+      padding: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #2c2c2c;
+      font-size: 14px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s;
+      background: #fafafa;
+    }
+
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #8b7355;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.1);
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      background: #f9f9f9;
+      padding: 12px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s;
+    }
+
+    .checkbox-container:hover {
+      background: #fff8f0;
+      border-color: #d4a574;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: #8b7355;
+    }
+
+    .checkbox-container label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 600;
+      color: #5a4a3a;
+      font-size: 14px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-skip {
+      background: #e0e0e0;
+      color: #424242;
+      border: 2px solid #d0d0d0;
+    }
+
+    .btn-skip:hover {
+      background: #d0d0d0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn-share {
+      background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+    }
+
+    .btn-share:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
+      background: linear-gradient(135deg, #6b5745 0%, #5a4a3a 100%);
+    }
+
+    .btn-share:disabled,
+    .btn-skip:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+      padding: 20px;
+      background: #fff8f0;
+      border-radius: 10px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #8b7355;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading p {
+      color: #8b7355;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .message {
+      display: none;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .message.active {
+      display: block;
+    }
+
+    .message.success {
+      background: #d4edda;
+      border: 2px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      border: 2px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .footer {
+      background: #fafafa;
+      padding: 15px;
+      text-align: center;
+      border-top: 2px solid #e0e0e0;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .footer .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #8b7355;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-icon">✅</div>
+      <h1>Enquiry Saved Successfully!</h1>
+      <p>Share PDF with Broker Link</p>
+    </div>
+
+    <div class="success-banner">
+      <div class="success-banner-icon">📋</div>
+      <div class="success-banner-text">
+        <h3>RTWE Number</h3>
+        <p id="rtweNo">Loading...</p>
+      </div>
+    </div>
+
+    <div class="broker-info">
+      <h3>🔗 Broker Link Included</h3>
+      <p><strong>What will the broker receive?</strong></p>
+      <ul>
+        <li>✅ PDF with complete enquiry details</li>
+        <li>✅ Secure link to submit selvedge details</li>
+        <li>⏰ Link valid for 72 hours</li>
+        <li>📝 Maximum 3 submissions allowed</li>
+      </ul>
+    </div>
+
+    <div class="form-section">
+      <div id="message" class="message"></div>
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Generating PDF and sending...</p>
+      </div>
+
+      <form id="shareForm" onsubmit="shareEnquiry(event)">
+        <div class="form-group">
+          <label>📧 Broker Email Address</label>
+          <input 
+            type="email" 
+            id="emailInput" 
+            placeholder="broker@example.com"
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="checkbox-container">
+          <input type="checkbox" id="sendTelegram">
+          <label for="sendTelegram">📱 Also send via Telegram</label>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-skip" id="skipBtn" onclick="skipShare()">
+            Skip
+          </button>
+          <button type="submit" class="btn-share" id="shareBtn">
+            📄 Share PDF
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="footer">
+      <p>Ramratan Techno Weave • RTWE System v3.0</p>
+      <div class="security-badge">
+        <span>🔒</span>
+        <span>Secure PDF Generation & Email Delivery</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Parse enquiry data from server
+  const enquiryData = <?= enquiryData ?>;
+  
+  // Display RTWE number
+  document.getElementById('rtweNo').textContent = enquiryData.rtweNo || 'N/A';
+
+  function skipShare() {
+    google.script.host.close();
+  }
+
+  function shareEnquiry(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('emailInput').value.trim();
+    const sendTelegram = document.getElementById('sendTelegram').checked;
+    const msg = document.getElementById('message');
+    const loading = document.getElementById('loading');
+    const shareBtn = document.getElementById('shareBtn');
+    const skipBtn = document.getElementById('skipBtn');
+
+    // Validation
+    if (!email && !sendTelegram) {
+      showMessage('error', '⚠️ Please enter an email address or select Telegram');
+      return;
+    }
+
+    if (email && !isValidEmail(email)) {
+      showMessage('error', '⚠️ Please enter a valid email address');
+      return;
+    }
+
+    // Show loading state
+    msg.classList.remove('active');
+    loading.classList.add('active');
+    shareBtn.disabled = true;
+    skipBtn.disabled = true;
+
+    // Call backend function
+    google.script.run
+      .withSuccessHandler(handleSuccess)
+      .withFailureHandler(handleError)
+      .sharePDFwithBrokerLink(enquiryData, email, sendTelegram);
+  }
+
+  function handleSuccess(result) {
+    const loading = document.getElementById('loading');
+    const shareBtn = document.getElementById('shareBtn');
+    const skipBtn = document.getElementById('skipBtn');
+
+    loading.classList.remove('active');
+
+    if (result.success) {
+      showMessage('success', '✅ PDF shared successfully! Email sent to broker.');
+      
+      // Auto-close after 2 seconds
+      setTimeout(() => {
+        google.script.host.close();
+      }, 2000);
+    } else {
+      showMessage('error', '❌ Error: ' + (result.error || 'Unknown error'));
+      shareBtn.disabled = false;
+      skipBtn.disabled = false;
+    }
+  }
+
+  function handleError(error) {
+    const loading = document.getElementById('loading');
+    const shareBtn = document.getElementById('shareBtn');
+    const skipBtn = document.getElementById('skipBtn');
+
+    loading.classList.remove('active');
+    showMessage('error', '❌ Error: ' + error.message);
+    shareBtn.disabled = false;
+    skipBtn.disabled = false;
+  }
+
+  function showMessage(type, text) {
+    const msg = document.getElementById('message');
+    msg.className = 'message ' + type + ' active';
+    msg.textContent = text;
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Auto-focus email field
+  window.onload = function() {
+    document.getElementById('emailInput').focus();
+  };
+</script>
+
+</body>
+</html>

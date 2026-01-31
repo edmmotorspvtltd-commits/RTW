@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page -
+        <?= appName ?>
+    </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .test-box {
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+
+        .info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: #6B4423;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: #4A2F1A;
+        }
+
+        .success {
+            color: #4CAF50;
+            font-size: 48px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-box">
+        <div class="success">✅</div>
+        <h1>Test Page Loaded Successfully!</h1>
+
+        <p><strong>If you can see this page, it means:</strong></p>
+        <ul>
+            <li>✅ Routing is working</li>
+            <li>✅ Authentication is working</li>
+            <li>✅ Template rendering is working</li>
+            <li>✅ Code is deployed</li>
+        </ul>
+
+        <h3>Session Information:</h3>
+        <div class="info">
+            <strong>Token:</strong>
+            <?= token ? 'Present ✅' : 'Missing ❌' ?><br>
+            <strong>User Name:</strong>
+            <?= user.full_name || user.name ?><br>
+            <strong>User Role:</strong>
+            <?= user.role ?><br>
+            <strong>App Name:</strong>
+            <?= appName ?><br>
+            <strong>Version:</strong>
+            <?= version ?>
+        </div>
+
+        <h3>Next Steps:</h3>
+        <p>Since this test page works, the issue is likely in the specific HTML files (SaleOrderForm.html,
+            PendingOrders.html, CompleteOrders.html).</p>
+
+        <p><strong>Possible causes:</strong></p>
+        <ul>
+            <li>Missing or incorrect data being passed to templates</li>
+            <li>JavaScript errors in those pages</li>
+            <li>CSS issues hiding content</li>
+        </ul>
+
+        <a href="?page=dashboard&token=<?= token ?>" class="btn">🏠 Back to Dashboard</a>
+        <a href="?page=sale-order-form&token=<?= token ?>" class="btn">📝 Try Sale Order Form</a>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTWE Enquiry Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CRITICAL: Hidden class for showing/hiding elements */
+        .hidden {
+            display: none !important;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #F5F5F5;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 25px 30px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #5D4037;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-content {
+            padding: 0;
+            background: transparent;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #5D4037;
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            border-radius: 0;
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-body {
+            padding: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #5D4037;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        label.required::after {
+            content: " *";
+            color: #F44336;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px 12px;
+            border: 1px solid #D7CCC8;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #5D4037;
+            box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+        }
+
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            background-color: #EFEBE9;
+            cursor: not-allowed;
+            color: #666;
+            border-color: #D7CCC8;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        .design-taga-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit {
+            background: #5D4037;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #4E342E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(93, 64, 55, 0.3);
+        }
+
+        .btn-clear {
+            background: #757575;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #616161;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Loading Overlay */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8b7355;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Share Modal */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-modal.active {
+            display: flex;
+        }
+
+        .share-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.4s ease;
+            border: 3px solid #d4a574;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-80px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .share-modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .share-modal-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .share-section {
+            margin-bottom: 25px;
+        }
+
+        .share-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #8b7355;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .email-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .email-input-group input {
+            flex: 1;
+        }
+
+        .add-email-btn {
+            background: #8b7355;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .add-email-btn:hover {
+            background: #6b5745;
+        }
+
+        .email-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff8f0;
+            border: 2px solid #d4a574;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 5px 5px 5px 0;
+            font-size: 14px;
+        }
+
+        .email-tag-remove {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .share-option:hover {
+            background: #fff8f0;
+            border-color: #d4a574;
+        }
+
+        .share-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .share-option-icon {
+            font-size: 24px;
+        }
+
+        .share-option-text {
+            flex: 1;
+        }
+
+        .share-option-title {
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 3px;
+        }
+
+        .share-option-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .share-modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .share-modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .share-modal-btn-primary {
+            background: linear-gradient(135deg, #8b7355 0%, #6b5745 100%);
+            color: white;
+        }
+
+        .share-modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
+        }
+
+        .share-modal-btn-secondary {
+            background: #f5f5f5;
+            color: #2c2c2c;
+        }
+
+        .share-modal-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 18px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border-left: 5px solid #4caf50;
+            z-index: 10002;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            min-width: 300px;
+            animation: toastSlideIn 0.3s ease;
+        }
+
+        .toast.active {
+            display: flex;
+        }
+
+        .toast.error {
+            border-left-color: #f44336;
+        }
+
+        .toast.warning {
+            border-left-color: #ff9800;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 3px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .required::after {
+            content: ' *';
+            color: #d32f2f;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .form-content {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .design-taga-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .share-modal-content {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+
+            .toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Back to Dashboard Link -->
+    <div style="max-width: 1000px; margin: 0 auto 20px; padding: 0 20px;">
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=dashboard&sessionId=<?= sessionId ?>"
+            onclick="showNavigationLoading('Dashboard')"
+            style="display: inline-flex; align-items: center; gap: 8px; color: white; text-decoration: none; font-weight: 600; padding: 10px 20px; background: #5D4037; border-radius: 4px; transition: all 0.2s;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏭 RAMRATAN TECHNO WEAVE</h1>
+            <p>Enquiry to Order Management System</p>
+        </div>
+
+        <div class="form-content">
+            <!-- Hidden entry type for backward compatibility -->
+            <input type="hidden" id="entryType" value="NEW ENTRY">
+            <div id="searchRTWEGroup" class="hidden">
+                <input type="text" id="searchRTWE" placeholder="Enter RTWE number">
+            </div>
+            <div id="selectPendingGroup" class="hidden">
+                <select id="selectPendingApproved">
+                    <option value="">-- Select RTWE --</option>
+                </select>
+            </div>
+            <div id="selectEditGroup" class="hidden">
+                <select id="selectEdit">
+                    <option value="">-- Select RTWE --</option>
+                </select>
+            </div>
+
+            <!-- ========== BASIC ENQUIRY FORM ========== -->
+            <div id="basicFormSection" class="hidden">
+                <div class="section-card">
+                    <div class="section-header">
+                        📝 BASIC ENQUIRY FORM
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="required">RTWE No</label>
+                                <input type="text" id="rtweNo" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Costing Sheet No</label>
+                                <input type="text" id="costingNo" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Enquiry Date</label>
+                                <input type="date" id="enqDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Enquiry Time</label>
+                                <input type="time" id="enqTime">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Broker Name</label>
+                                <select id="broker">
+                                    <option value="">-- Select Broker --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Quality</label>
+                                <select id="quality">
+                                    <option value="">-- Select Quality --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Given Rate</label>
+                                <input type="number" id="givenRate" step="0.01" placeholder="0.00">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Order Status</label>
+                                <select id="orderStatus">
+                                    <option value="">-- Select Status --</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Canceled">Canceled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ========== ORDER DETAILS SECTION ========== -->
+            <div id="approvalSection" class="hidden">
+                <!-- Order Details Card -->
+                <div class="section-card">
+                    <div class="section-header">
+                        ✅ ORDER DETAILS (For Approved Orders)
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Approved Date</label>
+                                <input type="date" id="approvedDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Approved Time</label>
+                                <input type="time" id="approvedTime">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Final Rate</label>
+                                <input type="number" id="finalRate" step="0.01" placeholder="0.00">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">Buyer</label>
+                                <select id="buyer">
+                                    <option value="">-- Select Buyer --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">P/O No</label>
+                                <input type="text" id="poNo" placeholder="Purchase Order Number">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Quality Order</label>
+                                <select id="qualityOrder">
+                                    <option value="">-- Select Quality --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Design & Taga Card -->
+                <div class="section-card">
+                    <div class="section-header">
+                        🎨 DESIGN & TAGA DETAILS
+                    </div>
+                    <div class="section-body">
+                        <div class="design-taga-grid">
+                            <div class="form-group">
+                                <label>Design 1</label>
+                                <select id="design1">
+                                    <option value="">-- Select Design --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Taga 1</label>
+                                <input type="number" id="taga1" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Design 2</label>
+                                <select id="design2">
+                                    <option value="">-- Select Design --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Taga 2</label>
+                                <input type="number" id="taga2" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Design 3</label>
+                                <select id="design3">
+                                    <option value="">-- Select Design --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Taga 3</label>
+                                <input type="number" id="taga3" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Design 4</label>
+                                <select id="design4">
+                                    <option value="">-- Select Design --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Taga 4</label>
+                                <input type="number" id="taga4" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Design 5</label>
+                                <select id="design5">
+                                    <option value="">-- Select Design --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Taga 5</label>
+                                <input type="number" id="taga5" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Design 6</label>
+                                <select id="design6">
+                                    <option value="">-- Select Design --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Taga 6</label>
+                                <input type="number" id="taga6" placeholder="0">
+                            </div>
+                        </div>
+
+                        <!-- Calculations Row -->
+                        <div class="form-grid" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>Total Order Taga</label>
+                                <input type="number" id="totalOrderTaga" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Count Meter</label>
+                                <input type="number" id="countMeter" step="0.01" placeholder="0.00">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Total MTR</label>
+                                <input type="number" id="totalMTR" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Total Order Value</label>
+                                <input type="number" id="totalOrderValue" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selvedge Card -->
+                <div class="section-card">
+                    <div class="section-header">
+                        🧵 SELVEDGE DETAILS
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Name of Selvedge</label>
+                                <input type="text" id="selvedgeName" placeholder="Selvedge name">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Ends of Selvedge</label>
+                                <input type="number" id="selvedgeEnds" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Color of Selvedge</label>
+                                <input type="text" id="selvedgeColor" placeholder="Color">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Details Card -->
+                <div class="section-card">
+                    <div class="section-header">
+                        📦 ADDITIONAL DETAILS
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Yarn to be Used</label>
+                                <select id="yarnUsed">
+                                    <option value="">-- Select Yarn --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Sizing Beam Meter</label>
+                                <input type="number" id="sizingBeam" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Payment Terms</label>
+                                <input type="text" id="paymentTerms" placeholder="Payment terms">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Delivery Date</label>
+                                <input type="date" id="deliveryDate">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Remark</label>
+                                <textarea id="remark" placeholder="Additional remarks..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="btn-container">
+                <button class="btn btn-submit" onclick="submitForm(false)">💾 SAVE</button>
+                <button class="btn btn-submit" onclick="submitForm(true)">💾 SAVE & SHARE</button>
+                <button class="btn btn-clear" onclick="clearForm()">🗑️ CLEAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="share-modal">
+        <div class="share-modal-content">
+            <div class="share-modal-title">📤 Share Enquiry PDF</div>
+            <div class="share-modal-subtitle">Choose how to share the PDF with broker</div>
+
+            <!-- Email Section -->
+            <div class="share-section">
+                <div class="share-section-title">📧 Email Addresses</div>
+                <div class="email-input-group">
+                    <input type="email" id="emailInput" placeholder="Enter email address">
+                    <button class="add-email-btn" onclick="addEmail()">+ Add</button>
+                </div>
+                <div id="emailTags"></div>
+            </div>
+
+            <!-- Share Options -->
+            <div class="share-section">
+                <div class="share-section-title">🔗 Additional Share Options</div>
+
+                <div class="share-option" onclick="toggleCheckbox('whatsappCheck')">
+                    <input type="checkbox" id="whatsappCheck">
+                    <div class="share-option-icon">📱</div>
+                    <div class="share-option-text">
+                        <div class="share-option-title">WhatsApp</div>
+                        <div class="share-option-desc">Share broker link via WhatsApp</div>
+                    </div>
+                </div>
+
+                <div class="share-option" onclick="toggleCheckbox('telegramCheck')">
+                    <input type="checkbox" id="telegramCheck">
+                    <div class="share-option-icon">✈️</div>
+                    <div class="share-option-text">
+                        <div class="share-option-title">Telegram</div>
+                        <div class="share-option-desc">Send PDF via Telegram channel</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="share-modal-buttons">
+                <button class="share-modal-btn share-modal-btn-secondary" onclick="closeShareModal()">Cancel</button>
+                <button class="share-modal-btn share-modal-btn-primary" onclick="processShare()">Share Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-icon" id="toastIcon">✅</div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Success</div>
+            <div class="toast-message" id="toastMessage">Operation completed successfully</div>
+        </div>
+        <button class="toast-close" onclick="hideToast()">×</button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading hidden">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+
+    <script>
+        // ========================================
+        // GLOBAL VARIABLES
+        // ========================================
+
+        let emailList = [];
+        let currentFormData = null;
+        let pendingRtweToLoad = null;  // Store RTWE to load after master data is ready
+
+        // URLs for navigation
+        const webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+        const sessionId = "<?= sessionId ?>";
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+
+        window.onload = function () {
+            console.log('✅ EnquiryForm.html loaded successfully!');
+            console.log('Page URL:', window.location.href);
+
+            // Load master data first
+            loadMasterData();
+            setupEventListeners();
+            setupCalculations();
+
+            // Handle Preset Entry Type from Dashboard/Pending/Order Confirm
+            const presetType = "<?= presetType ?>";
+            const presetRtwe = "<?= presetRtwe ?>";
+
+            console.log('========================================');
+            console.log('🔧 PRESET VARIABLES DEBUG:');
+            console.log('  presetType:', presetType, '(length:', presetType.length + ')');
+            console.log('  presetRtwe:', presetRtwe, '(length:', presetRtwe.length + ')');
+            console.log('  window.location.href:', window.location.href);
+            console.log('========================================');
+
+            if (presetType) {
+                // Handle VIEW mode from Order Confirm Data - read-only form
+                if (presetType === 'view' && presetRtwe) {
+                    console.log('👁️ VIEW MODE - Loading confirmed order:', presetRtwe);
+                    pendingRtweToLoad = presetRtwe;
+                    window.isViewMode = true;
+                }
+                // Handle VIEW-APPROVED mode from Pending Approved - read-only form
+                else if (presetType === 'view-approved' && presetRtwe) {
+                    console.log('👁️ VIEW-APPROVED MODE - Loading approved enquiry (read-only):', presetRtwe);
+                    pendingRtweToLoad = presetRtwe;
+                    window.isViewApprovedMode = true;
+                    window.isViewMode = true; // Use view mode logic
+                }
+                // Handle VIEW-CANCELLED mode from Cancelled Enquiries - read-only form
+                else if (presetType === 'view-cancelled' && presetRtwe) {
+                    console.log('👁️ VIEW-CANCELLED MODE - Loading cancelled enquiry (read-only):', presetRtwe);
+                    pendingRtweToLoad = presetRtwe;
+                    window.isViewCancelledMode = true;
+                    window.isViewMode = true; // Use view mode logic
+                }
+                // Handle APPROVE-CONFIRMED mode from Pending Approved - editable for confirmation
+                else if (presetType === 'approve-confirmed' && presetRtwe) {
+                    console.log('✅ APPROVE-CONFIRMED MODE - Loading approved enquiry for confirmation:', presetRtwe);
+                    pendingRtweToLoad = presetRtwe;
+                    window.isApproveConfirmedMode = true;
+                }
+                // Handle EDIT-CONFIRM mode - edit confirmed enquiry
+                else if (presetType === 'edit-confirm' && presetRtwe) {
+                    console.log('✏️ EDIT-CONFIRM MODE - Loading confirmed order for edit:', presetRtwe);
+                    pendingRtweToLoad = presetRtwe;
+                    window.isEditConfirmMode = true;
+                }
+                // If it's approve with a specific RTWE from Pending Enquiries, store it to load
+                else if (presetType === 'approve' && presetRtwe) {
+                    console.log('📋 Will auto-load pending enquiry after master data:', presetRtwe);
+                    pendingRtweToLoad = presetRtwe;
+                }
+                // NEW entry - show form and generate new RTWE
+                else if (presetType === 'NEW') {
+                    console.log('📝 NEW ENTRY MODE - Generating new entry');
+                    document.getElementById('basicFormSection').classList.remove('hidden');
+                    // handleNewEntry will be called after master data loads
+                }
+            } else {
+                // Default: No preset type means NEW ENTRY (form opened from New Enquiry button)
+                console.log('📝 DEFAULT NEW ENTRY MODE - No preset type provided');
+                document.getElementById('basicFormSection').classList.remove('hidden');
+                // handleNewEntry will be called after master data loads
+            }
+        };
+
+        // Auto-load a specific pending enquiry (called when coming from Pending Enquiries page)
+        function autoLoadPendingEnquiry(rtweNo) {
+            console.log('🔄 Loading pending enquiry data for:', rtweNo);
+            showLoading('Loading enquiry data...');
+
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    if (data) {
+                        populateFormData(data);
+                        document.getElementById('basicFormSection').classList.remove('hidden');
+                        document.getElementById('approvalSection').classList.remove('hidden');
+                        document.getElementById('orderStatus').value = 'Approved';
+
+                        // Set approved date and time to now
+                        const now = new Date();
+                        document.getElementById('approvedDate').value = now.toISOString().split('T')[0];
+                        document.getElementById('approvedTime').value = now.toTimeString().split(' ')[0].substring(0, 5);
+
+                        // Auto-copy Quality to Quality Order
+                        const qualityValue = document.getElementById('quality').value;
+                        if (qualityValue) {
+                            setDropdownValue('qualityOrder', qualityValue);
+                        }
+
+                        hideLoading();
+                        showToast('Enquiry Loaded', 'RTWE: ' + rtweNo + ' - Ready for approval', 'success');
+                    } else {
+                        hideLoading();
+                        showToast('Error', 'Enquiry not found: ' + rtweNo, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message || 'Failed to load enquiry', 'error');
+                })
+                .loadPendingEnquiryData(rtweNo);
+        }
+
+        // Auto-load an approved enquiry (from PENDING_APPROVED sheet)
+        // Called when coming from Pending Approved page with View or Confirm action
+        function autoLoadPendingApprovedEnquiry(rtweNo) {
+            console.log('🔄 Loading pending approved enquiry data for:', rtweNo);
+            showLoading('Loading approved enquiry...');
+
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    if (data) {
+                        populateFormData(data);
+                        document.getElementById('basicFormSection').classList.remove('hidden');
+                        document.getElementById('approvalSection').classList.remove('hidden');
+
+                        hideLoading();
+
+                        // Apply read-only mode for VIEW
+                        if (window.isViewApprovedMode || window.isViewMode) {
+                            makeFormReadOnly();
+                            // Update header for view mode
+                            const header = document.querySelector('.header h1');
+                            if (header) {
+                                header.innerHTML = '👁️ VIEW APPROVED - ' + rtweNo;
+                            }
+                            showToast('View Mode', 'RTWE: ' + rtweNo + ' - Read-only view', 'success');
+                        }
+                        // For APPROVE-CONFIRMED mode, user can edit order details
+                        else if (window.isApproveConfirmedMode) {
+                            window.editingApprovedRtwe = rtweNo;
+                            // Update header for confirm mode
+                            const header = document.querySelector('.header h1');
+                            if (header) {
+                                header.innerHTML = '✅ CONFIRM ORDER - ' + rtweNo;
+                            }
+                            showToast('Confirm Mode', 'RTWE: ' + rtweNo + ' - Ready to confirm order', 'success');
+                        }
+                    } else {
+                        hideLoading();
+                        showToast('Error', 'Approved enquiry not found: ' + rtweNo, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message || 'Failed to load approved enquiry', 'error');
+                })
+                .loadPendingApprovedEnquiryData(rtweNo);
+        }
+
+        // Auto-load a cancelled enquiry (from ENQUIRY_CLOSED_DATA sheet)
+        // Called when coming from Cancelled Enquiries page with View action
+        function autoLoadCancelledEnquiry(rtweNo) {
+            console.log('🔄 Loading cancelled enquiry data for:', rtweNo);
+            showLoading('Loading cancelled enquiry...');
+
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    if (data) {
+                        populateFormData(data);
+                        document.getElementById('basicFormSection').classList.remove('hidden');
+
+                        hideLoading();
+
+                        // Always read-only for cancelled enquiries
+                        makeFormReadOnly();
+
+                        // Update header for cancelled view mode
+                        const header = document.querySelector('.header h1');
+                        if (header) {
+                            header.innerHTML = '❌ VIEW CANCELLED - ' + rtweNo;
+                        }
+                        showToast('View Mode', 'RTWE: ' + rtweNo + ' - Cancelled enquiry (Read-only)', 'success');
+                    } else {
+                        hideLoading();
+                        showToast('Error', 'Cancelled enquiry not found: ' + rtweNo, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message || 'Failed to load cancelled enquiry', 'error');
+                })
+                .loadCancelledEnquiryData(rtweNo);
+        }
+
+        // Auto-load a confirmed enquiry (called when coming from Order Confirm Data page)
+        function autoLoadConfirmedEnquiry(rtweNo) {
+            console.log('🔄 Loading confirmed enquiry data for:', rtweNo);
+            showLoading('Loading confirmed order...');
+
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    console.log('========================================');
+                    console.log('📦 loadConfirmedEnquiryData RESPONSE:');
+                    console.log('  Data received:', data);
+                    console.log('  Data type:', typeof data);
+                    console.log('  Is null:', data === null);
+                    console.log('  Is undefined:', data === undefined);
+                    if (data) {
+                        console.log('  RTWE No:', data.rtweNo);
+                        console.log('  Broker:', data.broker);
+                    }
+                    console.log('========================================');
+
+                    if (data && data.rtweNo) {
+                        populateFormData(data);
+                        document.getElementById('basicFormSection').classList.remove('hidden');
+                        document.getElementById('approvalSection').classList.remove('hidden');
+
+                        hideLoading();
+
+                        // Apply read-only mode for VIEW
+                        if (window.isViewMode) {
+                            makeFormReadOnly();
+                            // Update header for view mode
+                            const header = document.querySelector('.header h1');
+                            if (header) {
+                                header.innerHTML = '👁️ VIEW ORDER - ' + rtweNo;
+                            }
+                            showToast('View Mode', 'RTWE: ' + rtweNo + ' - Read-only view', 'success');
+                        } else if (window.isEditConfirmMode) {
+                            // For edit mode, mark that we're editing a confirmed order
+                            window.editingConfirmedRtwe = rtweNo;
+                            showToast('Edit Mode', 'RTWE: ' + rtweNo + ' - Ready to edit', 'success');
+                        }
+                    } else {
+                        hideLoading();
+                        console.error('❌ Data is empty or missing rtweNo');
+                        showToast('Error', 'Order not found: ' + rtweNo, 'error');
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message || 'Failed to load order', 'error');
+                })
+                .loadConfirmedEnquiryData(rtweNo);
+        }
+
+        // Make the entire form read-only (for View mode)
+        function makeFormReadOnly() {
+            console.log('📖 Making form read-only...');
+
+            // Disable all inputs
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.disabled = true;
+            });
+
+            // Hide save buttons container, replace with back button
+            const btnContainer = document.querySelector('.btn-container');
+            if (btnContainer) {
+                btnContainer.innerHTML = `
+          <a href="${webAppUrl}?page=order-confirm&sessionId=${sessionId}" 
+             class="btn btn-submit" 
+             style="text-decoration: none; text-align: center;"
+             onclick="showLoading('Order Confirm Data')">
+            ← Back to Order Confirm Data
+          </a>
+        `;
+            }
+
+            // Add visual indicator that form is read-only
+            const container = document.querySelector('.container');
+            if (container) {
+                const readOnlyBanner = document.createElement('div');
+                readOnlyBanner.style.cssText = 'background: #E3F2FD; border-left: 4px solid #2196F3; padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; display: flex; align-items: center; gap: 10px;';
+                readOnlyBanner.innerHTML = '<span style="font-size: 20px;">👁️</span> <span style="color: #1565C0; font-weight: bold;">VIEW MODE - This form is read-only</span>';
+                container.insertBefore(readOnlyBanner, container.firstChild);
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('entryType').addEventListener('change', onEntryTypeChange);
+            document.getElementById('orderStatus').addEventListener('change', onOrderStatusChange);
+            document.getElementById('selectPendingApproved').addEventListener('change', loadPendingApprovedData);
+            document.getElementById('selectEdit').addEventListener('change', loadEditData);
+
+            document.getElementById('quality').addEventListener('change', function () {
+                const quality = this.value;
+                const qualityOrderSelect = document.getElementById('qualityOrder');
+                if (quality && qualityOrderSelect) {
+                    qualityOrderSelect.value = quality;
+                }
+            });
+
+            // Email input - press Enter to add
+            document.getElementById('emailInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addEmail();
+                }
+            });
+        }
+
+        function setupCalculations() {
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById('taga' + i).addEventListener('input', calculateTotalTaga);
+            }
+
+            document.getElementById('countMeter').addEventListener('input', calculateTotals);
+            document.getElementById('finalRate').addEventListener('input', calculateTotals);
+        }
+
+        // ========================================
+        // SHARE MODAL FUNCTIONS
+        // ========================================
+
+        function showShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+            emailList = [];
+            document.getElementById('emailTags').innerHTML = '';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('whatsappCheck').checked = false;
+            document.getElementById('telegramCheck').checked = false;
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+            currentFormData = null;
+        }
+
+        function toggleCheckbox(id) {
+            const checkbox = document.getElementById(id);
+            checkbox.checked = !checkbox.checked;
+        }
+
+        function addEmail() {
+            const input = document.getElementById('emailInput');
+            const email = input.value.trim();
+
+            if (!email) return;
+
+            if (!email.includes('@')) {
+                showToast('Invalid Email', 'Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (emailList.includes(email)) {
+                showToast('Duplicate Email', 'This email is already added', 'warning');
+                return;
+            }
+
+            emailList.push(email);
+            renderEmailTags();
+            input.value = '';
+            // input.focus(); // REMOVED: Causes autofocus blocking in cross-origin iframe
+        }
+
+        function removeEmail(email) {
+            emailList = emailList.filter(e => e !== email);
+            renderEmailTags();
+        }
+
+        function renderEmailTags() {
+            const container = document.getElementById('emailTags');
+            container.innerHTML = '';
+
+            emailList.forEach(email => {
+                const tag = document.createElement('div');
+                tag.className = 'email-tag';
+                tag.innerHTML = `
+          <span>${email}</span>
+          <button class="email-tag-remove" onclick="removeEmail('${email}')">×</button>
+        `;
+                container.appendChild(tag);
+            });
+        }
+
+        function processShare() {
+            if (emailList.length === 0) {
+                showToast('No Emails', 'Please add at least one email address', 'warning');
+                return;
+            }
+
+            const whatsapp = document.getElementById('whatsappCheck').checked;
+            const telegram = document.getElementById('telegramCheck').checked;
+
+            // CAPTURE DATA BEFORE CLOSING MODAL (which nullifies currentFormData)
+            const dataToShare = JSON.parse(JSON.stringify(currentFormData));
+
+            closeShareModal();
+
+            // Show toast immediately - sharing will happen in background
+            showToast(
+                'Sharing in Progress',
+                'Redirecting to Pending Enquiries...',
+                'success'
+            );
+
+            // Process sharing in background
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    // Redirect happens regardless of share result
+                })
+                .withFailureHandler(function (error) {
+                    console.error('Share Error:', error.message);
+                })
+                .sharePDFMultiChannel(dataToShare, emailList, whatsapp, telegram);
+
+            // Redirect to Pending Enquiries after short delay (sharing continues in background)
+            setTimeout(function () {
+                window.location.href = webAppUrl + '?page=pending-enquiries&sessionId=' + sessionId;
+            }, 1500);
+        }
+
+        // ========================================
+        // TOAST NOTIFICATION FUNCTIONS
+        // ========================================
+
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Set icon based on type
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+
+            toastIcon.textContent = icons[type] || '✅';
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            // Remove previous type classes
+            toast.classList.remove('error', 'warning');
+
+            // Add new type class
+            if (type !== 'success') {
+                toast.classList.add(type);
+            }
+
+            toast.classList.add('active');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
+        }
+
+        function hideToast() {
+            document.getElementById('toast').classList.remove('active');
+        }
+
+        // ========================================
+        // LOAD MASTER DATA
+        // ========================================
+
+        function loadMasterData() {
+            console.log('Loading master data...');
+            showLoading('Loading master data...');
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    console.log('Master data loaded:', data);
+                    populateDropdown('broker', data.brokers);
+                    populateDropdown('quality', data.qualities);
+                    populateDropdown('qualityOrder', data.qualities);
+                    populateDropdown('buyer', data.buyers);
+                    populateDropdown('design1', data.designs);
+                    populateDropdown('design2', data.designs);
+                    populateDropdown('design3', data.designs);
+                    populateDropdown('design4', data.designs);
+                    populateDropdown('design5', data.designs);
+                    populateDropdown('design6', data.designs);
+                    populateDropdown('yarnUsed', data.yarns);
+                    hideLoading();
+
+                    // After master data is loaded, check if we need to load an enquiry
+                    if (pendingRtweToLoad) {
+                        console.log('📋 Master data ready, now loading enquiry:', pendingRtweToLoad);
+
+                        // Handle VIEW or EDIT-CONFIRM mode for confirmed orders (from ORDER_CONFIRM_DATA)
+                        if ((window.isViewMode && !window.isViewApprovedMode && !window.isViewCancelledMode) || window.isEditConfirmMode) {
+                            autoLoadConfirmedEnquiry(pendingRtweToLoad);
+                        }
+                        // Handle VIEW-APPROVED or APPROVE-CONFIRMED mode (from PENDING_APPROVED)
+                        else if (window.isViewApprovedMode || window.isApproveConfirmedMode) {
+                            autoLoadPendingApprovedEnquiry(pendingRtweToLoad);
+                        }
+                        // Handle VIEW-CANCELLED mode (from ENQUIRY_CLOSED_DATA)
+                        else if (window.isViewCancelledMode) {
+                            autoLoadCancelledEnquiry(pendingRtweToLoad);
+                        }
+                        // Default: load from PENDING_DATA for approval
+                        else {
+                            autoLoadPendingEnquiry(pendingRtweToLoad);
+                        }
+                        pendingRtweToLoad = null;
+                    } else {
+                        // No pending RTWE to load - this is a NEW ENTRY, generate new RTWE number
+                        console.log('📝 New entry mode - generating new RTWE number...');
+                        handleNewEntry();
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    console.error('Failed to load master data:', error);
+                    hideLoading();
+                    showToast('Error', 'Failed to load master data: ' + error, 'error');
+                })
+                .getMasterDataForForm();
+        }
+
+        function populateDropdown(id, items) {
+            const select = document.getElementById(id);
+            if (!select) return;
+
+            const firstOption = select.options[0].outerHTML;
+            select.innerHTML = firstOption;
+
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                select.appendChild(option);
+            });
+        }
+
+        // ========================================
+        // ENTRY TYPE CHANGE HANDLER
+        // ========================================
+
+        function onEntryTypeChange() {
+            const entryType = document.getElementById('entryType').value;
+
+            document.getElementById('searchRTWEGroup').classList.add('hidden');
+            document.getElementById('selectPendingGroup').classList.add('hidden');
+            document.getElementById('selectEditGroup').classList.add('hidden');
+            document.getElementById('basicFormSection').classList.add('hidden');
+            document.getElementById('approvalSection').classList.add('hidden');
+
+            if (!entryType) return;
+
+            if (entryType === 'NEW ENTRY') {
+                handleNewEntry();
+            } else if (entryType === 'PENDING APPROVED') {
+                handlePendingApproved();
+            } else if (entryType === 'EDIT ENQUIRY') {
+                handleEditEnquiry();
+            }
+        }
+
+        // ========================================
+        // NEW ENTRY HANDLER
+        // ========================================
+
+        function handleNewEntry() {
+            clearForm();
+            document.getElementById('basicFormSection').classList.remove('hidden');
+
+            showLoading('Generating new entry...');
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    document.getElementById('rtweNo').value = data.rtweNo;
+                    document.getElementById('costingNo').value = data.costingNo;
+                    document.getElementById('enqDate').value = data.enqDate;
+                    document.getElementById('enqTime').value = data.enqTime;
+                    document.getElementById('orderStatus').value = 'Pending';
+                    hideLoading();
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message, 'error');
+                })
+                .generateNewEntryData();
+        }
+
+        // ========================================
+        // PENDING APPROVED HANDLER
+        // ========================================
+
+        function handlePendingApproved() {
+            document.getElementById('selectPendingGroup').classList.remove('hidden');
+
+            showLoading('Loading pending approvals...');
+            google.script.run
+                .withSuccessHandler(function (rtweList) {
+                    const select = document.getElementById('selectPendingApproved');
+                    select.innerHTML = '<option value="">-- Select RTWE --</option>';
+
+                    rtweList.forEach(rtwe => {
+                        const option = document.createElement('option');
+                        option.value = rtwe;
+                        option.textContent = rtwe;
+                        select.appendChild(option);
+                    });
+
+                    hideLoading();
+
+                    if (rtweList.length === 0) {
+                        showToast('No Data', 'No pending approved enquiries found', 'warning');
+                        document.getElementById('entryType').value = '';
+                        onEntryTypeChange();
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message, 'error');
+                })
+                .getPendingApprovedList();
+        }
+
+        function loadPendingApprovedData() {
+            const rtweNo = document.getElementById('selectPendingApproved').value;
+            if (!rtweNo) return;
+
+            showLoading('Loading enquiry data...');
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    populateFormData(data);
+                    document.getElementById('basicFormSection').classList.remove('hidden');
+                    document.getElementById('approvalSection').classList.remove('hidden');
+                    document.getElementById('orderStatus').value = 'Approved';
+
+                    const now = new Date();
+                    document.getElementById('approvedDate').value = now.toISOString().split('T')[0];
+                    document.getElementById('approvedTime').value = now.toTimeString().split(' ')[0].substring(0, 5);
+
+                    hideLoading();
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message, 'error');
+                })
+                .loadPendingApprovedEnquiryData(rtweNo);
+        }
+
+        // ========================================
+        // EDIT ENQUIRY HANDLER
+        // ========================================
+
+        function handleEditEnquiry() {
+            document.getElementById('selectEditGroup').classList.remove('hidden');
+
+            showLoading('Loading enquiries...');
+            google.script.run
+                .withSuccessHandler(function (rtweList) {
+                    const select = document.getElementById('selectEdit');
+                    select.innerHTML = '<option value="">-- Select RTWE --</option>';
+
+                    rtweList.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.value;
+                        option.textContent = item.label;
+                        select.appendChild(option);
+                    });
+
+                    hideLoading();
+
+                    if (rtweList.length === 0) {
+                        showToast('No Data', 'No enquiries found to edit', 'warning');
+                        document.getElementById('entryType').value = '';
+                        onEntryTypeChange();
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message, 'error');
+                })
+                .getEditEnquiryList();
+        }
+
+        function loadEditData() {
+            const selectedValue = document.getElementById('selectEdit').value;
+            if (!selectedValue) return;
+
+            showLoading('Loading enquiry data...');
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    populateFormData(data);
+                    document.getElementById('basicFormSection').classList.remove('hidden');
+
+                    if (data.isConfirmed) {
+                        document.getElementById('approvalSection').classList.remove('hidden');
+                    }
+
+                    hideLoading();
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message, 'error');
+                })
+                .loadEditEnquiryData(selectedValue);
+        }
+
+        // ========================================
+        // ORDER STATUS CHANGE HANDLER
+        // ========================================
+
+        function onOrderStatusChange() {
+            const orderStatus = document.getElementById('orderStatus').value;
+            const entryType = document.getElementById('entryType').value;
+            const approvalSection = document.getElementById('approvalSection');
+
+            // For NEW ENTRY - NEVER show approval section (save as pending only)
+            if (entryType === 'NEW ENTRY' || entryType === 'NEW') {
+                approvalSection.classList.add('hidden');
+                return; // Exit early - no approval details for new entries
+            }
+
+            // For other entry types (PENDING APPROVED, EDIT ENQUIRY, etc.)
+            // Show/hide approval section based on status
+            if (orderStatus === 'Approved') {
+                // Show approval section when status is Approved
+                approvalSection.classList.remove('hidden');
+
+                // Auto-set approved date and time if not already set
+                if (!document.getElementById('approvedDate').value) {
+                    const now = new Date();
+                    document.getElementById('approvedDate').value = now.toISOString().split('T')[0];
+                }
+
+                // Always auto-set approved time to current time when changing to Approved
+                if (!document.getElementById('approvedTime').value) {
+                    const now = new Date();
+                    document.getElementById('approvedTime').value = now.toTimeString().split(' ')[0].substring(0, 5);
+                }
+
+                // Auto-populate Quality Order from Basic Enquiry Quality field
+                const qualityValue = document.getElementById('quality').value;
+                const qualityOrderSelect = document.getElementById('qualityOrder');
+
+                if (qualityValue && qualityOrderSelect) {
+                    // Check if option exists, if not add it
+                    let optionExists = false;
+                    for (let i = 0; i < qualityOrderSelect.options.length; i++) {
+                        if (qualityOrderSelect.options[i].value === qualityValue) {
+                            optionExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!optionExists) {
+                        const newOption = document.createElement('option');
+                        newOption.value = qualityValue;
+                        newOption.text = qualityValue;
+                        qualityOrderSelect.appendChild(newOption);
+                    }
+
+                    // Set the value only if not already set
+                    if (!qualityOrderSelect.value) {
+                        qualityOrderSelect.value = qualityValue;
+                    }
+                }
+            } else {
+                // Hide approval section for Pending or Canceled status
+                approvalSection.classList.add('hidden');
+            }
+        }
+
+        // ========================================
+        // POPULATE FORM DATA
+        // ========================================
+
+        function populateFormData(data) {
+            console.log('Populating form with data:', data);
+
+            // Set text/number inputs
+            document.getElementById('rtweNo').value = data.rtweNo || '';
+            document.getElementById('costingNo').value = data.costingNo || '';
+            document.getElementById('enqDate').value = data.enqDate || '';
+            document.getElementById('enqTime').value = data.enqTime || '';
+            document.getElementById('givenRate').value = data.givenRate || '';
+
+            // Set dropdown values - use helper to ensure option exists
+            setDropdownValue('broker', data.broker);
+            setDropdownValue('quality', data.quality);
+            setDropdownValue('orderStatus', data.orderStatus || 'Pending');
+
+            if (data.approvedDate) document.getElementById('approvedDate').value = data.approvedDate;
+            if (data.approvedTime) document.getElementById('approvedTime').value = data.approvedTime;
+            if (data.finalRate) document.getElementById('finalRate').value = data.finalRate;
+            if (data.buyer) setDropdownValue('buyer', data.buyer);
+            if (data.poNo) document.getElementById('poNo').value = data.poNo;
+            if (data.qualityOrder) setDropdownValue('qualityOrder', data.qualityOrder);
+
+            for (let i = 1; i <= 6; i++) {
+                if (data['design' + i]) setDropdownValue('design' + i, data['design' + i]);
+                if (data['taga' + i]) document.getElementById('taga' + i).value = data['taga' + i];
+            }
+
+            if (data.countMeter) document.getElementById('countMeter').value = data.countMeter;
+            if (data.selvedgeName) document.getElementById('selvedgeName').value = data.selvedgeName;
+            if (data.selvedgeEnds) document.getElementById('selvedgeEnds').value = data.selvedgeEnds;
+            if (data.selvedgeColor) document.getElementById('selvedgeColor').value = data.selvedgeColor;
+            if (data.yarnUsed) setDropdownValue('yarnUsed', data.yarnUsed);
+            if (data.paymentTerms) document.getElementById('paymentTerms').value = data.paymentTerms;
+            if (data.deliveryDate) document.getElementById('deliveryDate').value = data.deliveryDate;
+            if (data.remark) document.getElementById('remark').value = data.remark;
+
+            calculateTotalTaga();
+            calculateTotals();
+        }
+
+        // Helper to set dropdown value, adding option if it doesn't exist
+        function setDropdownValue(selectId, value) {
+            if (!value) return;
+
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            // Check if option exists
+            let optionExists = false;
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === value) {
+                    optionExists = true;
+                    break;
+                }
+            }
+
+            // If option doesn't exist, add it
+            if (!optionExists) {
+                const newOption = document.createElement('option');
+                newOption.value = value;
+                newOption.textContent = value;
+                select.appendChild(newOption);
+                console.log('Added missing option to', selectId + ':', value);
+            }
+
+            // Now set the value
+            select.value = value;
+        }
+
+
+        // ========================================
+        // CALCULATIONS
+        // ========================================
+
+        function calculateTotalTaga() {
+            let total = 0;
+            for (let i = 1; i <= 6; i++) {
+                const taga = parseFloat(document.getElementById('taga' + i).value) || 0;
+                total += taga;
+            }
+            document.getElementById('totalOrderTaga').value = total;
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const totalTaga = parseFloat(document.getElementById('totalOrderTaga').value) || 0;
+            const countMeter = parseFloat(document.getElementById('countMeter').value) || 0;
+            const finalRate = parseFloat(document.getElementById('finalRate').value) || 0;
+
+            const totalMTR = totalTaga * countMeter;
+            document.getElementById('totalMTR').value = totalMTR.toFixed(2);
+
+            const totalValue = totalMTR * finalRate;
+            document.getElementById('totalOrderValue').value = totalValue.toFixed(2);
+
+            if (totalTaga > 0) {
+                const sizingBeam = totalMTR / totalTaga;
+                document.getElementById('sizingBeam').value = sizingBeam.toFixed(2);
+            }
+        }
+
+        // ========================================
+        // FORM SUBMISSION
+        // ========================================
+
+        function submitForm(isShare) {
+            if (!validateForm()) return;
+
+            const formData = collectFormData();
+
+            showLoading('Saving data...');
+
+            // Check if we're editing a confirmed order
+            if (window.isEditConfirmMode && window.editingConfirmedRtwe) {
+                console.log('📝 Saving edited confirmed order:', window.editingConfirmedRtwe);
+
+                google.script.run
+                    .withSuccessHandler(function (result) {
+                        hideLoading();
+
+                        if (!result.success) {
+                            showToast('Error', result.error || result.message, 'error');
+                            return;
+                        }
+
+                        showToast('Order Updated', 'Redirecting to Order Confirm Data...', 'success');
+
+                        // Redirect to Order Confirm Data page after short delay
+                        setTimeout(function () {
+                            window.location.href = webAppUrl + '?page=order-confirm&sessionId=' + sessionId;
+                        }, 1500);
+                    })
+                    .withFailureHandler(function (error) {
+                        hideLoading();
+                        showToast('Error', error.message, 'error');
+                    })
+                    .updateConfirmedEnquiry(formData);
+
+                return;
+            }
+
+            // Normal save flow
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    hideLoading();
+
+                    if (!result.success) {
+                        showToast('Error', result.message, 'error');
+                        return;
+                    }
+
+                    if (isShare) {
+                        // Store form data for sharing
+                        currentFormData = formData;
+
+                        // Show share modal
+                        showShareModal();
+
+                    } else {
+                        // Determine redirect based on entry type
+                        const entryType = document.getElementById('entryType').value;
+
+                        if (entryType === 'NEW ENTRY' || entryType === 'NEW') {
+                            // NEW entries: show success and redirect to New Enquiry form
+                            showToast('Data Saved', 'Enquiry saved successfully! Redirecting...', 'success');
+                            setTimeout(function () {
+                                window.location.href = webAppUrl + '?page=enquiry-form&sessionId=' + sessionId + '&type=NEW';
+                            }, 1500);
+                        } else {
+                            // Other entries: redirect to Pending Enquiries
+                            showToast('Data Saved', 'Redirecting to Pending Enquiries...', 'success');
+                            setTimeout(function () {
+                                window.location.href = webAppUrl + '?page=pending-enquiries&sessionId=' + sessionId;
+                            }, 1500);
+                        }
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message, 'error');
+                })
+                .submitEnquiryForm(formData);
+        }
+
+        function validateForm() {
+            const entryType = document.getElementById('entryType').value;
+            const orderStatus = document.getElementById('orderStatus').value;
+
+            // Skip entry type check for Edit-Confirm mode (set via URL param, not dropdown)
+            if (!entryType && !window.isEditConfirmMode) {
+                showToast('Validation Error', 'Please select Entry Type', 'warning');
+                return false;
+            }
+
+            if (!document.getElementById('rtweNo').value) {
+                showToast('Validation Error', 'RTWE No is required', 'warning');
+                return false;
+            }
+
+            if (!document.getElementById('broker').value) {
+                showToast('Validation Error', 'Broker is required', 'warning');
+                return false;
+            }
+
+            if (!document.getElementById('quality').value) {
+                showToast('Validation Error', 'Quality is required', 'warning');
+                return false;
+            }
+
+            if (!document.getElementById('givenRate').value) {
+                showToast('Validation Error', 'Given Rate is required', 'warning');
+                return false;
+            }
+
+            if (!orderStatus) {
+                showToast('Validation Error', 'Order Status is required', 'warning');
+                return false;
+            }
+
+            const approvalVisible = !document.getElementById('approvalSection').classList.contains('hidden');
+            if (approvalVisible && orderStatus === 'Approved') {
+                if (!document.getElementById('finalRate').value) {
+                    showToast('Validation Error', 'Final Rate is required for approved orders', 'warning');
+                    return false;
+                }
+                if (!document.getElementById('buyer').value) {
+                    showToast('Validation Error', 'Buyer is required for approved orders', 'warning');
+                    return false;
+                }
+                if (!document.getElementById('poNo').value) {
+                    showToast('Validation Error', 'P/O No is required for approved orders', 'warning');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function collectFormData() {
+            const data = {
+                entryType: document.getElementById('entryType').value,
+                rtweNo: document.getElementById('rtweNo').value,
+                costingNo: document.getElementById('costingNo').value,
+                enqDate: document.getElementById('enqDate').value,
+                enqTime: document.getElementById('enqTime').value,
+                broker: document.getElementById('broker').value,
+                quality: document.getElementById('quality').value,
+                givenRate: document.getElementById('givenRate').value,
+                orderStatus: document.getElementById('orderStatus').value
+            };
+
+            const approvalVisible = !document.getElementById('approvalSection').classList.contains('hidden');
+            if (approvalVisible) {
+                data.approvedDate = document.getElementById('approvedDate').value;
+                data.approvedTime = document.getElementById('approvedTime').value;
+                data.finalRate = document.getElementById('finalRate').value;
+                data.buyer = document.getElementById('buyer').value;
+                data.poNo = document.getElementById('poNo').value;
+                data.qualityOrder = document.getElementById('qualityOrder').value;
+
+                for (let i = 1; i <= 6; i++) {
+                    data['design' + i] = document.getElementById('design' + i).value;
+                    data['taga' + i] = document.getElementById('taga' + i).value;
+                }
+
+                data.totalOrderTaga = document.getElementById('totalOrderTaga').value;
+                data.countMeter = document.getElementById('countMeter').value;
+                data.totalMTR = document.getElementById('totalMTR').value;
+                data.totalOrderValue = document.getElementById('totalOrderValue').value;
+                data.selvedgeName = document.getElementById('selvedgeName').value;
+                data.selvedgeEnds = document.getElementById('selvedgeEnds').value;
+                data.selvedgeColor = document.getElementById('selvedgeColor').value;
+                data.yarnUsed = document.getElementById('yarnUsed').value;
+                data.sizingBeam = document.getElementById('sizingBeam').value;
+                data.paymentTerms = document.getElementById('paymentTerms').value;
+                data.deliveryDate = document.getElementById('deliveryDate').value;
+                data.remark = document.getElementById('remark').value;
+            }
+
+            return data;
+        }
+
+        // ========================================
+        // RESET AFTER SAVE
+        // ========================================
+
+        function resetAfterSave() {
+            document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea').forEach(input => {
+                if (!input.disabled) {
+                    input.value = '';
+                }
+            });
+
+            document.querySelectorAll('select').forEach(select => {
+                if (select.id !== 'entryType') {
+                    select.selectedIndex = 0;
+                }
+            });
+
+            document.getElementById('entryType').value = '';
+
+            document.getElementById('searchRTWEGroup').classList.add('hidden');
+            document.getElementById('selectPendingGroup').classList.add('hidden');
+            document.getElementById('selectEditGroup').classList.add('hidden');
+            document.getElementById('basicFormSection').classList.add('hidden');
+            document.getElementById('approvalSection').classList.add('hidden');
+
+            document.getElementById('rtweNo').value = '';
+            document.getElementById('costingNo').value = '';
+            document.getElementById('totalOrderTaga').value = '';
+            document.getElementById('totalMTR').value = '';
+            document.getElementById('totalOrderValue').value = '';
+            document.getElementById('sizingBeam').value = '';
+        }
+
+        // ========================================
+        // CLEAR FORM
+        // ========================================
+
+        function clearForm() {
+            document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea').forEach(input => {
+                if (!input.disabled) {
+                    input.value = '';
+                }
+            });
+
+            document.querySelectorAll('select').forEach(select => {
+                if (select.id !== 'entryType') {
+                    select.selectedIndex = 0;
+                }
+            });
+        }
+
+        // ========================================
+        // LOADING OVERLAY
+        // ========================================
+
+        function showLoading(text) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+
+            if (text) {
+                loadingText.textContent = text;
+            }
+
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        // Show loading when navigating to another page
+        function showNavigationLoading(pageName) {
+            showLoading('Navigating to ' + pageName + '...');
+        }
+    </script>
+</body>
+
+</html>

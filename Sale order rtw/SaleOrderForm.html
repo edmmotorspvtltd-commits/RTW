@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Sale Order - RTWE</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      min-height: 100vh;
+    }
+
+    .form-side {
+      padding: 25px 40px;
+      background: white;
+      overflow-y: auto;
+    }
+
+    .preview-side {
+      background: linear-gradient(135deg, #8B5E3C 0%, #6B4423 100%);
+      padding: 25px;
+      color: white;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .header {
+      margin-bottom: 25px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #6B4423;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 16px;
+      background: #F5E6D3;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      font-size: 13px;
+    }
+
+    .back-link:hover {
+      background: #E8D4C0;
+    }
+
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #6B4423;
+    }
+
+    .so-number {
+      background: #6B4423;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .section {
+      background: #fafafa;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 18px;
+      border: 2px solid #e8e0d5;
+    }
+
+    .section-title {
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      padding: 8px 14px;
+      background: linear-gradient(135deg, #8B5E3C 0%, #6B4423 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group.span-2 {
+      grid-column: span 2;
+    }
+
+    .form-group label {
+      display: block;
+      color: #333;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #8B5E3C;
+      background: #fffaf5;
+    }
+
+    .form-group input[readonly] {
+      background: #F5E6D3;
+      color: #6B4423;
+      font-weight: 600;
+    }
+
+    .required {
+      color: #e74c3c;
+    }
+
+    /* Dual input with add button */
+    .dual-input {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dual-input select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dual-input input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .btn-add {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-add:hover {
+      background: #388E3C;
+    }
+
+    /* Item Table */
+    .item-table-container {
+      overflow-x: auto;
+      margin: 0 -18px;
+      padding: 0 18px;
+    }
+
+    .item-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 900px;
+    }
+
+    .item-table thead {
+      background: linear-gradient(135deg, #8B5E3C 0%, #6B4423 100%);
+      color: white;
+    }
+
+    .item-table th {
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .item-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #e0e0e0;
+      vertical-align: middle;
+    }
+
+    .item-table input,
+    .item-table select {
+      padding: 7px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+      width: 100%;
+      min-width: 60px;
+    }
+
+    .item-table .btn-delete {
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      width: 26px;
+      height: 26px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .add-item-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    /* Totals Bar */
+    .totals-bar {
+      background: linear-gradient(135deg, #6B4423 0%, #5a3820 100%);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .total-item label {
+      font-size: 9px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .total-item span {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .grand-total-box {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .grand-total-box label {
+      font-size: 10px;
+      text-transform: uppercase;
+      display: block;
+      opacity: 0.9;
+    }
+
+    .grand-total-box span {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    /* Action Buttons */
+    .btn-container {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #333;
+      border: 2px solid #e0e0e0;
+    }
+
+    .btn-outline:hover {
+      border-color: #8B5E3C;
+      background: #F5E6D3;
+    }
+
+    /* Preview Side */
+    .preview-header {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
+
+    .preview-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .preview-item {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .preview-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .preview-label {
+      font-size: 9px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+
+    .preview-value {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .preview-value.large {
+      font-size: 20px;
+    }
+
+    /* Loading & Toast */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #8B5E3C;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: white;
+      padding: 14px 18px;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 10001;
+      min-width: 260px;
+    }
+
+    .toast.active {
+      display: flex;
+    }
+
+    .toast.success {
+      border-left: 4px solid #4CAF50;
+    }
+
+    .toast.error {
+      border-left: 4px solid #f44336;
+    }
+
+    @media (max-width: 1024px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-side {
+        display: none;
+      }
+
+      .form-side {
+        padding: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .form-grid,
+      .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .totals-bar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <?!= include('Navigation'); ?>
+
+  <div class="main-container">
+    <!-- Form Side -->
+    <div class="form-side">
+      <div class="header">
+        <a href="<?= webAppUrl ?>?page=dashboard&sessionId=<?= sessionId ?>" class="back-link" id="btnBack">
+          ← Back to Dashboard
+        </a>
+        <div class="page-title">
+          <div class="logo">📋 Create New Sale Order</div>
+          <div class="so-number" id="soNumberDisplay">RTW-SO-NO/25-26/XXX</div>
+        </div>
+      </div>
+
+      <form id="saleOrderForm">
+        <!-- Order Details Section -->
+        <div class="section">
+          <div class="section-title">📝 Order Details</div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>DATE <span class="required">*</span></label>
+              <input type="date" id="orderDate" required>
+            </div>
+            <div class="form-group">
+              <label>BUYER <span class="required">*</span></label>
+              <div class="dual-input">
+                <select id="buyerSelect">
+                  <option value="">-- Select --</option>
+                </select>
+                <input type="text" id="buyerManual" placeholder="Or type...">
+                <button type="button" class="btn-add" onclick="addMaster('buyer')">+</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>BUYER PO NO</label>
+              <input type="text" id="buyerPoNo" placeholder="PO Number">
+            </div>
+            <div class="form-group">
+              <label>CONTRACT TYPE <span class="required">*</span></label>
+              <select id="contractType" required>
+                <option value="DOMESTIC">DOMESTIC</option>
+                <option value="EXPORT">EXPORT</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 12px;">
+            <div class="form-group">
+              <label>CONTRACT ROUTE <span class="required">*</span></label>
+              <select id="contractRoute" required>
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>AGENT</label>
+              <div class="dual-input">
+                <select id="agentSelect">
+                  <option value="">-- Select --</option>
+                </select>
+                <input type="text" id="agentManual" placeholder="Or type...">
+                <button type="button" class="btn-add" onclick="addMaster('agent')">+</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>AGENT INDENT NO</label>
+              <input type="text" id="agentIndentNo" placeholder="Indent No">
+            </div>
+            <div class="form-group">
+              <label>MODE OF SHIPMENT <span class="required">*</span></label>
+              <select id="modeOfShipment" required>
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 12px;">
+            <div class="form-group">
+              <label>PAYMENT TERMS</label>
+              <select id="paymentTerms">
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>DELIVERY TERMS <span class="required">*</span></label>
+              <select id="deliveryTerms" required>
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>BANK</label>
+              <select id="bank">
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>SO TYPE <span class="required">*</span></label>
+              <select id="soType" required>
+                <option value="BULK">BULK</option>
+                <option value="SAMPLE">SAMPLE</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 12px;">
+            <div class="form-group">
+              <label>TERMS & CONDITIONS</label>
+              <select id="termsConditions">
+                <option value="">-- Select --</option>
+                <option value="DOMESTIC INSURANCE">DOMESTIC INSURANCE</option>
+                <option value="EXPORT TERMS">EXPORT TERMS</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>GST TYPE <span class="required">*</span></label>
+              <select id="gstType" required onchange="updateGstType()">
+                <option value="">-- Select --</option>
+                <option value="CGST/SGST">CGST/SGST</option>
+                <option value="IGST">IGST</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>TRANSPORT</label>
+              <div class="dual-input">
+                <select id="transportSelect">
+                  <option value="">-- Select --</option>
+                </select>
+                <input type="text" id="transportManual" placeholder="Or type...">
+                <button type="button" class="btn-add" onclick="addMaster('transport')">+</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>CONSIGNEE</label>
+              <div class="dual-input">
+                <select id="consigneeSelect">
+                  <option value="">-- Select --</option>
+                </select>
+                <input type="text" id="consigneeManual" placeholder="Or type...">
+                <button type="button" class="btn-add" onclick="addMaster('consignee')">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 12px;">
+            <div class="form-group span-2">
+              <label>REMARK</label>
+              <textarea id="remark" placeholder="Enter remarks..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>RTWE NO</label>
+              <input type="text" id="rtweNo" placeholder="Reference RTWE" readonly>
+            </div>
+            <div class="form-group">
+              <label>COSTING NUMBER</label>
+              <input type="text" id="costingNumber" placeholder="Costing ref">
+            </div>
+          </div>
+        </div>
+
+        <!-- Item Details Section -->
+        <div class="section">
+          <div class="section-title">📦 Item Details</div>
+          <div class="item-table-container">
+            <table class="item-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fabric Type</th>
+                  <th>Quality</th>
+                  <th>Design</th>
+                  <th>HSN</th>
+                  <th>UOM</th>
+                  <th>Qty</th>
+                  <th>Rate</th>
+                  <th>Base Amt</th>
+                  <th>GST</th>
+                  <th>Total</th>
+                  <th>Delivery</th>
+                  <th>Piece Len</th>
+                  <th>No. Pcs</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="itemsTableBody">
+              </tbody>
+            </table>
+          </div>
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <button type="button" class="add-item-btn" onclick="addItemRow()">+ Add Item</button>
+          </div>
+
+          <!-- Totals Bar -->
+          <div class="totals-bar">
+            <div class="total-item">
+              <label>Total QTY</label>
+              <span id="totalQty">0.00</span>
+            </div>
+            <div class="total-item">
+              <label>Base Amount</label>
+              <span>₹ <span id="totalBase">0.00</span></span>
+            </div>
+            <div class="total-item">
+              <label>CGST</label>
+              <span>₹ <span id="totalCgst">0</span></span>
+            </div>
+            <div class="total-item">
+              <label>SGST</label>
+              <span>₹ <span id="totalSgst">0</span></span>
+            </div>
+            <div class="total-item">
+              <label>IGST</label>
+              <span>₹ <span id="totalIgst">0</span></span>
+            </div>
+            <div class="total-item">
+              <label>Items</label>
+              <span id="itemCount">1</span>
+            </div>
+          </div>
+          <div class="grand-total-box">
+            <label>Grand Total</label>
+            <span>₹ <span id="grandTotal">0.00</span></span>
+          </div>
+        </div>
+
+        <!-- Technical Details Section -->
+        <div class="section">
+          <div class="section-title">⚙️ Technical Details</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>WARP DETAILS</label>
+              <input type="text" id="warpDetails" placeholder="Warp specification">
+            </div>
+            <div class="form-group">
+              <label>WEFT DETAILS</label>
+              <input type="text" id="weftDetails" placeholder="Weft specification">
+            </div>
+            <div class="form-group">
+              <label>SIZING DETAILS</label>
+              <input type="text" id="sizingDetails" placeholder="Sizing specification">
+            </div>
+            <div class="form-group">
+              <label>WEAVING DETAILS</label>
+              <input type="text" id="weavingDetails" placeholder="Weaving specification">
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 12px;">
+            <div class="form-group">
+              <label>SELVEDGE NAME</label>
+              <input type="text" id="selvedgeName" placeholder="Selvedge name">
+            </div>
+            <div class="form-group">
+              <label>SELVEDGE ENDS</label>
+              <input type="text" id="selvedgeEnds" placeholder="No. of ends">
+            </div>
+            <div class="form-group">
+              <label>SELVEDGE COLOR</label>
+              <input type="text" id="selvedgeColor" placeholder="Color">
+            </div>
+            <div class="form-group">
+              <label>INSPECTION TYPE</label>
+              <select id="inspectionType">
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 12px;">
+            <div class="form-group">
+              <label>FINISHED QUALITY</label>
+              <input type="text" id="finishedQuality" placeholder="Finished quality spec">
+            </div>
+            <div class="form-group">
+              <label>BUYER PRODUCT</label>
+              <input type="text" id="buyerProduct" placeholder="Buyer's product code">
+            </div>
+            <div class="form-group">
+              <label>BONUS COMMISSION</label>
+              <input type="number" id="bonusCommission" placeholder="0.00" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>DELIVERY DATE <span class="required">*</span></label>
+              <input type="date" id="deliveryDate" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-container">
+          <button type="button" class="btn btn-outline" onclick="cancelForm()">✖ Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveOrder('save')">💾 Save</button>
+          <button type="button" class="btn btn-secondary" onclick="saveOrder('share')">📤 Save & Share</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Preview Side -->
+    <div class="preview-side">
+      <div class="preview-header">📋 Order Preview</div>
+
+      <div class="preview-card">
+        <div class="preview-item">
+          <div class="preview-label">SO Number</div>
+          <div class="preview-value" id="previewSO">RTW-SO-NO/25-26/XXX</div>
+        </div>
+        <div class="preview-item">
+          <div class="preview-label">Buyer</div>
+          <div class="preview-value" id="previewBuyer">Not selected</div>
+        </div>
+        <div class="preview-item">
+          <div class="preview-label">RTWE No</div>
+          <div class="preview-value" id="previewRtwe">--</div>
+        </div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-item">
+          <div class="preview-label">Total Items</div>
+          <div class="preview-value" id="previewItems">1</div>
+        </div>
+        <div class="preview-item">
+          <div class="preview-label">Total Quantity</div>
+          <div class="preview-value" id="previewQty">0.00</div>
+        </div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-item">
+          <div class="preview-label">Base Amount</div>
+          <div class="preview-value">₹ <span id="previewBase">0.00</span></div>
+        </div>
+        <div class="preview-item">
+          <div class="preview-label">GST</div>
+          <div class="preview-value">₹ <span id="previewGst">0.00</span></div>
+        </div>
+      </div>
+
+      <div class="preview-card">
+        <div class="preview-item">
+          <div class="preview-label">Grand Total</div>
+          <div class="preview-value large">₹ <span id="previewTotal">0.00</span></div>
+        </div>
+      </div>
+
+      <div class="preview-card"
+        style="background: rgba(255,255,255,0.08); border-left: 3px solid rgba(255,255,255,0.4);">
+        <div style="font-size: 11px; opacity: 0.9; line-height: 1.5;">
+          💡 Fill all required fields marked with * and add at least one item before saving.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Processing...</div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <div class="toast-icon" id="toastIcon">✓</div>
+    <div class="toast-content">
+      <div class="toast-title" id="toastTitle">Success</div>
+      <div class="toast-message" id="toastMessage">Operation completed.</div>
+    </div>
+  </div>
+
+  <script>
+    const webAppUrl = '<?= webAppUrl ?>';
+    const sessionId = '<?= sessionId ?>';
+    const prefillRtweNo = '<?= prefillRtweNo || "" ?>';  // RTWE No passed from URL for auto-fetch
+    let itemCounter = 0;
+    const GST_RATE = 5; // 5% total (2.5% CGST + 2.5% SGST or 5% IGST)
+
+    // DEBUG: Log immediately when script loads
+    console.log('=== SALE ORDER FORM SCRIPT LOADED ===');
+    console.log('webAppUrl:', webAppUrl);
+    console.log('sessionId:', sessionId);
+    console.log('prefillRtweNo:', prefillRtweNo);
+
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('=== DOM CONTENT LOADED ===');
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('orderDate').value = today;
+
+        const delivery = new Date();
+        delivery.setDate(delivery.getDate() + 15);
+        document.getElementById('deliveryDate').value = delivery.toISOString().split('T')[0];
+
+        console.log('About to call loadMasterData()...');
+        loadMasterData();
+
+        console.log('About to call addItemRow()...');
+        addItemRow();
+
+        // Live preview updates
+        ['buyerSelect', 'buyerManual', 'rtweNo'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener('change', updatePreview);
+          if (el) el.addEventListener('input', updatePreview);
+        });
+
+        // Check for RTWE prefill - prefer template variable, fallback to localStorage
+        const rtweToLoad = prefillRtweNo || localStorage.getItem('saleorder_prefill_rtwe');
+        if (rtweToLoad) {
+          console.log('Loading RTWE data for:', rtweToLoad);
+          loadRTWEData(rtweToLoad);
+          // Clear localStorage if it was used
+          localStorage.removeItem('saleorder_prefill_rtwe');
+        }
+
+        console.log('=== DOMContentLoaded COMPLETE ===');
+      } catch (e) {
+        console.error('ERROR in DOMContentLoaded:', e);
+      }
+    });
+
+    function loadMasterData() {
+      console.log('loadMasterData: === STARTING ===');
+      console.log('loadMasterData: Calling google.script.run.getMasterData with sessionId:', sessionId);
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          console.log('loadMasterData: === SUCCESS HANDLER CALLED ===');
+          console.log('loadMasterData: Full result:', JSON.stringify(result, null, 2));
+
+          if (result && result.success && result.data) {
+            console.log('loadMasterData: Data received successfully');
+            console.log('  - Buyers:', result.data.buyers?.length || 0, result.data.buyers);
+            console.log('  - Agents:', result.data.agents?.length || 0, result.data.agents);
+            console.log('  - Transport:', result.data.transport?.length || 0);
+            console.log('  - ContractRoutes:', result.data.contractRoutes?.length || 0);
+
+            // Check if dropdown elements exist
+            console.log('  - buyerSelect element:', document.getElementById('buyerSelect'));
+            console.log('  - agentSelect element:', document.getElementById('agentSelect'));
+
+            // Simple string arrays
+            populateDropdown('buyerSelect', result.data.buyers || []);
+            populateDropdown('consigneeSelect', result.data.consignees || result.data.buyers || []);
+            populateDropdown('agentSelect', result.data.agents || []);
+            populateDropdown('transportSelect', result.data.transport || []);
+
+            // Object arrays with value/display
+            populateOptionsDropdown('contractRoute', result.data.contractRoutes || []);
+            populateOptionsDropdown('modeOfShipment', result.data.modesOfShipment || []);
+            populateOptionsDropdown('paymentTerms', result.data.paymentTerms || []);
+            populateOptionsDropdown('deliveryTerms', result.data.deliveryTerms || []);
+            populateOptionsDropdown('bank', result.data.banks || []);
+            populateOptionsDropdown('inspectionType', result.data.inspectionTypes || []);
+
+            console.log('loadMasterData: === DROPDOWNS POPULATED ===');
+
+            // Verify by checking option count
+            const buyerSelect = document.getElementById('buyerSelect');
+            console.log('  - buyerSelect options count:', buyerSelect?.options?.length || 0);
+
+          } else {
+            console.error('loadMasterData: ERROR - No data or success=false');
+            console.error('  - result:', result);
+            showToast('error', 'Warning', 'Master data load failed: ' + (result?.message || 'Empty response'));
+          }
+        })
+        .withFailureHandler(function (error) {
+          console.error('loadMasterData: === FAILURE HANDLER CALLED ===');
+          console.error('loadMasterData: Error:', error);
+          showToast('error', 'Error', 'Failed to load master data: ' + error.message);
+        })
+        .getMasterData(sessionId);
+
+      console.log('loadMasterData: google.script.run call initiated (async)');
+    }
+
+    function populateDropdown(id, options) {
+      const select = document.getElementById(id);
+      if (!select) return;
+
+      // SAVE CURRENT VALUE before clearing
+      const previousValue = select.value;
+
+      // RESET OPTIONS
+      select.innerHTML = '<option value="">-- Select --</option>';
+
+      options.forEach(opt => {
+        const option = document.createElement('option');
+
+        if (typeof opt === 'string') {
+          option.value = opt;
+          option.textContent = opt;
+        } else if (opt && opt.value) {
+          option.value = opt.value;
+          option.textContent = opt.display || opt.value;
+        }
+
+        select.appendChild(option);
+      });
+
+      // RESTORE VALUE if it was set
+      if (previousValue) {
+        select.value = previousValue;
+      }
+    }
+
+    function populateOptionsDropdown(id, options) {
+      const select = document.getElementById(id);
+      if (!select) return;
+
+      // SAVE CURRENT VALUE before clearing
+      const previousValue = select.value;
+
+      // RESET OPTIONS
+      select.innerHTML = '<option value="">-- Select --</option>';
+
+      options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value || '';
+        option.textContent = opt.display || opt.value || '';
+        select.appendChild(option);
+      });
+
+      // RESTORE VALUE if it was set
+      if (previousValue) {
+        select.value = previousValue;
+      }
+    }
+
+    function addItemRow() {
+      itemCounter++;
+      const tbody = document.getElementById('itemsTableBody');
+      const tr = document.createElement('tr');
+      tr.id = 'row_' + itemCounter;
+      tr.innerHTML = `
+          <td>${itemCounter}</td>
+          <td><select class="fabric-type" onchange="calculateRow(${itemCounter})">
+            <option value="COTTON">COTTON</option>
+            <option value="POLYESTER">POLYESTER</option>
+            <option value="BLEND">BLEND</option>
+            <option value="SILK">SILK</option>
+          </select></td>
+          <td><input type="text" class="quality" placeholder="Quality" onchange="calculateRow(${itemCounter})"></td>
+          <td><input type="text" class="design" placeholder="Design"></td>
+          <td><input type="text" class="hsn" placeholder="HSN"></td>
+          <td><select class="uom">
+            <option value="MTR">MTR</option>
+            <option value="KG">KG</option>
+            <option value="PCS">PCS</option>
+          </select></td>
+          <td><input type="number" class="qty" placeholder="0" step="0.01" onchange="calculateRow(${itemCounter})" oninput="calculateRow(${itemCounter})"></td>
+          <td><input type="number" class="rate" placeholder="0" step="0.01" onchange="calculateRow(${itemCounter})" oninput="calculateRow(${itemCounter})"></td>
+          <td><input type="number" class="base-amt" placeholder="0.00" readonly></td>
+          <td><input type="number" class="gst" placeholder="0.00" readonly></td>
+          <td><input type="number" class="total" placeholder="0.00" readonly></td>
+          <td><input type="date" class="item-delivery"></td>
+          <td><input type="number" class="piece-len" placeholder="0"></td>
+          <td><input type="number" class="no-pcs" placeholder="0"></td>
+          <td><button type="button" class="btn-delete" onclick="deleteRow(${itemCounter})">×</button></td>
+        `;
+      tbody.appendChild(tr);
+      updateItemCount();
+    }
+
+    function deleteRow(id) {
+      const row = document.getElementById('row_' + id);
+      if (row && document.querySelectorAll('#itemsTableBody tr').length > 1) {
+        row.remove();
+        calculateTotals();
+        updateItemCount();
+      } else {
+        showToast('error', 'Error', 'At least one item is required');
+      }
+    }
+
+    function calculateRow(id) {
+      const row = document.getElementById('row_' + id);
+      if (!row) return;
+
+      const qty = parseFloat(row.querySelector('.qty').value) || 0;
+      const rate = parseFloat(row.querySelector('.rate').value) || 0;
+      const baseAmt = qty * rate;
+      const gstAmt = baseAmt * (GST_RATE / 100);
+      const total = baseAmt + gstAmt;
+
+      row.querySelector('.base-amt').value = baseAmt.toFixed(2);
+      row.querySelector('.gst').value = gstAmt.toFixed(2);
+      row.querySelector('.total').value = total.toFixed(2);
+
+      calculateTotals();
+    }
+
+    function calculateTotals() {
+      const rows = document.querySelectorAll('#itemsTableBody tr');
+      let totalQty = 0, totalBase = 0, totalGst = 0, grandTotal = 0;
+
+      rows.forEach(row => {
+        totalQty += parseFloat(row.querySelector('.qty')?.value) || 0;
+        totalBase += parseFloat(row.querySelector('.base-amt')?.value) || 0;
+        totalGst += parseFloat(row.querySelector('.gst')?.value) || 0;
+        grandTotal += parseFloat(row.querySelector('.total')?.value) || 0;
+      });
+
+      const gstType = document.getElementById('gstType').value;
+      let cgst = 0, sgst = 0, igst = 0;
+      if (gstType === 'CGST/SGST') {
+        cgst = totalGst / 2;
+        sgst = totalGst / 2;
+      } else if (gstType === 'IGST') {
+        igst = totalGst;
+      }
+
+      document.getElementById('totalQty').textContent = totalQty.toFixed(2);
+      document.getElementById('totalBase').textContent = totalBase.toFixed(2);
+      document.getElementById('totalCgst').textContent = cgst.toFixed(2);
+      document.getElementById('totalSgst').textContent = sgst.toFixed(2);
+      document.getElementById('totalIgst').textContent = igst.toFixed(2);
+      document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+
+      // Update preview
+      document.getElementById('previewQty').textContent = totalQty.toFixed(2);
+      document.getElementById('previewBase').textContent = totalBase.toFixed(2);
+      document.getElementById('previewGst').textContent = totalGst.toFixed(2);
+      document.getElementById('previewTotal').textContent = grandTotal.toFixed(2);
+    }
+
+    function updateGstType() {
+      calculateTotals();
+    }
+
+    function updateItemCount() {
+      const count = document.querySelectorAll('#itemsTableBody tr').length;
+      document.getElementById('itemCount').textContent = count;
+      document.getElementById('previewItems').textContent = count;
+    }
+
+    function updatePreview() {
+      const buyer = document.getElementById('buyerManual').value ||
+        document.getElementById('buyerSelect').value || 'Not selected';
+      const rtwe = document.getElementById('rtweNo').value || '--';
+
+      document.getElementById('previewBuyer').textContent = buyer;
+      document.getElementById('previewRtwe').textContent = rtwe;
+    }
+
+    function getFormData() {
+      const items = [];
+      document.querySelectorAll('#itemsTableBody tr').forEach(row => {
+        items.push({
+          fabricType: row.querySelector('.fabric-type')?.value || 'COTTON',
+          quality: row.querySelector('.quality')?.value || '',
+          design: row.querySelector('.design')?.value || '',
+          hsnCode: row.querySelector('.hsn')?.value || '',
+          uom: row.querySelector('.uom')?.value || 'MTR',
+          quantity: parseFloat(row.querySelector('.qty')?.value) || 0,
+          rate: parseFloat(row.querySelector('.rate')?.value) || 0,
+          baseAmount: parseFloat(row.querySelector('.base-amt')?.value) || 0,
+          gstAmount: parseFloat(row.querySelector('.gst')?.value) || 0,
+          totalAmount: parseFloat(row.querySelector('.total')?.value) || 0,
+          deliveryDate: row.querySelector('.item-delivery')?.value || '',
+          pieceLength: row.querySelector('.piece-len')?.value || '',
+          noPieces: row.querySelector('.no-pcs')?.value || ''
+        });
+      });
+
+      return {
+        date: document.getElementById('orderDate').value,
+        buyer: document.getElementById('buyerManual').value || document.getElementById('buyerSelect').value,
+        buyerPoNo: document.getElementById('buyerPoNo').value,
+        contractType: document.getElementById('contractType').value,
+        contractRoute: document.getElementById('contractRoute').value,
+        agent: document.getElementById('agentManual').value || document.getElementById('agentSelect').value,
+        agentIndentNo: document.getElementById('agentIndentNo').value,
+        modeOfShipment: document.getElementById('modeOfShipment').value,
+        paymentTerms: document.getElementById('paymentTerms').value,
+        deliveryTerms: document.getElementById('deliveryTerms').value,
+        bank: document.getElementById('bank').value,
+        soType: document.getElementById('soType').value,
+        termsConditions: document.getElementById('termsConditions').value,
+        gstType: document.getElementById('gstType').value,
+        transport: document.getElementById('transportManual').value || document.getElementById('transportSelect').value,
+        consignee: document.getElementById('consigneeManual').value || document.getElementById('consigneeSelect').value,
+        remark: document.getElementById('remark').value,
+        rtweNo: document.getElementById('rtweNo').value,
+        costingNumber: document.getElementById('costingNumber').value,
+        warpDetails: document.getElementById('warpDetails').value,
+        weftDetails: document.getElementById('weftDetails').value,
+        sizingDetails: document.getElementById('sizingDetails').value,
+        weavingDetails: document.getElementById('weavingDetails').value,
+        selvedgeName: document.getElementById('selvedgeName').value,
+        selvedgeEnds: document.getElementById('selvedgeEnds').value,
+        selvedgeColor: document.getElementById('selvedgeColor').value,
+        inspectionType: document.getElementById('inspectionType').value,
+        finishedQuality: document.getElementById('finishedQuality').value,
+        buyerProduct: document.getElementById('buyerProduct').value,
+        bonusCommission: document.getElementById('bonusCommission').value,
+        deliveryDate: document.getElementById('deliveryDate').value,
+        items: items,
+        grandTotal: parseFloat(document.getElementById('grandTotal').textContent) || 0
+      };
+    }
+
+    function saveOrder(saveType) {
+      const form = document.getElementById('saleOrderForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const data = getFormData();
+
+      if (!data.buyer) {
+        showToast('error', 'Error', 'Please select or enter a buyer');
+        return;
+      }
+
+      if (data.items.length === 0 || !data.items.some(i => i.quantity > 0)) {
+        showToast('error', 'Error', 'Please add at least one item with quantity');
+        return;
+      }
+
+      data.saveType = saveType;
+      showLoading('Saving Sale Order...');
+
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          if (result.success) {
+            showToast('success', 'Success!', 'Sale Order ' + result.soNumber + ' created');
+            setTimeout(() => {
+              window.location.href = webAppUrl + '?page=pending-orders&sessionId=' + sessionId;
+            }, 1500);
+          } else {
+            showToast('error', 'Error', result.message || 'Failed to create order');
+          }
+        })
+        .withFailureHandler(function (err) {
+          hideLoading();
+          showToast('error', 'Error', err.message || 'Server error');
+        })
+        .serverCreateSaleOrder(data, sessionId);
+    }
+
+    function addMaster(type) {
+      const inputId = type + 'Manual';
+      const value = document.getElementById(inputId)?.value?.trim();
+      if (!value) {
+        showToast('error', 'Error', 'Please enter a ' + type + ' name');
+        return;
+      }
+
+      showLoading('Adding ' + type + '...');
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          if (result.success) {
+            showToast('success', 'Added', type + ' added successfully');
+            loadMasterData();
+          } else {
+            showToast('error', 'Error', result.message);
+          }
+        })
+        .addMasterData(type, value, sessionId);
+    }
+
+    function loadRTWEData(rtweNo) {
+      showLoading('Loading RTWE data...');
+      google.script.run
+        .withSuccessHandler(function (result) {
+          hideLoading();
+          if (result) {
+            // 1. Prefill Main Details
+            document.getElementById('rtweNo').value = result.rtweNo || rtweNo;
+            document.getElementById('buyerManual').value = result.buyer || '';
+            document.getElementById('costingNumber').value = result.costingNo || '';
+
+            // 2. Clear Default Item Row
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML = '';
+            itemCounter = 0;
+
+            let itemsAdded = false;
+
+            // 3. Loop through potential designs (Design 1 to 6)
+            for (let i = 1; i <= 6; i++) {
+              const designKey = 'design' + i;
+              const tagaKey = 'taga' + i;
+
+              const designVal = result[designKey];
+
+              if (designVal && String(designVal).trim() !== '') {
+                // Add a new row
+                addItemRow();
+                itemsAdded = true;
+
+                const currentRowId = itemCounter;
+                const row = document.getElementById('row_' + currentRowId);
+
+                if (row) {
+                  // A. Set Quality & Design
+                  const qualityVal = result.quality || '';
+                  row.querySelector('.quality').value = qualityVal;
+                  row.querySelector('.design').value = designVal;
+
+                  // B. Set Rate (Clean currency symbols if any)
+                  let rawRate = String(result.finalRate || '0').replace(/[^0-9.]/g, '');
+                  row.querySelector('.rate').value = parseFloat(rawRate) || 0;
+
+                  // C. Calculate Quantity = Taga * Count Meter
+                  let tagaVal = parseFloat(result[tagaKey]) || 0;
+                  let countMeterVal = parseFloat(result.countMeter) || 0;
+                  let calculatedQty = tagaVal * countMeterVal;
+
+                  if (calculatedQty > 0) {
+                    row.querySelector('.qty').value = calculatedQty.toFixed(2);
+                  }
+
+                  // D. Set Delivery Date (Sync with main date for convenience)
+                  const mainDelivery = document.getElementById('deliveryDate').value;
+                  if (mainDelivery) {
+                    row.querySelector('.item-delivery').value = mainDelivery;
+                  }
+
+                  // E. Trigger Row Calculation
+                  calculateRow(currentRowId);
+                }
+              }
+            }
+
+            // 4. Fallback: If no designs found, add one empty row
+            if (!itemsAdded) {
+              addItemRow();
+            }
+
+            updatePreview();
+            showToast('success', 'Data Loaded', 'Order details pre-filled successfully');
+          }
+        })
+        .withFailureHandler(function (e) {
+          hideLoading();
+          showToast('error', 'Error', 'Failed to load pre-fill data: ' + e.message);
+        })
+        .getPendingRTWEOrderDetails(rtweNo, sessionId);
+    }
+
+    function cancelForm() {
+      if (confirm('Are you sure you want to cancel? All data will be lost.')) {
+        window.location.href = webAppUrl + '?page=dashboard&sessionId=' + sessionId;
+      }
+    }
+
+    function showLoading(text) {
+      document.getElementById('loadingText').textContent = text || 'Processing...';
+      document.getElementById('loadingOverlay').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('active');
+    }
+
+    function showToast(type, title, message) {
+      const toast = document.getElementById('toast');
+      toast.className = 'toast active ' + type;
+      document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '✕';
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMessage').textContent = message;
+      setTimeout(() => toast.classList.remove('active'), 4000);
+    }
+  </script>
+</body>
+
+</html>

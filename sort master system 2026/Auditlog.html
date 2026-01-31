@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Log - Sort Master System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      font-size: 14px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .navbar {
+      background: white;
+      padding: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar a {
+      display: block;
+      padding: 15px 20px;
+      color: #5D4037;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .navbar a.active {
+      background: #D7CCC8;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .page-header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .page-header h2 {
+      color: #5D4037;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .search-filters {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 15px;
+    }
+
+    .search-row input,
+    .search-row select {
+      padding: 10px;
+      border: 1px solid #D7CCC8;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .btn-search {
+      padding: 10px 20px;
+      background: #5D4037;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #5D4037;
+      color: white;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    tbody tr:hover {
+      background: #F5F5F5;
+    }
+
+    td {
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-create {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .badge-update {
+      background: #E3F2FD;
+      color: #1976D2;
+    }
+
+    .badge-delete {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    .badge-login {
+      background: #F3E5F5;
+      color: #7B1FA2;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pagination {
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination button {
+      padding: 8px 15px;
+      background: #D7CCC8;
+      color: #5D4037;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ============ MOBILE RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .btn-logout {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .navbar a {
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .page-header h2 {
+        font-size: 18px;
+      }
+
+      .filters {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .filters select {
+        width: 100%;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 700px;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+      }
+
+      .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .pagination button {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar-left h1 {
+        font-size: 14px;
+      }
+
+      .navbar ul {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .navbar a {
+        padding: 10px;
+        border-bottom: 1px solid #E0E0E0;
+      }
+
+      table {
+        font-size: 12px;
+        min-width: 600px;
+      }
+
+      th,
+      td {
+        padding: 8px 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>📊 Sort Master System</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        👤 <strong>
+          <?= user.userName ?>
+        </strong>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="<?= webAppUrl ?>?page=dashboard&session=<?= sessionId ?>"
+          onclick="showLoading('Dashboard')">Dashboard</a></li>
+      <li><a href="<?= webAppUrl ?>?page=user-management&session=<?= sessionId ?>"
+          onclick="showLoading('User Management')">User Management</a></li>
+      <li><a href="<?= webAppUrl ?>?page=settings&session=<?= sessionId ?>"
+          onclick="showLoading('Settings')">Settings</a></li>
+      <li><a href="<?= webAppUrl ?>?page=audit-log&session=<?= sessionId ?>" class="active"
+          onclick="showLoading('Audit Log')">Audit Log</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h2>📋 Audit Log</h2>
+      <div style="color: #666; font-size: 14px; margin-top: 5px;">
+        System activity tracking and monitoring
+      </div>
+    </div>
+
+    <div class="search-filters">
+      <div class="search-row">
+        <select id="filterAction">
+          <option value="">All Actions</option>
+          <option value="CREATE">Create</option>
+          <option value="UPDATE">Update</option>
+          <option value="DELETE">Delete</option>
+          <option value="LOGIN">Login</option>
+          <option value="LOGOUT">Logout</option>
+        </select>
+        <select id="filterModule">
+          <option value="">All Modules</option>
+          <option value="USER">User</option>
+          <option value="SORT_MASTER">Sort Master</option>
+          <option value="SETTINGS">Settings</option>
+        </select>
+        <input type="text" id="filterUser" placeholder="Filter by user...">
+        <button class="btn-search" onclick="loadLogs()">🔍 Search</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div id="loadingArea" class="loading">
+        <div class="spinner"></div>
+        <div>Loading audit logs...</div>
+      </div>
+
+      <div id="tableArea" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Module</th>
+              <th>Description</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody id="logsBody"></tbody>
+        </table>
+
+        <div class="pagination" id="paginationArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sessionId = '<?= sessionId ?>';
+    const webAppUrl = '<?= webAppUrl ?>';
+    let currentPage = 1;
+
+    console.log('=== AUDIT LOG INITIALIZED ===');
+
+    window.onload = function () {
+      loadLogs();
+    };
+
+    function loadLogs(page = 1) {
+      currentPage = page;
+
+      console.log('Loading logs for page:', page);
+
+      document.getElementById('loadingArea').style.display = 'block';
+      document.getElementById('tableArea').style.display = 'none';
+
+      const filters = {
+        action: document.getElementById('filterAction').value,
+        module: document.getElementById('filterModule').value,
+        userName: document.getElementById('filterUser').value.trim()
+      };
+
+      console.log('Filters:', filters);
+
+      // ✅ Use google.script.run (NO CORS)
+      google.script.run
+        .withSuccessHandler(onLogsSuccess)
+        .withFailureHandler(onLogsFailure)
+        .getAuditLogs(filters, sessionId);
+    }
+
+    function onLogsSuccess(data) {
+      console.log('Logs loaded:', data);
+
+      document.getElementById('loadingArea').style.display = 'none';
+
+      if (data.success) {
+        displayLogs(data.logs || []);
+        document.getElementById('tableArea').style.display = 'block';
+      } else {
+        alert('Error: ' + data.message);
+      }
+    }
+
+    function onLogsFailure(error) {
+      console.error('Error:', error);
+      document.getElementById('loadingArea').style.display = 'none';
+      alert('Failed to load logs: ' + (error && error.message ? error.message : String(error)));
+    }
+
+    function displayLogs(logs) {
+      const tbody = document.getElementById('logsBody');
+      tbody.innerHTML = '';
+
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px;">No audit logs found</td></tr>';
+        return;
+      }
+
+      logs.forEach(log => {
+        const tr = document.createElement('tr');
+
+        const timestamp = log.timestamp ? new Date(log.timestamp).toLocaleString() : '';
+        const actionClass = 'badge-' + (log.action || '').toLowerCase();
+
+        tr.innerHTML = `
+          <td>${timestamp}</td>
+          <td>${escapeHtml(log.userName || '')}</td>
+          <td><span class="badge ${actionClass}">${log.action || ''}</span></td>
+          <td>${escapeHtml(log.module || '')}</td>
+          <td>${escapeHtml(log.description || '')}</td>
+          <td>${escapeHtml(log.ipAddress || 'N/A')}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleLogout() {
+      showLogoutOverlay();
+      try {
+        sessionStorage.removeItem('sortmaster_session');
+        sessionStorage.removeItem('sortmaster_webAppUrl');
+        sessionStorage.clear();
+      } catch (e) { }
+
+      setTimeout(function () {
+        google.script.run
+          .withSuccessHandler(function () { redirectToLogin('Logged out successfully'); })
+          .withFailureHandler(function () { redirectToLogin('Logged out'); })
+          .serverLogout(sessionId);
+      }, 500);
+    }
+
+    function showLogoutOverlay() {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 50px;border-radius:12px;text-align:center"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Logging Out...</h3><p style="color:#666;margin-top:10px">Please wait</p></div>';
+      document.body.appendChild(overlay);
+    }
+
+    function redirectToLogin(message) {
+      const url = webAppUrl + '?page=login&message=' + encodeURIComponent(message);
+      try { if (window.top && window.top !== window) window.top.location.href = url; else window.location.href = url; } catch (e) { window.location.href = url; }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showLoading(pageName) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 60px;border-radius:12px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Loading ' + pageName + '</h3><p style="color:#666;margin-top:10px">Please wait...</p></div>';
+      document.body.appendChild(overlay);
+    }
+  </script>
+  <style>
+    @keyframes spin {
+      from {
+        transform: rotate(0)
+      }
+
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+</body>
+
+</html>

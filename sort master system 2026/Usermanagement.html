@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - Sort Master System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F5F5F5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #5D4037;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      font-size: 14px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .navbar {
+      background: white;
+      padding: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar a {
+      display: block;
+      padding: 15px 20px;
+      color: #5D4037;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .navbar a.active {
+      background: #D7CCC8;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .page-header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-header h2 {
+      color: #5D4037;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #5D4037;
+      color: white;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    tbody tr:hover {
+      background: #F5F5F5;
+    }
+
+    td {
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-admin {
+      background: #E3F2FD;
+      color: #1976D2;
+    }
+
+    .badge-manager {
+      background: #F3E5F5;
+      color: #7B1FA2;
+    }
+
+    .badge-user {
+      background: #E8F5E9;
+      color: #388E3C;
+    }
+
+    .badge-active {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .badge-inactive {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    .btn-edit {
+      background: #FF9800;
+      color: white;
+    }
+
+    .btn-toggle {
+      background: #2196F3;
+      color: white;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #5D4037;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: #5D4037;
+      margin: 0;
+    }
+
+    .close {
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #D7CCC8;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-cancel {
+      background: #757575;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Modern Confirm Modal */
+    .confirm-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .confirm-modal-overlay.show {
+      display: flex;
+    }
+
+    .confirm-modal {
+      background: #FAFAFA;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      max-width: 420px;
+      width: 90%;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+
+    .confirm-modal-header {
+      background: #5D4037;
+      color: white;
+      padding: 16px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .confirm-modal-header .icon {
+      font-size: 20px;
+    }
+
+    .confirm-modal-body {
+      padding: 25px 20px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+      background: white;
+    }
+
+    .confirm-modal-body .warning-text {
+      margin-top: 12px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .confirm-modal-footer {
+      padding: 16px 20px;
+      background: #F5F5F5;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    .modal-btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-btn-confirm {
+      background: #D32F2F;
+      color: white;
+    }
+
+    .modal-btn-confirm:hover {
+      background: #B71C1C;
+    }
+
+    .modal-btn-confirm.activate {
+      background: #4CAF50;
+    }
+
+    .modal-btn-confirm.activate:hover {
+      background: #388E3C;
+    }
+
+    .modal-btn-cancel {
+      background: #E0E0E0;
+      color: #333;
+    }
+
+    .modal-btn-cancel:hover {
+      background: #BDBDBD;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* ============ MOBILE RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 15px;
+      }
+
+      .topbar-left h1 {
+        font-size: 16px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .btn-logout {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .navbar a {
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+
+      .container {
+        padding: 15px 10px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .page-header h2 {
+        font-size: 18px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 600px;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+      }
+
+      .btn-action {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 10px;
+        padding: 20px;
+      }
+
+      .modal-content h2 {
+        font-size: 18px;
+      }
+
+      .form-group label {
+        font-size: 13px;
+      }
+
+      .form-group input,
+      .form-group select {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .modal-buttons button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar-left h1 {
+        font-size: 14px;
+      }
+
+      .navbar ul {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .navbar a {
+        padding: 10px;
+        border-bottom: 1px solid #E0E0E0;
+      }
+
+      table {
+        font-size: 12px;
+        min-width: 500px;
+      }
+
+      th,
+      td {
+        padding: 8px 5px;
+      }
+
+      .modal-content {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>📊 Sort Master System</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        👤 <strong>
+          <?= user.userName ?>
+        </strong>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="<?= webAppUrl ?>?page=dashboard&session=<?= sessionId ?>"
+          onclick="showLoading('Dashboard')">Dashboard</a></li>
+      <li><a href="<?= webAppUrl ?>?page=user-management&session=<?= sessionId ?>" class="active"
+          onclick="showLoading('User Management')">User Management</a>
+      </li>
+      <li><a href="<?= webAppUrl ?>?page=settings&session=<?= sessionId ?>"
+          onclick="showLoading('Settings')">Settings</a></li>
+      <li><a href="<?= webAppUrl ?>?page=audit-log&session=<?= sessionId ?>" onclick="showLoading('Audit Log')">Audit
+          Log</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h2>👥 User Management</h2>
+      <button class="btn-primary" onclick="openCreateModal()">➕ Create User</button>
+    </div>
+
+    <div class="table-container">
+      <div id="loadingArea" class="loading">
+        <div class="spinner"></div>
+        <div>Loading users...</div>
+      </div>
+
+      <div id="tableArea" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Created Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit User Modal -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Create User</h3>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+
+      <form id="userForm">
+        <input type="hidden" id="userId">
+
+        <div class="form-group">
+          <label>Username *</label>
+          <input type="text" id="username" required>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="fullName" required>
+        </div>
+
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="email" required>
+        </div>
+
+        <div class="form-group" id="passwordGroup">
+          <label>Password *</label>
+          <input type="password" id="password">
+        </div>
+
+        <div class="form-group">
+          <label>Role *</label>
+          <select id="role" required>
+            <option value="">Select Role</option>
+            <option value="ADMIN">Admin</option>
+            <option value="MANAGER">Manager</option>
+            <option value="USER">User</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const sessionId = '<?= sessionId ?>';
+    const webAppUrl = '<?= webAppUrl ?>';
+    let currentMode = 'create';
+
+    console.log('=== USER MANAGEMENT INITIALIZED ===');
+
+    window.onload = function () {
+      loadUsers();
+    };
+
+    function loadUsers() {
+      console.log('Loading users...');
+
+      document.getElementById('loadingArea').style.display = 'block';
+      document.getElementById('tableArea').style.display = 'none';
+
+      // ✅ Use google.script.run (NO CORS)
+      google.script.run
+        .withSuccessHandler(onUsersSuccess)
+        .withFailureHandler(onUsersFailure)
+        .getAllUsers(sessionId);
+    }
+
+    function onUsersSuccess(data) {
+      console.log('========================================');
+      console.log('onUsersSuccess called');
+      console.log('Full data received:', JSON.stringify(data));
+      console.log('========================================');
+
+      document.getElementById('loadingArea').style.display = 'none';
+
+      if (data && data.success) {
+        console.log('Users count:', data.users ? data.users.length : 0);
+        if (data.users && data.users.length > 0) {
+          displayUsers(data.users);
+          document.getElementById('tableArea').style.display = 'block';
+        } else {
+          document.getElementById('tableArea').innerHTML = '<p style="padding:20px;text-align:center;">No users found</p>';
+          document.getElementById('tableArea').style.display = 'block';
+        }
+      } else {
+        console.error('Error in response:', data ? data.message : 'Unknown error');
+        alert('Error: ' + (data && data.message ? data.message : 'Unknown error loading users'));
+      }
+    }
+
+    function onUsersFailure(error) {
+      console.error('========================================');
+      console.error('onUsersFailure called');
+      console.error('Error:', error);
+      console.error('========================================');
+      document.getElementById('loadingArea').style.display = 'none';
+      alert('Failed to load users: ' + (error && error.message ? error.message : String(error)));
+    }
+
+    function displayUsers(users) {
+      const tbody = document.getElementById('usersBody');
+      tbody.innerHTML = '';
+
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+
+        const roleClass = 'badge-' + user.role.toLowerCase();
+        const statusClass = user.isActive ? 'badge-active' : 'badge-inactive';
+        const statusText = user.isActive ? 'Active' : 'Inactive';
+        const toggleText = user.isActive ? 'Deactivate' : 'Activate';
+
+        const createdDate = user.createdDate ? new Date(user.createdDate).toLocaleDateString() : '';
+
+        tr.innerHTML = `
+          <td><strong>${escapeHtml(user.userName)}</strong></td>
+          <td>${escapeHtml(user.fullName)}</td>
+          <td>${escapeHtml(user.email)}</td>
+          <td><span class="badge ${roleClass}">${user.role}</span></td>
+          <td><span class="badge ${statusClass}">${statusText}</span></td>
+          <td>${createdDate}</td>
+          <td>
+            <button class="btn-action btn-edit" onclick="editUser('${user.userId}')">
+              ✏️ Edit
+            </button>
+            <button class="btn-action btn-toggle" onclick="toggleUser('${user.userId}', ${user.isActive})">
+              ${toggleText}
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openCreateModal() {
+      currentMode = 'create';
+      document.getElementById('modalTitle').textContent = 'Create User';
+      document.getElementById('userForm').reset();
+      document.getElementById('userId').value = '';
+      document.getElementById('passwordGroup').style.display = 'block';
+      document.getElementById('password').required = true;
+      document.getElementById('userModal').style.display = 'block';
+    }
+
+    function editUser(userId) {
+      currentMode = 'edit';
+      document.getElementById('modalTitle').textContent = 'Edit User';
+      document.getElementById('userId').value = userId;
+      document.getElementById('passwordGroup').style.display = 'none';
+      document.getElementById('password').required = false;
+
+      // Find user data
+      const tbody = document.getElementById('usersBody');
+      const rows = tbody.querySelectorAll('tr');
+
+      // For now, just open modal (in real app, fetch user data)
+      document.getElementById('userModal').style.display = 'block';
+    }
+
+    function toggleUser(userId, currentStatus) {
+      const action = currentStatus ? 'deactivate' : 'activate';
+      const isDeactivate = currentStatus;
+
+      showUserConfirmModal(
+        isDeactivate ? 'Deactivate User' : 'Activate User',
+        `Are you sure you want to ${action} this user?`,
+        isDeactivate ? 'This user will no longer be able to log in.' : 'This user will be able to log in again.',
+        action.charAt(0).toUpperCase() + action.slice(1),
+        isDeactivate,
+        function () {
+          console.log('Toggling user:', userId);
+
+          google.script.run
+            .withSuccessHandler(function (data) {
+              if (data.success) {
+                showSuccessToast('User status updated successfully');
+                loadUsers();
+              } else {
+                alert('Error: ' + data.message);
+              }
+            })
+            .withFailureHandler(function (error) {
+              alert('Error: ' + (error && error.message ? error.message : 'Unknown error'));
+            })
+            .toggleUserStatus(userId, sessionId);
+        }
+      );
+    }
+
+    // Show user confirm modal
+    function showUserConfirmModal(title, message, warningText, confirmText, isDeactivate, onConfirm) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      document.getElementById('confirmModalWarning').textContent = warningText;
+
+      const confirmBtn = document.getElementById('confirmModalBtn');
+      confirmBtn.textContent = confirmText;
+      confirmBtn.className = 'modal-btn modal-btn-confirm' + (isDeactivate ? '' : ' activate');
+
+      document.getElementById('confirmModalOverlay').classList.add('show');
+
+      // Clone to remove old listeners
+      const newBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+      newBtn.addEventListener('click', function () {
+        hideUserConfirmModal();
+        if (onConfirm) onConfirm();
+      });
+    }
+
+    // Hide user confirm modal
+    function hideUserConfirmModal() {
+      document.getElementById('confirmModalOverlay').classList.remove('show');
+    }
+
+    // Show success toast
+    function showSuccessToast(message) {
+      alert(message); // Simple for now, can be enhanced
+    }
+
+    function closeModal() {
+      document.getElementById('userModal').style.display = 'none';
+    }
+
+    document.getElementById('userForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const userData = {
+        userName: document.getElementById('username').value,
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        role: document.getElementById('role').value,
+        password: document.getElementById('password').value
+      };
+
+      console.log('Saving user:', userData);
+
+      if (currentMode === 'create') {
+        google.script.run
+          .withSuccessHandler(onSaveSuccess)
+          .withFailureHandler(onSaveFailure)
+          .adminCreateUser(userData, sessionId);
+      } else {
+        const userId = document.getElementById('userId').value;
+        google.script.run
+          .withSuccessHandler(onSaveSuccess)
+          .withFailureHandler(onSaveFailure)
+          .updateUser(userId, userData, sessionId);
+      }
+    });
+
+    function onSaveSuccess(data) {
+      if (data.success) {
+        alert('User saved successfully!');
+        closeModal();
+        loadUsers();
+      } else {
+        alert('Error: ' + data.message);
+      }
+    }
+
+    function onSaveFailure(error) {
+      alert('Error: ' + error.message);
+    }
+
+    function handleLogout() {
+      showLogoutOverlay();
+      try {
+        sessionStorage.removeItem('sortmaster_session');
+        sessionStorage.removeItem('sortmaster_webAppUrl');
+        sessionStorage.clear();
+      } catch (e) { }
+
+      setTimeout(function () {
+        google.script.run
+          .withSuccessHandler(function () { redirectToLogin('Logged out successfully'); })
+          .withFailureHandler(function () { redirectToLogin('Logged out'); })
+          .serverLogout(sessionId);
+      }, 500);
+    }
+
+    function showLogoutOverlay() {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 50px;border-radius:12px;text-align:center"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Logging Out...</h3><p style="color:#666;margin-top:10px">Please wait</p></div>';
+      document.body.appendChild(overlay);
+    }
+
+    function redirectToLogin(message) {
+      const url = webAppUrl + '?page=login&message=' + encodeURIComponent(message);
+      try { if (window.top && window.top !== window) window.top.location.href = url; else window.location.href = url; } catch (e) { window.location.href = url; }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showLoading(pageName) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000';
+      overlay.innerHTML = '<div style="background:white;padding:40px 60px;border-radius:12px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)"><div style="width:50px;height:50px;border:4px solid #E0E0E0;border-top:4px solid #5D4037;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px"></div><h3 style="color:#5D4037;margin:0">Loading ' + pageName + '</h3><p style="color:#666;margin-top:10px">Please wait...</p></div>';
+      document.body.appendChild(overlay);
+    }
+  </script>
+  <style>
+    @keyframes spin {
+      from {
+        transform: rotate(0)
+      }
+
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+
+  <!-- Custom Confirm Modal -->
+  <div class="confirm-modal-overlay" id="confirmModalOverlay">
+    <div class="confirm-modal">
+      <div class="confirm-modal-header">
+        <span class="icon">⚠️</span>
+        <span id="confirmModalTitle">Confirm Action</span>
+      </div>
+      <div class="confirm-modal-body">
+        <p id="confirmModalMessage">Are you sure you want to proceed?</p>
+        <p class="warning-text" id="confirmModalWarning">This action cannot be undone.</p>
+      </div>
+      <div class="confirm-modal-footer">
+        <button class="modal-btn modal-btn-cancel" onclick="hideUserConfirmModal()">Cancel</button>
+        <button class="modal-btn modal-btn-confirm" id="confirmModalBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

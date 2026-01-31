@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Enquiry - RTWE</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            min-height: 100vh;
+        }
+
+        .form-side {
+            padding: 40px 60px;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .preview-side {
+            background: linear-gradient(135deg, #5D4037 0%, #3E2723 100%);
+            padding: 40px;
+            color: white;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #5D4037;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            background: #f5f0eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: #e8e0d8;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #3E2723;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: #3E2723;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-number {
+            width: 32px;
+            height: 32px;
+            background: #3E2723;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #5D4037;
+            background: #fafafa;
+        }
+
+        .form-group input[readonly] {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #3E2723;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2c1b18;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(62, 39, 35, 0.3);
+        }
+
+        .btn-secondary {
+            background: #5D4037;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4E342E;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(93, 64, 55, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #3E2723;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-outline:hover {
+            border-color: #3E2723;
+            background: #fafafa;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Preview Side Styles */
+        .preview-header {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        .preview-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .preview-label {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .preview-value {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .modal-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            padding: 0 25px 25px;
+        }
+
+        .email-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .email-input-container input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn-add-email {
+            padding: 12px 20px;
+            background: #5D4037;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .email-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .email-tag {
+            background: #f5f0eb;
+            border: 2px solid #d4a574;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .email-tag-remove {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #5D4037;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 10001;
+            min-width: 280px;
+        }
+
+        .toast.active {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #f44336;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #ff9800;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .toast-message {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-side {
+                position: relative;
+                height: auto;
+                order: -1;
+                padding: 30px;
+            }
+
+            .form-side {
+                padding: 30px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Global variables for Navigation - MUST be before Navigation include -->
+    <script>
+        var webAppUrl = "<?= ScriptApp.getService().getUrl() ?>";
+        var sessionId = "<?= sessionId ?>";
+    </script>
+
+    <?!= include('Navigation') ?>
+
+    <div class="main-container">
+        <!-- Form Side -->
+        <div class="form-side">
+            <div class="header">
+                <a href="<?= ScriptApp.getService().getUrl() ?>?page=dashboard&sessionId=<?= sessionId ?>"
+                    class="back-link">
+                    ← Back to Dashboard
+                </a>
+                <div class="logo">📊 RAMRATAN TECHNO WEAVE</div>
+                <div class="subtitle">New Enquiry - Create and Save to Pending</div>
+            </div>
+
+            <form id="enquiryForm">
+                <div class="section-title">
+                    <div class="section-number">1</div>
+                    Basic Enquiry Information
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>RTWE NO <span class="required">*</span></label>
+                        <input type="text" id="rtweNo" readonly placeholder="Auto-generating...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>COSTING SHEET NO</label>
+                        <input type="text" id="costingNo" readonly placeholder="Auto-generating...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>ENQUIRY DATE <span class="required">*</span></label>
+                        <input type="date" id="enqDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ENQUIRY TIME</label>
+                        <input type="time" id="enqTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label>BROKER NAME <span class="required">*</span></label>
+                        <select id="broker" required>
+                            <option value="">-- Select Broker --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>QUALITY <span class="required">*</span></label>
+                        <select id="quality" required>
+                            <option value="">-- Select Quality --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>GIVEN RATE <span class="required">*</span></label>
+                        <input type="number" id="givenRate" step="0.01" placeholder="Enter rate" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>REMARK</label>
+                        <textarea id="remark" placeholder="Any additional notes..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-outline" onclick="cancelForm()">✖ Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEnquiry()">💾 Save</button>
+                    <button type="button" class="btn btn-secondary" onclick="openShareModal()">📤 Save & Share</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Preview Side -->
+        <div class="preview-side">
+            <div class="preview-header">📋 Live Preview</div>
+
+            <div class="preview-card">
+                <div class="preview-item">
+                    <div class="preview-label">RTWE Number</div>
+                    <div class="preview-value" id="previewRtwe">Loading...</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Costing Sheet</div>
+                    <div class="preview-value" id="previewCosting">Loading...</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Enquiry Date</div>
+                    <div class="preview-value" id="previewDate">--</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Enquiry Time</div>
+                    <div class="preview-value" id="previewTime">--</div>
+                </div>
+            </div>
+
+            <div class="preview-card">
+                <div class="preview-item">
+                    <div class="preview-label">Broker</div>
+                    <div class="preview-value" id="previewBroker">Not selected</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Quality</div>
+                    <div class="preview-value" id="previewQuality">Not selected</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Given Rate</div>
+                    <div class="preview-value" id="previewRate">₹ 0.00</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-label">Status</div>
+                    <div class="status-badge" id="previewStatus">Pending</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                💡 <strong>Tip:</strong> All changes are automatically reflected in this preview. Complete all required
+                fields marked with * to save the enquiry.
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📤 Share Enquiry</h2>
+                <p id="shareRtweNo">RTWE: Loading...</p>
+            </div>
+
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; color: #666; font-size: 13px;">
+                    📧 Share will send PDF with Broker Link (72 hours, 3 uses)
+                </p>
+
+                <label style="font-size: 12px; font-weight: 600; color: #333; display: block; margin-bottom: 8px;">
+                    EMAIL RECIPIENTS
+                </label>
+                <div class="email-input-container">
+                    <input type="email" id="emailInput" placeholder="Enter email address">
+                    <button type="button" class="btn-add-email" onclick="addEmail()">+ Add</button>
+                </div>
+                <div id="emailTags" class="email-tags"></div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sendTelegram">
+                    <label for="sendTelegram">📱 Also send via Telegram</label>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeShareModal()">Cancel</button>
+                <button type="button" class="btn btn-secondary" onclick="shareEnquiry()">📤 Share Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Saving...</div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-icon" id="toastIcon">✅</div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Success</div>
+            <div class="toast-message" id="toastMessage">Saved successfully</div>
+        </div>
+    </div>
+
+    <script>
+        // sessionId and webAppUrl already declared above for Navigation
+        const userName = '<?= userName ?>';
+
+        let emailList = [];
+        let savedFormData = null;
+
+        // Initialize on load
+        window.onload = function () {
+            generateRTWENumber();
+            setDefaultDateTime();
+            loadMasterData();
+            setupLivePreview();
+
+            // Allow Enter key to add email
+            document.getElementById('emailInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addEmail();
+                }
+            });
+        };
+
+        function generateRTWENumber() {
+            google.script.run
+                .withSuccessHandler(function (rtwe) {
+                    document.getElementById('rtweNo').value = rtwe;
+                    const num = rtwe.replace(/\D/g, '');
+                    document.getElementById('costingNo').value = 'RTWC' + num;
+                    updatePreview();
+                })
+                .withFailureHandler(function (err) {
+                    console.error('RTWE generation error:', err);
+                    showToast('Error', 'Failed to generate RTWE number', 'error');
+                })
+                .generateRTWENumber();
+        }
+
+        function setDefaultDateTime() {
+            const now = new Date();
+            document.getElementById('enqDate').value = now.toISOString().split('T')[0];
+            document.getElementById('enqTime').value = now.toTimeString().split(' ')[0].substring(0, 5);
+            updatePreview();
+        }
+
+        function loadMasterData() {
+            google.script.run
+                .withSuccessHandler(function (data) {
+                    if (data) {
+                        populateDropdown('broker', data.brokers || []);
+                        populateDropdown('quality', data.qualities || []);
+                    }
+                })
+                .withFailureHandler(function (err) {
+                    console.error('Master data error:', err);
+                })
+                .getMasterDataForForm();
+        }
+
+        function populateDropdown(selectId, options) {
+            const select = document.getElementById(selectId);
+            options.forEach(function (opt) {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+        }
+
+        // ===== LIVE PREVIEW =====
+        function setupLivePreview() {
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                element.addEventListener('input', updatePreview);
+                element.addEventListener('change', updatePreview);
+            });
+        }
+
+        function updatePreview() {
+            document.getElementById('previewRtwe').textContent =
+                document.getElementById('rtweNo').value || 'Loading...';
+
+            document.getElementById('previewCosting').textContent =
+                document.getElementById('costingNo').value || 'Loading...';
+
+            const date = document.getElementById('enqDate').value;
+            if (date) {
+                const [year, month, day] = date.split('-');
+                document.getElementById('previewDate').textContent = day + '-' + month + '-' + year;
+            } else {
+                document.getElementById('previewDate').textContent = '--';
+            }
+
+            const time = document.getElementById('enqTime').value;
+            document.getElementById('previewTime').textContent = time || '--';
+
+            document.getElementById('previewBroker').textContent =
+                document.getElementById('broker').value || 'Not selected';
+
+            document.getElementById('previewQuality').textContent =
+                document.getElementById('quality').value || 'Not selected';
+
+            const rate = document.getElementById('givenRate').value;
+            document.getElementById('previewRate').textContent =
+                rate ? '₹ ' + parseFloat(rate).toFixed(2) : '₹ 0.00';
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text || 'Saving...';
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function showToast(title, message, type) {
+            const toast = document.getElementById('toast');
+            const icons = { success: '✅', error: '❌', warning: '⚠️' };
+
+            document.getElementById('toastIcon').textContent = icons[type] || '✅';
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+
+            toast.className = 'toast active ' + type;
+
+            setTimeout(function () {
+                toast.classList.remove('active');
+            }, 4000);
+        }
+
+        function validateForm() {
+            const required = ['rtweNo', 'enqDate', 'broker', 'quality', 'givenRate'];
+
+            for (let id of required) {
+                const el = document.getElementById(id);
+                if (!el.value || el.value.trim() === '') {
+                    showToast('Validation Error', id.replace(/([A-Z])/g, ' $1') + ' is required', 'warning');
+                    el.focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function collectFormData() {
+            return {
+                entryType: 'NEW ENTRY',
+                rtweNo: document.getElementById('rtweNo').value,
+                costingNo: document.getElementById('costingNo').value,
+                enqDate: document.getElementById('enqDate').value,
+                enqTime: document.getElementById('enqTime').value,
+                broker: document.getElementById('broker').value,
+                quality: document.getElementById('quality').value,
+                givenRate: document.getElementById('givenRate').value,
+                orderStatus: 'Pending',
+                remark: document.getElementById('remark').value,
+                createdBy: userName,
+                createdAt: new Date().toISOString()
+            };
+        }
+
+        function cancelForm() {
+            if (confirm('Are you sure you want to cancel? All data will be lost.')) {
+                window.location.href = webAppUrl + '?page=dashboard&sessionId=' + sessionId;
+            }
+        }
+
+        function saveEnquiry() {
+            if (!validateForm()) return;
+
+            showLoading('Saving enquiry...');
+
+            const formData = collectFormData();
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    hideLoading();
+
+                    if (!result.success) {
+                        showToast('Error', result.message || 'Save failed', 'error');
+                        return;
+                    }
+
+                    showToast('Success!', 'Enquiry saved. Redirecting...', 'success');
+
+                    setTimeout(function () {
+                        window.location.href = webAppUrl + '?page=new-enquiry&sessionId=' + sessionId;
+                    }, 1500);
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message || 'Save failed', 'error');
+                })
+                .saveNewEnquiry(formData);
+        }
+
+        // ===== SHARE MODAL =====
+        function openShareModal() {
+            if (!validateForm()) return;
+
+            savedFormData = collectFormData();
+            document.getElementById('shareRtweNo').textContent = 'RTWE: ' + savedFormData.rtweNo;
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+            emailList = [];
+            renderEmailTags();
+            document.getElementById('emailInput').value = '';
+            document.getElementById('sendTelegram').checked = false;
+        }
+
+        function addEmail() {
+            const input = document.getElementById('emailInput');
+            const email = input.value.trim();
+
+            if (!email) return;
+
+            if (!email.includes('@')) {
+                showToast('Invalid Email', 'Please enter a valid email address', 'warning');
+                return;
+            }
+
+            if (emailList.includes(email)) {
+                showToast('Duplicate', 'Email already added', 'warning');
+                return;
+            }
+
+            emailList.push(email);
+            input.value = '';
+            renderEmailTags();
+            input.focus();
+        }
+
+        function removeEmail(index) {
+            emailList.splice(index, 1);
+            renderEmailTags();
+        }
+
+        function renderEmailTags() {
+            const container = document.getElementById('emailTags');
+            container.innerHTML = emailList.map((email, i) =>
+                '<div class="email-tag">' +
+                '<span>' + email + '</span>' +
+                '<button class="email-tag-remove" onclick="removeEmail(' + i + ')">×</button>' +
+                '</div>'
+            ).join('');
+        }
+
+        function shareEnquiry() {
+            if (emailList.length === 0) {
+                showToast('No Recipients', 'Please add at least one email address', 'warning');
+                return;
+            }
+
+            showLoading('Saving and sharing...');
+            closeShareModal();
+
+            const sendTelegram = document.getElementById('sendTelegram').checked;
+
+            google.script.run
+                .withSuccessHandler(function (saveResult) {
+                    if (!saveResult.success) {
+                        hideLoading();
+                        showToast('Error', saveResult.message || 'Save failed', 'error');
+                        return;
+                    }
+
+                    // Background share
+                    google.script.run
+                        .withSuccessHandler(function () { })
+                        .withFailureHandler(function () { })
+                        .shareEnquiryBackground(savedFormData, emailList, sendTelegram);
+
+                    hideLoading();
+                    showToast('Success!', 'Enquiry saved! Sharing in background...', 'success');
+
+                    setTimeout(function () {
+                        window.location.href = webAppUrl + '?page=new-enquiry&sessionId=' + sessionId;
+                    }, 1500);
+                })
+                .withFailureHandler(function (error) {
+                    hideLoading();
+                    showToast('Error', error.message || 'Save failed', 'error');
+                })
+                .saveNewEnquiry(savedFormData);
+        }
+    </script>
+</body>
+
+</html>

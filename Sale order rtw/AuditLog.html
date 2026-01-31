@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Log - <?= appName ?></title>
+  
+  <?!= include('Styles'); ?>
+  
+  <style>
+    .audit-container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    
+    .filter-bar {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .log-entry {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+    
+    .status-success {
+      color: var(--success-green);
+      font-weight: 700;
+    }
+    
+    .status-error {
+      color: var(--error-red);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <?!= include('Navigation'); ?>
+  
+  <div class="audit-container">
+    <div class="card">
+      <div class="card-header">
+        📜 Audit Log
+        <button class="btn btn-success" style="float: right;" onclick="exportAuditLog()">📊 Export</button>
+      </div>
+      
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-row">
+          <div class="form-group">
+            <label class="form-label">Action</label>
+            <select class="form-select" id="actionFilter">
+              <option value="">All Actions</option>
+              <option value="LOGIN_SUCCESS">Login Success</option>
+              <option value="LOGIN_FAILED">Login Failed</option>
+              <option value="SALE_ORDER_CREATED">Order Created</option>
+              <option value="SALE_ORDER_UPDATED">Order Updated</option>
+              <option value="USER_CREATED">User Created</option>
+              <option value="USER_UPDATED">User Updated</option>
+              <option value="PDF_GENERATED">PDF Generated</option>
+              <option value="EMAIL_SENT">Email Sent</option>
+              <option value="TELEGRAM_SENT">Telegram Sent</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Module</label>
+            <select class="form-select" id="moduleFilter">
+              <option value="">All Modules</option>
+              <option value="Authentication">Authentication</option>
+              <option value="Sale Orders">Sale Orders</option>
+              <option value="User Management">User Management</option>
+              <option value="PDF">PDF</option>
+              <option value="Email">Email</option>
+              <option value="Telegram">Telegram</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="statusFilter">
+              <option value="">All Status</option>
+              <option value="SUCCESS">Success</option>
+              <option value="ERROR">Error</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">From Date</label>
+            <input type="date" class="form-input" id="dateFrom">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">To Date</label>
+            <input type="date" class="form-input" id="dateTo">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">&nbsp;</label>
+            <button class="btn btn-primary" onclick="applyFilters()">🔍 Filter</button>
+            <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Audit Log Table -->
+      <div class="table-container">
+        <table id="auditTable">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Module</th>
+              <th>Record ID</th>
+              <th>Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="auditBody">
+            <? if (logs && logs.logs && logs.logs.length > 0) { ?>
+              <? logs.logs.forEach(function(log) { ?>
+                <tr>
+                  <td class="log-entry"><?= formatDateTime(log.timestamp) ?></td>
+                  <td><?= log.user_email ?></td>
+                  <td><span class="badge badge-pending"><?= log.action ?></span></td>
+                  <td><?= log.module ?></td>
+                  <td><?= log.record_id || '-' ?></td>
+                  <td class="<?= log.status === 'SUCCESS' ? 'status-success' : 'status-error' ?>"><?= log.status ?></td>
+                  <td>
+                    <? if (log.error_message) { ?>
+                      <span style="color: var(--error-red);"><?= log.error_message ?></span>
+                    <? } else { ?>
+                      -
+                    <? } ?>
+                  </td>
+                </tr>
+              <? }); ?>
+            <? } else { ?>
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
+                  No audit logs found
+                </td>
+              </tr>
+            <? } ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <?!= include('Scripts'); ?>
+  
+  <script>
+    // Apply filters
+    async function applyFilters() {
+      const filters = {
+        action: document.getElementById('actionFilter').value,
+        module: document.getElementById('moduleFilter').value,
+        status: document.getElementById('statusFilter').value,
+        dateFrom: document.getElementById('dateFrom').value,
+        dateTo: document.getElementById('dateTo').value
+      };
+      
+      showLoading();
+      
+      const result = await apiCall('get-audit-logs', {
+        limit: 100,
+        filters: filters
+      });
+      
+      hideLoading();
+      
+      if (result.success) {
+        // Refresh table with new data
+        renderAuditLogs(result.logs);
+      } else {
+        showToast(result.error || 'Failed to load logs', 'error');
+      }
+    }
+    
+    // Clear filters
+    function clearFilters() {
+      document.getElementById('actionFilter').value = '';
+      document.getElementById('moduleFilter').value = '';
+      document.getElementById('statusFilter').value = '';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      location.reload();
+    }
+    
+    // Render audit logs
+    function renderAuditLogs(logs) {
+      const tbody = document.getElementById('auditBody');
+      tbody.innerHTML = '';
+      
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">No audit logs found</td></tr>';
+        return;
+      }
+      
+      logs.forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="log-entry">${formatDateTime(log.timestamp)}</td>
+          <td>${log.user_email}</td>
+          <td><span class="badge badge-pending">${log.action}</span></td>
+          <td>${log.module}</td>
+          <td>${log.record_id || '-'}</td>
+          <td class="${log.status === 'SUCCESS' ? 'status-success' : 'status-error'}">${log.status}</td>
+          <td>${log.error_message ? '<span style="color: var(--error-red);">' + log.error_message + '</span>' : '-'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+    
+    // Export audit log
+    async function exportAuditLog() {
+      showLoading();
+      
+      const filters = {
+        action: document.getElementById('actionFilter').value,
+        module: document.getElementById('moduleFilter').value,
+        status: document.getElementById('statusFilter').value,
+        dateFrom: document.getElementById('dateFrom').value,
+        dateTo: document.getElementById('dateTo').value
+      };
+      
+      const result = await apiCall('export-audit-logs', { filters: filters });
+      
+      hideLoading();
+      
+      if (result.success) {
+        // Download CSV
+        const blob = new Blob([result.csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'audit_log_' + new Date().toISOString().split('T')[0] + '.csv';
+        a.click();
+        
+        showToast('✅ Exported ' + result.count + ' logs', 'success');
+      } else {
+        showToast('❌ ' + (result.error || 'Failed to export'), 'error');
+      }
+    }
+    
+    function formatDateTime(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleString('en-IN');
+    }
+  </script>
+</body>
+</html>
+```
+
+---
+
+## ✅ **ALL FRONTEND FILES COMPLETE!**
+
+### 📊 **Complete File Summary:**
+```
+BACKEND FILES (8 files):
+✅ Setup.gs              - Database setup (500+ lines)
+✅ Code.gs               - Main logic (800+ lines)
+✅ Auth.gs               - Authentication (600+ lines)
+✅ SaleOrder.gs          - Order management (700+ lines)
+✅ PDF.gs                - PDF generation (400+ lines)
+✅ Email.gs              - Email service (300+ lines)
+✅ Telegram.gs           - Telegram integration (400+ lines)
+✅ AuditLog.gs           - Audit logging (400+ lines)
+
+FRONTEND FILES (12 files):
+✅ Login.html            - Login page
+✅ Dashboard.html        - Main dashboard
+✅ Styles.html           - Global CSS
+✅ Navigation.html       - Navigation bar
+✅ Scripts.html          - Global JavaScript
+✅ SaleOrderForm.html    - Order form
+✅ PendingOrders.html    - Pending list
+✅ CompleteOrders.html   - Complete list
+✅ CancelledOrders.html  - Cancelled list
+✅ Users.html            - User management
+✅ Settings.html         - System settings
+✅ AuditLog.html         - Audit log viewer
+
+TOTAL: 20 FILES | 8,000+ LINES OF PRODUCTION CODE
